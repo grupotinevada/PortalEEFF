@@ -1,0 +1,88 @@
+
+<app-navbar></app-navbar>
+<main class="container mt-5 pt-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-10 col-xl-8">
+            <div class="text-center mb-5">
+                <h1 class="display-5 fw-bold text-success mb-3">
+                    <i class="bi bi-file-earmark-arrow-up me-2"></i>
+                    Carga de Archivos SAP
+                </h1>
+                <p class="lead text-muted">
+                    Sube tus archivos HTM generados por SAP para procesamiento y análisis
+                </p>
+            </div>
+
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-body p-4">
+                    <div class="border border-3 border-dashed border-success rounded-3 p-5 bg-light bg-opacity-10 text-center position-relative"
+                        style="cursor: pointer;"
+                        (drop)="onFileDrop($event)"
+                        (dragover)="onDragOver($event)"
+                        (dragleave)="onDragLeave($event)"
+                        (click)="fileInput.click()">
+                        <input #fileInput type="file" class="d-none" (change)="onFileSelected($event)" accept=".htm" />
+
+                        <div class="p-3">
+                            <i class="bi bi-cloud-arrow-up fs-1 text-success"></i>
+                            <h5 class="mt-3 mb-1 fw-bold">Arrastra tu archivo aquí o haz clic para seleccionar</h5>
+                            <p class="text-muted mb-0">Formatos aceptados: .htm (Archivos SAP)</p>
+                            <small class="text-muted">Tamaño máximo: 10MB</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div *ngIf="savedFileName" class="alert alert-success mt-4 d-flex align-items-center">
+                <i class="bi bi-check-circle-fill me-2 fs-4"></i>
+                <div>
+                    <strong>Archivo procesado correctamente:</strong> {{ savedFileName }}
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+
+<!-- Modal de Preview -->
+<div
+  #previewModal
+  class="modal fade"
+  id="previewModal"
+  tabindex="-1"
+  aria-labelledby="previewModalLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog modal-xl modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header bg-success text-white">
+        <h5 class="modal-title" id="previewModalLabel">
+        </h5>
+        <button
+          type="button"
+          class="btn-close btn-close-white"
+          data-bs-dismiss="modal"
+          aria-label="Cerrar"
+        ></button>
+      </div>
+      <div class="modal-body">
+        <!-- Aquí va tu componente de preview -->
+        <app-preview
+          [file]="selectedFile"
+          (fileConfirmed)="onFileConfirmed($event)"
+          (fileCanceled)="onFileCanceled()"
+        ></app-preview>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+
+<!-- <footer class="bg-light py-4 mt-5 border-top">
+    <div class="container text-center text-muted">
+        <p class="mb-1">© 2025 Holding Nevada. Todos los derechos reservados.</p>
+        <p class="mb-0 small">Versión 1.0.0</p>
+    </div>
+</footer> -->

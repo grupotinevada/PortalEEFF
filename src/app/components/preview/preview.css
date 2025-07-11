@@ -1,0 +1,35 @@
+.preview-container {
+  padding: 1rem;
+  font-family: Arial, sans-serif;
+}
+
+.table-wrapper {
+  max-height: 500px;
+  overflow: auto;
+  margin-top: 1rem;
+  border: 1px solid #ccc;
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+thead th {
+  background-color: #d7eaff;
+  position: sticky;
+  top: 0;
+}
+
+td, th {
+  padding: 0.5rem;
+  border: 1px solid #999;
+  font-size: 0.85rem;
+  white-space: nowrap;
+}
+
+.preview-actions {
+  margin-top: 1rem;
+  display: flex;
+  gap: 1rem;
+}

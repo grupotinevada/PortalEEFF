@@ -1,0 +1,45 @@
+<div class="container d-flex justify-content-center align-items-center min-vh-100">
+  <div class="card shadow-lg" style="width: 400px;">
+    <div class="card-header bg-success text-white">
+      <h4 class="mb-0 text-center">Acceso Corporativo</h4>
+    </div>
+    <div class="card-body p-4">
+      <form [formGroup]="form" (ngSubmit)="onSubmit()">
+        <div class="mb-3">
+          <label for="email" class="form-label fw-bold">Correo electrónico</label>
+          <input 
+            type="email" 
+            class="form-control form-control-lg" 
+            id="email" 
+            formControlName="email"
+            placeholder="usuario@empresa.com"
+          >
+        </div>
+        
+        <div class="mb-4">
+          <label for="password" class="form-label fw-bold">Contraseña</label>
+          <input 
+            type="password" 
+            class="form-control form-control-lg" 
+            id="password" 
+            formControlName="password"
+            placeholder="••••••••"
+          >
+        </div>
+        
+        <button type="submit" class="btn btn-success btn-lg w-100 mb-3">
+          Iniciar sesión
+        </button>
+        @if(errorMsg){
+                    <div class="alert alert-danger mt-3 mb-0">
+          {{ errorMsg }}
+        </div>
+        }
+
+      </form>
+    </div>
+    <div class="card-footer bg-light text-center">
+      <small class="text-muted">© 20235 Holding Nevada. Todos los derechos reservados.</small>
+    </div>
+  </div>
+</div>

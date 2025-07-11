@@ -1,0 +1,20 @@
+/* You can add global styles to this file, and also import other style files */
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  font-family: 'Montserrat', sans-serif;
+  background-image: url(../public/prueba.jpg);
+  height: 100%;
+  margin: 0px;
+    background-position: center center; /* Centra la imagen */
+  background-repeat: no-repeat;       /* Evita que la imagen se repita */
+  background-size: cover;             /* Escala la imagen para cubrir todo el área */
+  background-attachment: fixed; 
+  }
+

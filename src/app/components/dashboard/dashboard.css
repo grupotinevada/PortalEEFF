@@ -1,0 +1,45 @@
+mat-panel-title {
+  font-weight: 600;
+  font-size: 1rem;
+}
+
+mat-panel-description {
+  font-size: 0.875rem;
+  color: #666;
+}
+
+::ng-deep mat-expansion-panel {
+  border-radius: 0.5rem;
+  margin-bottom: 0.5rem;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+  border: 1px solid #dee2e6;
+}
+
+::ng-deep mat-expansion-panel-header {
+  background-color: #f8f9fa;
+  padding: 0.75rem 1rem;
+  font-weight: 100;
+  font-size: 0.95rem;
+  color: #212529;
+  border-bottom: 1px solid #dee2e6;
+}
+
+
+
+::ng-deep mat-expansion-panel-header.mat-expanded {
+  background-color: #e9ecef;
+}
+
+::ng-deep .mat-expansion-panel-body {
+  padding: 0;
+  background-color: #ffffff;
+}
+
+::ng-deep mat-expansion-panel:not(.mat-expanded) .mat-expansion-panel-body {
+  display: none;
+}
+
+
+.header{
+border-radius: 1rem ;
+}

@@ -1,0 +1,10 @@
+[WARN] 2025-07-08T19:49:50.994Z - Login fallido - contraseña incorrecta: admin@inevada.cl
+[ERROR] 2025-07-09T19:17:45.986Z - Error en BalanceService.createBulk: Column count doesn't match value count at row 1
+[ERROR] 2025-07-09T19:19:02.642Z - Error en BalanceService.createBulk: id_fsa is not defined
+[ERROR] 2025-07-09T19:19:39.252Z - Error en BalanceService.createBulk: id_fsa is not defined
+[ERROR] 2025-07-09T19:20:34.645Z - Error en BalanceService.createBulk: id_fsa is not defined
+[ERROR] 2025-07-09T19:35:26.867Z - Error en BalanceService.createBulk: id_fsa is not defined
+[ERROR] 2025-07-09T19:39:23.128Z - Error en BalanceService.createBulk: id_fsa is not defined
+[ERROR] 2025-07-10T16:44:48.014Z - Error en BalanceService.createBulk: Duplicate entry 'X00002' for key 'fsa.PRIMARY'
+[ERROR] 2025-07-10T16:48:17.896Z - Error en BalanceService.createBulk: Data too long for column 'id_fsa' at row 21
+[ERROR] 2025-07-10T18:43:40.133Z - Error en BalanceService.createBulk: Cannot add or update a child row: a foreign key constraint fails (`portaleeff3`.`cta_fsa_mapping`, CONSTRAINT `cta_fsa_mapping_ibfk_2` FOREIGN KEY (`id_fsa`) REFERENCES `fsa` (`id_fsa`))
