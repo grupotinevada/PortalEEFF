@@ -1,164 +1,37 @@
-import { Component, ElementRef, ViewChild } from '@angular/core';
+import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Preview } from '../preview/preview';
-import { AuthService } from '../../services/auth.service';
 import { Router } from '@angular/router';
 import { Navbar } from '../navbar/navbar';
-declare const bootstrap: any;
+import { PreviewFileService } from '../../services/preview-fie';
 
 @Component({
   selector: 'app-home',
-  imports: [Preview, CommonModule, Navbar],
+  imports: [CommonModule, Navbar],
   templateUrl: './home.html',
   styleUrl: './home.css',
 })
 export class Home {
   selectedFile: File | null = null;
   savedFileName: string | null = null;
-  private modalInstance: any = null;
-  private modalEventListeners: Array<() => void> = [];
 
-  constructor(private authService: AuthService, 
-              private router: Router) {}
+  constructor(private previewFileService: PreviewFileService, private router: Router) {}
 
-  @ViewChild('previewModal') previewModalRef!: ElementRef;
-
-  onFileSelected(event: Event) {
-
+  onFileSelected(event: Event): void {
     const input = event.target as HTMLInputElement;
-    if (!input.files?.length) {
-      console.log('❌ No hay archivos seleccionados');
-      return;
-    }
-    this.selectedFile = input.files[0];
-    console.log('✅ Archivo seleccionado:', this.selectedFile.name);
+    if (!input.files?.length) return;
 
-    // Limpia el input para permitir seleccionar el mismo archivo múltiples veces
-    input.value = '';
+    const file = input.files[0];
+    this.previewFileService.setFile(file);
 
-    // Espera un tick para que el modal exista en el DOM
-    setTimeout(() => {
-      this.showModal();
-    });
-  }
-
-  private showModal(): void {
-
-    const modalEl = this.previewModalRef.nativeElement;
-    
-    // Limpia completamente el estado anterior
-    this.cleanupModal();
-
-    // Asegura que el modal esté en estado inicial
-    modalEl.classList.remove('show');
-    modalEl.style.display = 'none';
-    modalEl.setAttribute('aria-hidden', 'true');
-    modalEl.removeAttribute('aria-modal');
-    modalEl.removeAttribute('role');
-
-    // Remueve cualquier backdrop que pueda haber quedado
-    const backdrops = document.querySelectorAll('.modal-backdrop');
-
-    backdrops.forEach(backdrop => backdrop.remove());
-
-    // Remueve las clases del body que Bootstrap agrega
-    document.body.classList.remove('modal-open');
-    document.body.style.removeProperty('overflow');
-    document.body.style.removeProperty('padding-right');
-    this.modalInstance = new bootstrap.Modal(modalEl, {
-      backdrop: true,
-      keyboard: true,
-      focus: true
-    });
-
-    // Configura event listeners con referencias para poder removerlos
-    const hiddenHandler = (e: Event) => {
-
-      this.cleanupModal();
-    };
-
-    const hideHandler = (e: Event) => {
-
-    };
-
-    const shownHandler = (e: Event) => {
-    };
-
-    // Agrega los listeners
-    modalEl.addEventListener('hidden.bs.modal', hiddenHandler);
-    modalEl.addEventListener('hide.bs.modal', hideHandler);
-    modalEl.addEventListener('shown.bs.modal', shownHandler);
-
-    // Guarda las referencias para poder removerlas después
-    this.modalEventListeners = [
-      () => modalEl.removeEventListener('hidden.bs.modal', hiddenHandler),
-      () => modalEl.removeEventListener('hide.bs.modal', hideHandler),
-      () => modalEl.removeEventListener('shown.bs.modal', shownHandler)
-    ];
-
-    this.modalInstance.show();
-    
-    // Verifica el estado después de show()
-    setTimeout(() => {
-    }, 100);
-  }
-
-  private cleanupModal(): void {
-    this.modalEventListeners.forEach(removeListener => removeListener());
-    this.modalEventListeners = [];
-
-    // Destruye la instancia del modal
-    if (this.modalInstance) {
-
-      this.modalInstance.dispose();
-      this.modalInstance = null;
-    }
-    
-    // Limpia completamente el estado
-    if (this.previewModalRef) {
-      const modalEl = this.previewModalRef.nativeElement;
-      modalEl.classList.remove('show');
-      modalEl.style.display = 'none';
-      modalEl.setAttribute('aria-hidden', 'true');
-      modalEl.removeAttribute('aria-modal');
-      modalEl.removeAttribute('role');
-    }
-
-    // Asegúrate de que el body esté limpio
-    document.body.classList.remove('modal-open');
-    document.body.style.removeProperty('overflow');
-    document.body.style.removeProperty('padding-right');
-
-    // Remueve cualquier backdrop residual
-    const backdrops = document.querySelectorAll('.modal-backdrop');
-    backdrops.forEach(backdrop => backdrop.remove());
-    
+    this.router.navigate(['/preview']);
   }
 
   onFileConfirmed(confirmedFile: File): void {
-
-
     this.savedFileName = confirmedFile.name;
-    
-    // Cierra el modal y limpia
-    if (this.modalInstance) {
-
-      this.modalInstance.hide();
-    }
-    
-    this.selectedFile = null; // Limpia la previsualización después de guardar
+    this.selectedFile = null;
   }
 
   onFileCanceled(): void {
-
-    this.savedFileName = null;
-    
-    // Cierra el modal y limpia
-    if (this.modalInstance) {
-
-      this.modalInstance.hide();
-    }
-    
     this.selectedFile = null;
   }
 
@@ -179,12 +52,7 @@ export class Home {
       this.onFileSelected({ target: { files: [file] } } as any);
     }
   }
-
-
-
-
-  // Limpia el modal cuando el componente se destruye
-  ngOnDestroy(): void {
-    this.cleanupModal();
+  shouldShowPreview(): boolean {
+    return this.selectedFile !== null;
   }
 }

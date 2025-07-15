@@ -8,3 +8,9 @@
 [ERROR] 2025-07-10T16:44:48.014Z - Error en BalanceService.createBulk: Duplicate entry 'X00002' for key 'fsa.PRIMARY'
 [ERROR] 2025-07-10T16:48:17.896Z - Error en BalanceService.createBulk: Data too long for column 'id_fsa' at row 21
 [ERROR] 2025-07-10T18:43:40.133Z - Error en BalanceService.createBulk: Cannot add or update a child row: a foreign key constraint fails (`portaleeff3`.`cta_fsa_mapping`, CONSTRAINT `cta_fsa_mapping_ibfk_2` FOREIGN KEY (`id_fsa`) REFERENCES `fsa` (`id_fsa`))
+[ERROR] 2025-07-15T20:45:36.539Z - Error en BalanceService.createBulk: Unknown column 'fecha_procesado' in 'where clause'
+[ERROR] 2025-07-15T21:17:20.132Z - Error en BalanceService.createBulk: Unknown column 'fecha_procesado' in 'where clause'
+[ERROR] 2025-07-15T21:18:57.609Z - Error en BalanceService.createBulk: Unknown column 'fecha_procesado' in 'where clause'
+[ERROR] 2025-07-15T21:19:51.382Z - Error en BalanceService.createBulk: Unknown column 'fecha_procesado' in 'where clause'
+[ERROR] 2025-07-15T21:20:36.919Z - Error en BalanceService.createBulk: Unknown column 'fecha_procesado' in 'where clause'
+[ERROR] 2025-07-15T21:23:23.255Z - Error en BalanceService.createBulk: Field 'id_blce' doesn't have a default value

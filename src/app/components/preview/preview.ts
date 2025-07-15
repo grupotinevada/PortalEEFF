@@ -2,8 +2,8 @@ import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Empresa } from '../../models/empresa.model';
-import { EmpresaService } from '../../services/empresa';
-import { BalanceService } from '../../services/balance';
+import { EmpresaService } from '../../services/empresa.service';
+import { BalanceService } from '../../services/balance.service';
 import Swal from 'sweetalert2';
 
 import { AuthService } from '../../services/auth.service';
@@ -11,18 +11,17 @@ import { DefaultMappingService } from '../../services/default-mapping.service';
 import { IDefaultMapping } from '../../models/balance.model';
 import { Router } from '@angular/router';
 import { Spinner } from '../spinner/spinner';
+import { PreviewFileService } from '../../services/preview-fie';
+import { Navbar } from '../navbar/navbar';
+import { Console } from 'console';
 
 @Component({
   selector: 'app-preview',
-  imports: [CommonModule, FormsModule, Spinner],
+  imports: [CommonModule, FormsModule, Spinner, Navbar],
   templateUrl: './preview.html',
   styleUrls: ['./preview.css'],
 })
 export class Preview implements OnInit {
-  @Input() file: File | null = null;
-  @Output() fileConfirmed = new EventEmitter<File>();
-  @Output() fileCanceled = new EventEmitter<void>();
-
   tableData: any[] = [];
   headers: string[] = [];
   csvContent = '';
@@ -32,7 +31,7 @@ export class Preview implements OnInit {
   totalDeudor: number = 0;
   totalAcreedor: number = 0;
   resultadoSaldo: number = 0;
-  anioSeleccionado: number | null = null;
+
   fechaSeleccionada: string = ''; // este será el formato 'YYYY-01-01'
   listaAnios: number[] = [];
   msgError: string = '';
@@ -43,32 +42,42 @@ export class Preview implements OnInit {
 
   cuentasNoMapeadas: string[] = [];
   msgWarning: string = '';
+  file!: File | null;
+
+  nombreBalance: string = '';
+  fechaInicio: string = '';
+  fechaFin: string = '';
+  anioSeleccionado: number | null = null;
 
   constructor(
     private empresaService: EmpresaService,
     private balanceService: BalanceService,
     private authService: AuthService,
     private mappingService: DefaultMappingService,
-    private router: Router
-  ) {}
+    private router: Router,
+    private previewFileService: PreviewFileService
+  ) { }
 
   ngOnInit(): void {
-    this.fechaSeleccionada = '';
+
     this.selectedEmpresa = '';
     this.cargarEmpresas();
     this.cargarMapping();
     const currentYear = new Date().getFullYear();
-    this.listaAnios = Array.from({ length: 10 }, (_, i) => currentYear - i); // últimos 10 años
-  }
-  ngDoCheck(): void {
-    if (this.anioSeleccionado) {
-      this.fechaSeleccionada = `${this.anioSeleccionado}-01-01`;
+    this.listaAnios = Array.from({ length: 10 }, (_, i) => currentYear - i);
+
+    this.file = this.previewFileService.getFile();
+
+    if (!this.file) {
+      console.error('No se encontró archivo');
+      this.msgError = 'No se encontró el archivo cargado.';
+      this.router.navigate(['home']);
+      return;
     }
+
+    this.readHtmlFile(this.file);
   }
 
-  ngOnChanges(): void {
-    if (this.file) this.readHtmlFile(this.file);
-  }
 
   private cargarMapping() {
     this.authService.checkAuth().subscribe({
@@ -254,8 +263,11 @@ export class Preview implements OnInit {
   private procesarFilas(
     rawRows: any[],
     headers: string[],
-    fecha: string,
-    idEmpresa: string
+    fecha: number,
+    idEmpresa: string,
+    nombreBalance: string,
+    fechaInicio: string,
+    fechaFin: string
   ): {
     filasProcesadas: any[];
     headersFiltrados: string[];
@@ -318,7 +330,7 @@ export class Preview implements OnInit {
         // 3. Si sigue sin existir, usar "NO MAPPING"
         const id_fsa = mapping ? mapping.id_fsa : null;
 
-        const id_fsa_final = (id_fsa && /^X\d{5}$/.test(id_fsa)) ? null : id_fsa;
+        const id_fsa_final = id_fsa && /^X\d{5}$/.test(id_fsa) ? null : id_fsa;
 
         // Agregar a cuentas no mapeadas si es null
         if (id_fsa_final === null) {
@@ -329,9 +341,12 @@ export class Preview implements OnInit {
           num_cuenta,
           nombre,
           saldo,
-          fecha_procesado: fecha,
+          ejercicio: fecha,
           id_empresa: idEmpresa,
           id_fsa,
+          nombre_balance: nombreBalance ?? '',
+          fecha_inicio: fechaInicio ?? '',
+          fecha_fin: fechaFin ?? '',
         };
       });
 
@@ -341,10 +356,14 @@ export class Preview implements OnInit {
         codigoKey,
         nombreKey,
         'Saldo Actual',
-        'Fecha',
+        'Ejercicio',
         'ID Empresa',
         'FSA',
+        'Nombre Balance',
+        'Fecha Inicio',
+        'Fecha Fin',
       ],
+
       totalDeudor,
       totalAcreedor,
       cuentasNoMapeadas,
@@ -352,11 +371,13 @@ export class Preview implements OnInit {
   }
 
   visualizarProcesado(): void {
-    const fechaSeleccionada = this.fechaSeleccionada;
+
     const empresaSeleccionada = this.selectedEmpresa;
 
+    console.log("ejercicio: ", this.anioSeleccionado)
+
     this.msgError = '';
-    if (!fechaSeleccionada || !empresaSeleccionada) {
+    if (!this.anioSeleccionado || !empresaSeleccionada) {
       this.msgError = 'Debe seleccionar una empresa y una fecha';
       return;
     }
@@ -376,8 +397,11 @@ export class Preview implements OnInit {
       } = this.procesarFilas(
         this.originalTableData,
         this.originalHeaders,
-        fechaSeleccionada,
-        empresaSeleccionada
+        this.anioSeleccionado,
+        this.selectedEmpresa,
+        this.nombreBalance,
+        this.fechaInicio,
+        this.fechaFin
       );
 
       this.totalDeudor = totalDeudor;
@@ -393,9 +417,12 @@ export class Preview implements OnInit {
         [headersFiltrados[0]]: b.num_cuenta,
         [headersFiltrados[1]]: b.nombre,
         [headersFiltrados[2]]: b.saldo,
-        [headersFiltrados[3]]: b.fecha_procesado,
+        [headersFiltrados[3]]: b.ejercicio,
         [headersFiltrados[4]]: b.id_empresa,
-        [headersFiltrados[5]]: b.id_fsa, // << nuevo
+        [headersFiltrados[5]]: b.id_fsa,
+        [headersFiltrados[6]]: b.nombre_balance,
+        [headersFiltrados[7]]: b.fecha_inicio,
+        [headersFiltrados[8]]: b.fecha_fin,
       }));
 
       this.processed = true;
@@ -409,10 +436,10 @@ export class Preview implements OnInit {
     this.showSpinner = true;
     this.msgError = '';
 
-    const fechaSeleccionada = this.fechaSeleccionada;
+
     const empresaSeleccionada = this.selectedEmpresa;
 
-    if (!fechaSeleccionada || !empresaSeleccionada) {
+    if (!this.anioSeleccionado || !empresaSeleccionada) {
       this.msgError = 'Debe seleccionar una empresa y una fecha';
       this.showSpinner = false;
       return;
@@ -429,13 +456,17 @@ export class Preview implements OnInit {
         this.procesarFilas(
           this.originalTableData,
           this.originalHeaders,
-          fechaSeleccionada,
-          empresaSeleccionada
+          this.anioSeleccionado,
+          this.selectedEmpresa,
+          this.nombreBalance,
+          this.fechaInicio,
+          this.fechaFin
         );
 
       this.totalDeudor = totalDeudor;
       this.totalAcreedor = totalAcreedor;
       this.resultadoSaldo = totalDeudor - totalAcreedor;
+      console.log("BULK ENVIADO A BACK: ", filasProcesadas)
       this.balanceService.createBalanceBulk(filasProcesadas).subscribe({
         next: (res) => {
           this.showSpinner = false;

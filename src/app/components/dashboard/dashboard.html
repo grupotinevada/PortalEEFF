@@ -2,29 +2,73 @@
 
 <main class="container mt-5 pt-4">
     <!-- Selector de años -->
-    <div class="d-flex align-items-end gap-3 mb-4">
-        <div class="form-group">
-            <label for="annioBase" class="form-label">Año base</label>
-            <input type="number" id="annioBase" class="form-control" [(ngModel)]="annioBaseSeleccionado" />
-        </div>
 
-        <div class="form-group">
-            <label for="annioComp" class="form-label">Año comparación</label>
-            <input type="number" id="annioComp" class="form-control" [(ngModel)]="annioCompSeleccionado" />
-        </div>
+    
+<!-- Selector de periodos -->
+<div class="d-flex flex-column flex-md-row gap-4 mb-4">
 
-        <button class="btn btn-success"
-            (click)="procesarActivosComparado(annioBaseSeleccionado, annioCompSeleccionado)">
-            Obtener balance
-        </button>
+  <!-- Selector de Sociedad -->
+  <div class="card p-3 w-100">
+    <h6 class="fw-bold mb-3 text-dark">Sociedad</h6>
+    <label for="empresa" class="form-label">Seleccione Sociedad</label>
+    <select
+      id="empresa"
+      class="form-select"
+      [(ngModel)]="idEmpresaSeleccionada">
+      <option value="" disabled selected>Seleccione una empresa</option>
+      <option *ngFor="let empresa of empresas" [value]="empresa.id_empresa">
+        {{empresa.id_empresa}} - {{ empresa.descripcion }}
+      </option>
+    </select>
+  </div>
 
-        <button class="btn btn-primary" (click)="imprimirComparativo()">
-            Imprimir Reporte
-        </button>
-
+  <!-- Año base -->
+  <div class="card p-3 w-100">
+    <h6 class="fw-bold mb-3 text-success">Periodo Año Base</h6>
+    <div class="form-group mb-2">
+      <label for="fechaInicioBase">Fecha inicio</label>
+      <input type="date" id="fechaInicioBase" class="form-control" [(ngModel)]="fechaInicioBase">
+      <label class="form-label">Año base: {{ fechaInicioBase | date:'yyyy' }}</label>
     </div>
+    <div class="form-group">
+      <label for="fechaFinBase">Fecha fin</label>
+      <input type="date" id="fechaFinBase" class="form-control" [(ngModel)]="fechaFinBase">
+    </div>
+  </div>
 
-    <app-spinner [isLoading]="showSpinner"></app-spinner>
+  <!-- Año comparación -->
+  <div class="card p-3 w-100">
+    <h6 class="fw-bold mb-3 text-primary">Periodo Año Comparación</h6>
+    <div class="form-group mb-2">
+      <label for="fechaInicioComp">Fecha inicio</label>
+      <input type="date" id="fechaInicioComp" class="form-control" [(ngModel)]="fechaInicioComp">
+    </div>
+    <div class="form-group">
+      <label for="fechaFinComp">Fecha fin</label>
+      <input type="date" id="fechaFinComp" class="form-control" [(ngModel)]="fechaFinComp">
+    </div>
+  </div>
+
+  <!-- Botones -->
+  <div class="d-flex flex-column justify-content-end gap-2">
+    <button class="btn btn-success"
+      [disabled]="!fechaInicioBase || !fechaFinBase || !fechaInicioComp || !fechaFinComp || !idEmpresaSeleccionada"
+      (click)="cargarBalancesComparados()">
+      Comparar
+    </button>
+
+    <button class="btn btn-primary"
+      [disabled]="!fechaInicioBase || !fechaFinBase || !fechaInicioComp || !fechaFinComp || !idEmpresaSeleccionada"
+      (click)="imprimirComparativo()">
+      Imprimir Reporte
+    </button>
+  </div>
+
+</div>
+
+
+
+    <app-spinner [showSpinner]="showSpinner"></app-spinner>
 
     <div *ngIf="vistaActivosComparado.length > 0">
         @for (categoria of vistaActivosComparado; track $index) {

@@ -1,4 +1,3 @@
-const { ConsoleLogger } = require('@angular/compiler-cli');
 const BalanceModel = require('../models/balance.model');
 const Logger = require('../utils/logger.utils');
 
@@ -53,7 +52,7 @@ static async createBulk(balances, userId) {
       const exists = await BalanceModel.existsByCuentaEmpresaFecha(
         b.num_cuenta,
         b.id_empresa,
-        b.fecha_procesado
+        b.ejercicio
       );
       if (!exists) {
         b.id_user = userId;
@@ -81,22 +80,42 @@ static async createBulk(balances, userId) {
   /**
    * Obtiene balances por empresa y fecha
    * @param {string} id_empresa - ID de la empresa
-   * @param {string} fecha_procesado - Fecha del balance
+   * @param {string} fecha_inicio - Fecha del balance desde
+   * @param {string} fecha_fin - Fecha del balance fin
    * @returns {Object} Resultado de la operación
    */
-  static async getByEmpresaAndFecha(id_empresa, fecha_procesado) {
-    try {
-      const balances = await BalanceModel.findByEmpresaAndFecha(id_empresa, fecha_procesado);
+// services/balance.service.js
 
-      return {
-        success: true,
-        data: balances
-      };
-    } catch (error) {
-      Logger.error(`Error en BalanceService.getByEmpresaAndFecha: ${error.message}`);
-      return { success: false, message: 'Error al obtener balances' };
+
+static async getByEmpresaYPeriodoFlexible({ id_empresa, fecha_inicio, fecha_fin, fecha_consulta }) {
+  try {
+    let balances;
+    let modoConsulta;
+
+    if (fecha_inicio && fecha_fin) {
+      modoConsulta = 'rango';
+      Logger.info(`Consultando balances por rango: Empresa ${id_empresa}, Desde ${fecha_inicio} hasta ${fecha_fin}`);
+      balances = await BalanceModel.findByEmpresaEnRango(id_empresa, fecha_inicio, fecha_fin);
+    } else if (fecha_consulta) {
+      modoConsulta = 'única';
+      Logger.info(`Consultando balances por fecha única: Empresa ${id_empresa}, Fecha ${fecha_consulta}`);
+      balances = await BalanceModel.findByEmpresaYFechaUnica(id_empresa, fecha_consulta);
+    } else {
+      Logger.warn(`Consulta fallida: parámetros insuficientes para empresa ${id_empresa}`);
+      return { success: false, message: 'Parámetros insuficientes' };
     }
+
+    return {
+      success: true,
+      modo: modoConsulta,
+      data: balances
+    };
+  } catch (error) {
+    Logger.error(`Error en getByEmpresaYPeriodoFlexible: ${error.message}`);
+    return { success: false, message: 'Error al obtener balances' };
   }
+}
+
 
   /**
    * Obtiene todos los balances
@@ -105,6 +124,20 @@ static async createBulk(balances, userId) {
   static async getAll() {
     try {
       const balances = await BalanceModel.findAll();
+
+      return {
+        success: true,
+        data: balances
+      };
+    } catch (error) {
+      Logger.error(`Error en BalanceService.getAll: ${error.message}`);
+      return { success: false, message: 'Error al obtener balances' };
+    }
+  }
+
+    static async getFsaCategoria() {
+    try {
+      const balances = await BalanceModel.getFsaCategoria();
 
       return {
         success: true,

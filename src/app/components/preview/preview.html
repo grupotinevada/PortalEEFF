@@ -1,131 +1,239 @@
-<app-spinner [isLoading]="showSpinner"></app-spinner>
-<div *ngIf="file" class="card shadow-sm">
-  <div class="card-header bg-success text-white d-flex justify-content-between align-items-center">
-    <h5 class="mb-0">📄 Archivo cargado</h5>
-    <span class="badge bg-light text-dark">{{ file.type }}</span>
+<!-- navbar fijo arriba -->
+<app-navbar></app-navbar>
+<app-spinner [showSpinner]="showSpinner"></app-spinner>
+
+<!-- Padding superior para evitar que el navbar tape contenido -->
+<main
+  *ngIf="file"
+  class="container-fluid px-3 px-md-5 bg-light min-vh-100"
+  style="padding-top: 80px"
+>
+  <div class="mx-auto" style="max-width: 1200px">
+    <section class="bg-white rounded-3 border px-4 py-4 shadow-sm">
+      <!-- CABECERA -->
+      <header
+        class="d-flex justify-content-between align-items-center border-bottom pb-2 mb-3"
+      >
+        <div>
+          <h6 class="mb-1 text-success fw-semibold">
+            <i class="bi bi-check-circle me-2"></i>Procesamiento de Archivo SAP
+          </h6>
+          <small class="text-muted"
+            >Nombre: {{ file.name }} | Tipo: {{ file.type }}</small
+          >
+        </div>
+        <div>
+          <small class="text-dark fw-semibold"
+            >{{ file.size | number:'1.0-0' }} bytes</small
+          >
+        </div>
+      </header>
+
+      <!-- TABLA -->
+      <section *ngIf="tableData.length > 0;" class="mb-4 border rounded-2">
+        <div
+          class="table-responsive"
+          style="max-height: 35.5rem; overflow-y: auto"
+        >
+          <table class="table table-sm table-hover align-middle mb-0">
+            <thead class="table-light sticky-top small">
+              <tr>
+                <th
+                  *ngFor="let h of headers"
+                  class="text-secondary fw-semibold"
+                >
+                  {{ h }}
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let row of tableData">
+                <td *ngFor="let h of headers" class="text-dark small">
+                  {{ row[h] }}
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- DATOS DE SELECCIÓN Y METADATOS -->
+      <section class="row gx-4 gy-3 mb-4">
+
+                <!-- Nombre del Balance -->
+        <div class="col-md-4">
+          <label for="nombreBalance" class="form-label fw-semibold small"
+            >Nombre del Balance</label
+          >
+          <input
+            id="nombreBalance"
+            type="text"
+            class="form-control form-control-sm"
+            [(ngModel)]="nombreBalance"
+            placeholder="Ej. Balance Anual 2025"
+          />
+        </div>
+        
+        <!-- Ejercicio -->
+        <div class="col-md-3">
+          <label for="anioInput" class="form-label fw-semibold small"
+            >Ejercicio <span class="text-danger">*</span></label
+          >
+          <select
+            id="anioInput"
+            class="form-select form-select-sm"
+            [(ngModel)]="anioSeleccionado"
+          >
+            <option value="" disabled selected>-- Selecciona --</option>
+            <option *ngFor="let anio of listaAnios" [value]="anio">
+              {{ anio }}
+            </option>
+          </select>
+          <small *ngIf="!anioSeleccionado" class="text-danger"
+            >Campo requerido</small
+          >
+        </div>
+
+        <!-- Empresa -->
+        <div class="col-md-5">
+          <label for="empresaSelect" class="form-label fw-semibold small"
+            >Empresa <span class="text-danger">*</span></label
+          >
+          <select
+            id="empresaSelect"
+            class="form-select form-select-sm"
+            [(ngModel)]="selectedEmpresa"
+          >
+            <option value="" disabled selected>-- Selecciona --</option>
+            <option
+              *ngFor="let empresa of empresas"
+              [value]="empresa.id_empresa"
+            >
+              {{ empresa.id_empresa }} - {{ empresa.descripcion }}
+            </option>
+          </select>
+          <small *ngIf="!selectedEmpresa" class="text-danger"
+            >Campo requerido</small
+          >
+        </div>
+
+        <!-- Fecha inicio -->
+        <div class="col-md-3">
+          <label for="fechaInicio" class="form-label fw-semibold small"
+            >Fecha de Inicio</label
+          >
+          <input
+            id="fechaInicio"
+            type="date"
+            class="form-control form-control-sm"
+            [(ngModel)]="fechaInicio"
+          />
+        </div>
+
+        <!-- Fecha fin -->
+        <div class="col-md-3">
+          <label for="fechaFin" class="form-label fw-semibold small"
+            >Fecha de Fin</label
+          >
+          <input
+            id="fechaFin"
+            type="date"
+            class="form-control form-control-sm"
+            [(ngModel)]="fechaFin"
+          />
+        </div>
+
+        <!-- Botones -->
+        <div class="col-12 d-flex flex-wrap gap-2 justify-content-end">
+          <button
+            *ngIf="processed"
+            class="btn btn-success btn-sm"
+            (click)="subirBalance()"
+          >
+            <i class="bi bi-upload me-1"></i> Confirmar subida
+          </button>
+
+          <button
+            *ngIf="processed"
+            class="btn btn-outline-success btn-sm"
+            (click)="descargarProcesado()"
+          >
+            <i class="bi bi-download me-1"></i> CSV procesado
+          </button>
+
+          <button
+            *ngIf="!processed"
+            class="btn btn-outline-primary btn-sm"
+            [disabled]="!anioSeleccionado || !selectedEmpresa"
+            (click)="visualizarProcesado()"
+          >
+            <i class="bi bi-eye me-1"></i> Visualizar CSV
+          </button>
+
+          <button
+            class="btn btn-outline-secondary btn-sm"
+            (click)="descargarOriginal()"
+          >
+            <i class="bi bi-file-earmark-arrow-down me-1"></i> CSV original
+          </button>
+
+          <button class="btn btn-outline-danger btn-sm" (click)="cancel()">
+            <i class="bi bi-x-circle me-1"></i> Cancelar
+          </button>
+        </div>
+      </section>
+
+      <!-- WARNING MAPEADAS -->
+      <section *ngIf="msgWarning" class="alert alert-warning small">
+        ⚠️ {{ msgWarning }}
+        <details class="mt-2 small">
+          <summary class="fw-semibold text-dark cursor-pointer">
+            Ver cuentas no mapeadas
+          </summary>
+          <ul class="ps-3 mb-0">
+            <li *ngFor="let cuenta of cuentasNoMapeadas" class="small">
+              {{ cuenta }}
+            </li>
+          </ul>
+        </details>
+      </section>
+
+      <!-- RESULTADO -->
+      <section
+        *ngIf="processed"
+        class="alert alert-secondary border-start border-4 border-success"
+      >
+        <p class="mb-1 small">
+          <strong>Resultado:</strong> Acreedor
+          <span class="text-primary">{{ totalAcreedor | number:'1.0-0' }}</span>
+          - Deudor
+          <span class="text-danger">{{ totalDeudor | number:'1.0-0' }}</span> =
+          <strong class="text-dark"
+            >{{ resultadoSaldo | number:'1.0-0' }}</strong
+          >
+        </p>
+        <p
+          class="fw-semibold small"
+          [ngClass]="{
+            'text-success': resultadoSaldo === 0,
+            'text-danger': resultadoSaldo !== 0
+          }"
+        >
+          {{ resultadoSaldo === 0 ? '✔ El saldo cuadra correctamente.' : '✖ El saldo no cuadra, revise los datos.' }}
+        </p>
+      </section>
+
+      <!-- MENSAJE SI NO ESTÁ PROCESADO -->
+      <ng-template #noData>
+        <div
+          class="alert alert-light border-start border-3 border-warning small mt-3"
+        >
+          Asegúrate de que el año y la empresa sean correctos. Luego, haz clic
+          en <strong>"Visualizar CSV procesado"</strong>.
+        </div>
+      </ng-template>
+
+      <!-- BOTONES -->
+    </section>
   </div>
-
-
-
-    <p><strong>Nombre:</strong> {{ file.name }}</p>
-    <p><strong>Tamaño:</strong> {{ file.size | number:'1.0-0' }} bytes</p>
-
-    <div *ngIf="tableData.length > 0; else noData" class="table-responsive mb-4" style="
-        max-height: 400px;
-        overflow-y: auto;
-        overflow-x: auto;
-        border: 2px solid #1a82eb;
-        border-radius: 0.25rem;
-      ">
-      <table class="table table-sm table-striped table-bordered table-hover align-middle mb-0">
-        <thead class="table-light">
-          <tr>
-            <th *ngFor="let h of headers">{{ h }}</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let row of tableData">
-            <td *ngFor="let h of headers">{{ row[h] }}</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-
-    <div class="mb-3 d-flex align-items-center gap-2">
-      <label for="anioInput" class="form-label mb-0">
-      <strong>Selecciona un año:</strong>
-      <span class="text-danger">*</span>
-      </label>
-      <select class="form-select" id="anioInput" [(ngModel)]="anioSeleccionado" name="anioSeleccionado"
-      style="max-width: 250px" required>
-      <option value="" disabled selected>-- Selecciona --</option>
-      <option *ngFor="let anio of listaAnios" [value]="anio">
-        {{ anio }}
-      </option>
-      </select>
-      <span *ngIf="!anioSeleccionado" class="text-danger small ms-2">
-      El año es obligatorio.
-      </span>
-    </div>
-
-    <div class="mb-3 d-flex align-items-center gap-2">
-      <label for="empresaSelect" class="form-label mb-0">
-        <strong>Selecciona una empresa:</strong>
-        <span class="text-danger">*</span>
-      </label>
-      <select id="empresaSelect" class="form-select" [(ngModel)]="selectedEmpresa" name="selectedEmpresa"
-        style="max-width: 250px" required>
-        <option value="" disabled selected>-- Selecciona --</option>
-        <option *ngFor="let empresa of empresas" [value]="empresa.id_empresa">
-          {{empresa.id_empresa}} - {{ empresa.descripcion }}
-        </option>
-      </select>
-      <span *ngIf="!selectedEmpresa" class="text-danger small ms-2">
-        La empresa es obligatoria.
-      </span>
-    </div>
-
-    <ng-template #noData>
-      <div class="alert alert-info">No se encontraron filas válidas.</div>
-    </ng-template>
-    <div *ngIf="msgWarning" class="alert alert-warning mt-2">
-  ⚠️ {{ msgWarning }}
-  <details>
-    <summary>Ver cuentas no mapeadas</summary>
-    <ul>
-      <li *ngFor="let cuenta of cuentasNoMapeadas">{{ cuenta }}</li>
-    </ul>
-  </details>
-</div>
-
-    <div *ngIf="processed" class="alert alert-secondary border-start border-4 border-success">
-      <p class="mb-1">
-        <strong>Cálculo:</strong>
-        Total Acreedor
-        <span class="text-primary fw-bold">({{ totalAcreedor | number:'1.0-0' }})</span>
-        - Total Deudor
-        <span class="text-danger fw-bold">({{ totalDeudor | number:'1.0-0' }})</span>
-        =
-        <strong class="text-dark">{{ resultadoSaldo | number:'1.0-0' }}</strong>
-      </p>
-      <p class="fw-bold" [ngClass]="{'text-success': resultadoSaldo === 0,'text-danger': resultadoSaldo !== 0}">{{ resultadoSaldo === 0 ? '✔️ El saldo cuadra correctamente.' : '⚠️ Elsaldo no cuadra, hay un descuadre.' }}
-      </p>
-    </div>
-
-    <!-- Alerta solo visible si no está procesado -->
-    <div *ngIf="!processed" class="alert alert-warning">
-      <p class="mb-1">
-        <strong>Nota:</strong> Para procesar el archivo, asegúrate de que el año
-        y la empresa sean los correctos.
-      </p>
-      <p class="mb-0">Haz clic en "Visualizar CSV procesado" para continuar.</p>
-    </div>
-
-    <!-- Botones -->
-    <div class="d-flex flex-wrap gap-2 justify-content-end mt-3">
-      <button class="btn btn-success" *ngIf="processed" (click)="subirBalance()">
-        <i class="bi bi-filetype-csv px-1"></i> Confirmar subida
-      </button>
-      <!-- Solo visible si ya está procesado -->
-      <button class="btn btn-success" *ngIf="processed" (click)="descargarProcesado()">
-        <i class="bi bi-filetype-csv px-1"></i> Descargar CSV procesado
-      </button>
-
-      <!-- Solo visible si aún no está procesado -->
-      <button class="btn btn-success" *ngIf="!processed " (click)="visualizarProcesado()"
-        [disabled]="!fechaSeleccionada || !selectedEmpresa">
-        <i class="bi bi-file-earmark-code px-1"></i> Visualizar CSV procesado
-      </button>
-
-      <!-- Siempre visible -->
-      <button class="btn btn-warning" (click)="descargarOriginal()">
-        <i class="bi bi-file-earmark-arrow-down px-1"></i> Descargar CSV
-        original
-      </button>
-
-      <!-- Siempre visible -->
-      <button class="btn btn-danger" (click)="cancel()">
-        <i class="bi bi-file-excel px-1"></i> Cancelar
-      </button>
-    </div>
-  </div>
+</main>
