@@ -1,8 +1,8 @@
 const jwt = require('jsonwebtoken');
-const UserModel = require('../models/user.model');
-const { JWT_SECRET } = require('../config/constants');
+const UserModel = require('../models/user.model'); // Ajusta a tu modelo real
+const { JWT_SECRET } = process.env;
 
-const authenticateToken = async (req, res, next) => {
+const identifyUser = async (req, res, next) => {
   try {
     // Obtener token desde la cookie o el header
     const token = req.cookies?.token || req.headers.authorization?.split(' ')[1];
@@ -34,4 +34,4 @@ const authenticateToken = async (req, res, next) => {
   }
 };
 
-module.exports = { authenticateToken };
+module.exports = identifyUser;

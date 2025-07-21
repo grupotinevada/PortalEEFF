@@ -1,4 +1,4 @@
-const { body, checkSchema, validationResult } = require('express-validator');
+const { body, validationResult } = require('express-validator');
 
 const balanceValidation = [
   body('num_cuenta').notEmpty().withMessage('num_cuenta es obligatorio'),

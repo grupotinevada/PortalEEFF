@@ -5,3 +5,9 @@ export interface IFsa {
     categoria: string;
 
 }
+
+export interface IEstados{
+    id_estado: number;
+    desc: string;
+    color: string
+}

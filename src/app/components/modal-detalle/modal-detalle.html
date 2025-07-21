@@ -1,0 +1,15 @@
+<div class="modal-content d-flex flex-column h-100">
+  <div class="modal-header">
+    <h5 class="modal-title">Detalle del ID {{ id }}</h5>
+    <button type="button" class="btn-close" aria-label="Close" (click)="activeModal.dismiss()"></button>
+  </div>
+
+  <div class="modal-body">
+    <p>Contenido dinámico para ID: <strong>{{ id }}</strong></p>
+    <!-- aquí puedes meter formularios, tablas, tabs, etc. -->
+  </div>
+
+  <div class="modal-footer">
+    <button class="btn btn-secondary" (click)="activeModal.close()">Cerrar</button>
+  </div>
+</div>

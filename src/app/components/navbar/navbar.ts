@@ -27,7 +27,14 @@ constructor(private authService: AuthService,
   });
 }
 
-  irBalance(){
+  irDashboard(){
     this.router.navigate(['dashboard'])
+  }
+
+  irBalance(){
+    this.router.navigate(['balances'])
+  }
+  irHome(){
+   this.router.navigate(['home'])
   }
 }

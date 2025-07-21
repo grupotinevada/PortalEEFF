@@ -1,35 +1,40 @@
 // controllers/balance.controller.js
 const BalanceService = require("../services/balance.service");
 const Logger = require("../utils/logger.utils");
+
 class BalanceController {
-  static async createBulk(req, res) {
-    try {
-      const balances = req.body;
-      // Suponiendo que el userId está almacenado en una cookie llamada 'userId'
-      const userId = req.cookies?.userId;
 
-      if (!Array.isArray(balances)) {
-        return res.status(400).json({
-          success: false,
-          message: "El cuerpo debe ser un array de balances",
-        });
-      }
+static async createBulk(req, res) {
+  try {
+    console.log("POST /bulk - Subiendo balances masivamente");
+    console.log("Cuerpo de la petición:", req.body);
+    console.log("Usuario autenticado:", req.user);
+    const balances = req.body;
+    const userId = req.user.id_user;
 
-      const result = await BalanceService.createBulk(balances, userId);
-
-      if (!result.success) {
-        return res.status(409).json(result);
-      }
-
-      return res.status(201).json(result);
-    } catch (error) {
-      console.error("Error al subir balances masivamente:", error);
-      res.status(500).json({
+    if (!Array.isArray(balances)) {
+      return res.status(400).json({
         success: false,
-        message: "Error interno del servidor",
+        message: "El cuerpo debe ser un array de balances",
       });
     }
+
+    const result = await BalanceService.createBulk(balances, userId);
+
+    if (!result.success) {
+      return res.status(409).json(result);
+    }
+
+    return res.status(201).json(result);
+  } catch (error) {
+    console.error("Error al subir balances masivamente:", error);
+    res.status(500).json({
+      success: false,
+      message: "Error interno del servidor",
+    });
   }
+}
+
 
   static async create(req, res) {
     try {
@@ -78,84 +83,53 @@ class BalanceController {
     }
   }
 
-  static async getAll(req, res) {
-    try {
-      const result = await BalanceService.getAll();
-      res.json(result);
-    } catch (error) {
-      console.error("Error al obtener balances:", error);
-      res.status(500).json({
-        success: false,
-        message: "Error interno del servidor",
-      });
+//CARGA BALANCES
+
+  static async getResumen(req, res) {
+    const response = await BalanceService.getDistinctBalances(req.query);
+    if (!response.success) {
+      return res.status(400).json(response);
     }
+    res.json(response);
   }
 
-  static async getByEmpresaYPeriodoFlexible(req, res) {
-    try {
-      const { id_empresa, fecha_inicio, fecha_fin, fecha_consulta } = req.query;
 
-      if (!id_empresa) {
-        Logger.warn("Falta id_empresa en la consulta a searchPeriodoFlexible");
-        return res.status(400).json({
-          success: false,
-          message: "Se requiere id_empresa",
-        });
-      }
+static async getById(req, res) {
+  try {
+    const user = req.user;
+    const id_blce = req.params.id_blce;
 
-      const isDate = (d) => /^\d{4}-\d{2}-\d{2}$/.test(d);
 
-      if (fecha_inicio && fecha_fin) {
-        if (!isDate(fecha_inicio) || !isDate(fecha_fin)) {
-          Logger.warn(
-            `Fechas inválidas: fecha_inicio: ${fecha_inicio}, fecha_fin: ${fecha_fin}`
-          );
-          return res.status(400).json({
-            success: false,
-            message:
-              "fecha_inicio y fecha_fin deben estar en formato YYYY-MM-DD",
-          });
-        }
-      } else if (fecha_consulta) {
-        if (!isDate(fecha_consulta)) {
-          Logger.warn(`Fecha consulta inválida: ${fecha_consulta}`);
-          return res.status(400).json({
-            success: false,
-            message: "fecha_consulta debe estar en formato YYYY-MM-DD",
-          });
-        }
-      } else {
-        Logger.warn(`Consulta sin fechas válida para empresa ${id_empresa}`);
-        return res.status(400).json({
-          success: false,
-          message:
-            "Debe proporcionar fecha_inicio y fecha_fin o fecha_consulta",
-        });
-      }
 
-      Logger.userAction(
-        req.user?.id || "desconocido",
-        "Consulta balance por periodo",
-        `Empresa: ${id_empresa}`
-      );
-      const result = await BalanceService.getByEmpresaYPeriodoFlexible({
-        id_empresa,
-        fecha_inicio,
-        fecha_fin,
-        fecha_consulta,
-      });
-
-      res.json(result);
-    } catch (error) {
-      Logger.error(
-        `Error interno en getByEmpresaYPeriodoFlexible: ${error.message}`
-      );
-      res.status(500).json({
+    // Validación básica del ID
+    if (typeof id_blce !== 'string' || id_blce.trim().length === 0) {
+      Logger.warn(`Usuario ${user.username} (${user.id}) envió ID inválido: "${id_blce}"`);
+      return res.status(400).json({
         success: false,
-        message: "Error interno del servidor",
+        message: "ID de balance inválido",
       });
     }
+
+    Logger.info(`Usuario ${user.username} (${user.id_user}) solicitó balance con ID: ${id_blce}`);
+
+    const result = await BalanceService.getById(id_blce);
+
+    if (!result.success) {
+      Logger.info(`Balance con ID ${id_blce} no encontrado o inválido`);
+      return res.status(404).json(result);
+    }
+
+    return res.json(result);
+  } catch (error) {
+    Logger.error(`Error en BalanceController.getById: ${error.message}`);
+    return res.status(500).json({
+      success: false,
+      message: "Error interno del servidor",
+    });
   }
+}
+
+
 
   static async obtenerFsasConCategoria(req, res) {
     try {

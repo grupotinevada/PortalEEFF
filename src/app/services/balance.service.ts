@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
-import { IBalance } from '../models/balance.model';
+import { BalanceResumenResponse, IBalance } from '../models/balance.model';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { environment } from '../../environments/environment.development';
-import { Observable } from 'rxjs';
+import { map, Observable } from 'rxjs';
 import { IFsa } from '../models/fsa.model';
 
 @Injectable({
@@ -40,26 +40,6 @@ getAllBalances(): Observable<{ success: boolean; data: IBalance[] }> {
   });
 }
 
-getBalancesPorPeriodo(params: {
-  id_empresa: number | string;
-  fecha_inicio?: string;
-  fecha_fin?: string;
-  fecha_consulta?: string;
-}): Observable<{ success: boolean; modo?: string; data: IBalance[] }> {
-  const httpParams = new HttpParams({ fromObject: params });
-
-  return this.http.get<{ success: boolean; modo?: string; data: IBalance[] }>(
-    `${this.apiUrl}/search`,
-    {
-      params: httpParams,
-      withCredentials: true,
-      headers: new HttpHeaders({
-        'Content-Type': 'application/json'
-      })
-    }
-  );
-}
-
 
 getAllFsa() {
   return this.http.get<{ success: boolean; data: IFsa[] }>(
@@ -73,6 +53,41 @@ getAllFsa() {
   );
 }
 
+ getResumen(params: {
+    nombre?: string;
+    ejercicio?: number;
+    fechaInicio?: string;
+    fechaFin?: string;
+    idEmpresa?: string;
+    idEstado?: number;
+    limit?: number;
+    offset?: number;
+  }): Observable<BalanceResumenResponse> {
+    let httpParams = new HttpParams();
+
+    Object.entries(params).forEach(([key, value]) => {
+      if (value !== undefined && value !== null && value !== '') {
+        httpParams = httpParams.set(key, value.toString());
+      }
+    });
+
+    return this.http.get<BalanceResumenResponse>(`${this.apiUrl}/resumen`, { params: httpParams });
+  }
+
+
+getBalanceById(id: string): Observable<IBalance[]> {
+  return this.http.get<{ success: boolean; data: IBalance[]; message?: string }>(
+    `${this.apiUrl}/balance/search/${id}`,
+    {
+      withCredentials: true,
+      headers: new HttpHeaders({
+        'Content-Type': 'application/json'
+      })
+    }
+  ).pipe(
+    map(response => response.data)
+  );
+}
 
 
 }

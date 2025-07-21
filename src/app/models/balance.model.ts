@@ -54,3 +54,26 @@ export interface ComparativoCategoria {
   variacionPct: number;
   grupos: ComparativoFsa[];
 }
+
+export interface BalanceResumen {
+  id_blce: string;
+  nombre_conjunto: string;
+  ejercicio: number;
+  fecha_inicio: string;
+  fecha_fin: string;
+  id_empresa: string;
+  id_estado: number;
+  id_user: string;
+  empresa_desc: string;
+  estado_desc: string;
+  estado_color: string;
+  username: string;
+  email: string
+
+}
+
+export interface BalanceResumenResponse {
+  success: boolean;
+  data: BalanceResumen[];
+  total: number;
+}

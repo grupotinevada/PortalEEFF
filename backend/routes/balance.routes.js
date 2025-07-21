@@ -7,12 +7,11 @@ const { balanceValidation, bulkBalanceValidation, validate } = require('../middl
 
 
 router.post('/', authenticateToken, balanceValidation, validate, BalanceController.create);
-router.get('/', authenticateToken, BalanceController.getAll);
-router.get('/search', authenticateToken,  BalanceController.getByEmpresaYPeriodoFlexible);
+
+router.get('/resumen', BalanceController.getResumen);
 router.post('/bulk', authenticateToken, bulkBalanceValidation, BalanceController.createBulk);
 
-const { pool } = require("../config/database");
-// Endpoint rápido para obtener la tabla fsa con join a categoria
+router.get('/balance/:id_blce', authenticateToken, BalanceController.getById);
 
 router.get('/fsa', authenticateToken, validate, BalanceController.obtenerFsasConCategoria);
 

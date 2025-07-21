@@ -150,47 +150,7 @@ private getFsaData(): void {
 
 
 cargarBalancesComparados(): void {
-  if (!this.fechaInicioBase || !this.fechaFinBase || !this.fechaInicioComp || !this.fechaFinComp) {
-    this.msgError = 'Debe completar todas las fechas de ambos periodos.';
-    return;
-  }
 
-
-  this.showSpinner = true;
-  this.msgError = '';
-
-  Promise.all([
-    this.balanceService.getBalancesPorPeriodo({
-      id_empresa: this.idEmpresaSeleccionada,
-      fecha_inicio: this.fechaInicioBase,
-      fecha_fin: this.fechaFinBase
-    }).toPromise(),
-
-    this.balanceService.getBalancesPorPeriodo({
-      id_empresa: this.idEmpresaSeleccionada,
-      fecha_inicio: this.fechaInicioComp,
-      fecha_fin: this.fechaFinComp
-    }).toPromise()
-  ])
-    .then(([resBase, resComp]) => {
-      if (resBase?.success && resComp?.success) {
-        this.procesarActivosComparadoDesdeData(
-          resBase.data,
-          resComp.data,
-          this.fechaInicioBase,
-          this.fechaInicioComp
-        );
-      } else {
-        this.msgError = 'No se pudieron obtener balances de ambos periodos.';
-      }
-    })
-    .catch((error) => {
-      console.error('Error al cargar balances comparados:', error);
-      this.msgError = 'Ocurrió un error al cargar los balances.';
-    })
-    .finally(() => {
-      this.showSpinner = false;
-    });
 }
 
 procesarActivosComparadoDesdeData(

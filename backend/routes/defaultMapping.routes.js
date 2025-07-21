@@ -7,5 +7,5 @@ const { authenticateToken } = require('../middlewares/auth.middleware'); // supo
 router.get('/', authenticateToken, DefaultMappingController.getAll);
 router.post('/', authenticateToken, validateMapping, DefaultMappingController.create);
 router.put('/', authenticateToken, validateMapping, DefaultMappingController.update);
-
+router.get('/estados', authenticateToken, DefaultMappingController.getAllEstados)
 module.exports = router;

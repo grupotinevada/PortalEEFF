@@ -103,3 +103,140 @@
 [INFO] 2025-07-15T14:06:26.122Z - Consultando balances por rango: Empresa CV19, Desde 2023-01-01 hasta 2023-12-31
 [ACTION] 2025-07-15T15:43:20.546Z - User undefined - LOGIN - Usuario admin@inevada.cl inició sesión
 [ACTION] 2025-07-15T16:14:55.147Z - User undefined - LOGIN - Usuario admin@inevada.cl inició sesión
+[ACTION] 2025-07-17T15:34:26.116Z - User undefined - LOGIN - Usuario admin@inevada.cl inició sesión
+[INFO] 2025-07-17T16:16:32.758Z - Balance ya existente con id_blce: cf3358aa2e72b30f5e6a9e5d08efd718
+[INFO] 2025-07-17T16:16:32.762Z - Balance ya existente con id_blce: 03f187f7513b745a1929ede75cde82c2
+[INFO] 2025-07-17T16:16:32.764Z - Balance ya existente con id_blce: a486a05a10d9017064ffecf02fe7445c
+[INFO] 2025-07-17T16:16:32.766Z - Balance ya existente con id_blce: d5f00d380cbd2a6233a988872428ae50
+[INFO] 2025-07-17T16:16:32.767Z - Balance ya existente con id_blce: d78eb2793781b17d9014c76aecca7b9a
+[INFO] 2025-07-17T16:16:32.769Z - Balance ya existente con id_blce: 06abe07cd3188d706778fb808a8b1d1c
+[INFO] 2025-07-17T16:16:32.773Z - Balance ya existente con id_blce: 461b6ed01eba6df990d81969c4db9ac1
+[INFO] 2025-07-17T16:16:32.777Z - Balance ya existente con id_blce: b2018d3560b8bbec974e528ca752f2ef
+[INFO] 2025-07-17T16:16:32.781Z - Balance ya existente con id_blce: 76aa830d398299a90fc313ec3fc8ebdd
+[INFO] 2025-07-17T16:16:32.783Z - Balance ya existente con id_blce: 155d5c7aa73b052a5e878d8b3193546d
+[INFO] 2025-07-17T16:16:32.785Z - Balance ya existente con id_blce: e29c4081eac809abede4d90c1f0b83b4
+[INFO] 2025-07-17T16:16:32.788Z - Balance ya existente con id_blce: a8f9c936c8dd712832521f1bfdc1b2e2
+[INFO] 2025-07-17T16:16:32.791Z - Balance ya existente con id_blce: d7f1ad36ee74a3a24e68b3cf534aa552
+[INFO] 2025-07-17T16:16:32.795Z - Balance ya existente con id_blce: 6ad4b5a0365cabc64416ba67b054f6c0
+[INFO] 2025-07-17T16:16:32.798Z - Balance ya existente con id_blce: 834356ac3be55d0ff33d0e63adee87f4
+[INFO] 2025-07-17T16:16:32.799Z - Balance ya existente con id_blce: f4b3d32a8f794617adb271c808de91d6
+[INFO] 2025-07-17T16:16:32.803Z - Balance ya existente con id_blce: 9f3bc33d8bf7122fbbfaf512d475ec45
+[INFO] 2025-07-17T16:16:32.806Z - Balance ya existente con id_blce: 7ea813a8929d703ac3c1611ecbb18464
+[INFO] 2025-07-17T16:16:32.809Z - Balance ya existente con id_blce: 655c7dfcf550ced9ae215d5267e474a1
+[INFO] 2025-07-17T16:16:32.810Z - Balance ya existente con id_blce: e03d2e010048ce08f0c215d1baa829d4
+[INFO] 2025-07-17T16:16:32.812Z - Balance ya existente con id_blce: 37c2be95f6a9b6cfa05321a33722e077
+[INFO] 2025-07-17T16:16:32.814Z - Balance ya existente con id_blce: 98af4bfa064a6e3f468e9b0bf747fca6
+[INFO] 2025-07-17T16:16:32.816Z - Balance ya existente con id_blce: d875fe9350feaee03b471364a9531407
+[INFO] 2025-07-17T16:16:32.818Z - Balance ya existente con id_blce: ffe96b45989c7cc53dd5dc9e26e70575
+[INFO] 2025-07-17T16:16:32.821Z - Balance ya existente con id_blce: 2b6389148d3c2a629850fc5d9c194607
+[INFO] 2025-07-17T16:16:32.825Z - Balance ya existente con id_blce: cc43b7f96a9ab879652c36915458e6f1
+[INFO] 2025-07-17T16:16:32.827Z - Balance ya existente con id_blce: 09cf568a38c66a71c8bfda527db024bc
+[INFO] 2025-07-17T16:16:32.828Z - Balance ya existente con id_blce: 3b1a2b844a64327975fb7a98d503ceed
+[INFO] 2025-07-17T16:16:32.830Z - Balance ya existente con id_blce: dc7e157b145d9d4ddd94e8565f3c3568
+[INFO] 2025-07-17T16:16:32.831Z - Balance ya existente con id_blce: a9b451a7946bfb40e098f6efc8931d60
+[INFO] 2025-07-17T16:16:32.833Z - Balance ya existente con id_blce: 71681a9e33a21dfde170b9ad64263546
+[INFO] 2025-07-17T16:16:32.837Z - Balance ya existente con id_blce: fd6f45f8236f05d81b1f78cfdd6586c1
+[INFO] 2025-07-17T16:16:32.843Z - Balance ya existente con id_blce: c1b8a2dc7ca4448a4598784e6ae42da5
+[INFO] 2025-07-17T16:16:32.845Z - Balance ya existente con id_blce: cb9476480622d4affee899401e640f50
+[INFO] 2025-07-17T16:16:32.847Z - Balance ya existente con id_blce: 0678e09513257718b3c25a0dbc9e71d0
+[INFO] 2025-07-17T16:16:32.859Z - Balance ya existente con id_blce: a47c9e5d027d144802f358a7657f7b4f
+[INFO] 2025-07-17T16:16:32.864Z - Balance ya existente con id_blce: b17079a1cad523bacfbcd9f31dd3c788
+[INFO] 2025-07-17T16:16:32.868Z - Balance ya existente con id_blce: cc53f4d3ce939ab24c8e74debd9cb0f3
+[INFO] 2025-07-17T16:16:32.876Z - Balance ya existente con id_blce: a3de93b110b51a316bc31df26ff6bd77
+[INFO] 2025-07-17T16:16:32.878Z - Balance ya existente con id_blce: d7be53480cb5959d387d5dbfba43d0e4
+[INFO] 2025-07-17T16:16:32.880Z - Balance ya existente con id_blce: abd74cf7ee09b1f85e3c153db71ce4e5
+[INFO] 2025-07-17T16:16:32.882Z - Balance ya existente con id_blce: 91d69315860608c0a646f1b238453e8b
+[INFO] 2025-07-17T16:16:32.892Z - Balance ya existente con id_blce: 40a69c788173ef7d1cf5249a7496a533
+[INFO] 2025-07-17T16:16:32.895Z - Balance ya existente con id_blce: 19c0386419c9fdd64bdbbd94ad795481
+[INFO] 2025-07-17T16:16:32.897Z - Balance ya existente con id_blce: 36fab281139f920c254aab958cddcdf1
+[INFO] 2025-07-17T16:16:32.899Z - Balance ya existente con id_blce: 5506b8d86c4705640ccacbbc19ccaf16
+[INFO] 2025-07-17T16:16:32.901Z - Balance ya existente con id_blce: ce4273969ddd8ef2dd88a28d200d6a50
+[INFO] 2025-07-17T16:16:32.908Z - Balance ya existente con id_blce: 137d289d9b27474ee9356e5e7b8fe428
+[INFO] 2025-07-17T16:16:32.910Z - Balance ya existente con id_blce: 200b3544c853d29ae8c026926dc7de85
+[INFO] 2025-07-17T16:16:32.911Z - Balance ya existente con id_blce: 116703d8fc0c10fa0201095e89f8eec3
+[INFO] 2025-07-17T16:16:32.913Z - Balance ya existente con id_blce: fa49981790ce81f45dc2a3ffdbedf48a
+[INFO] 2025-07-17T16:16:32.914Z - Balance ya existente con id_blce: 3e953a233fdcbace3600fb9b773ce927
+[INFO] 2025-07-17T16:16:32.915Z - Balance ya existente con id_blce: c53736b82dba63ce93c7ea95ed9777f7
+[INFO] 2025-07-17T16:16:32.917Z - Balance ya existente con id_blce: 1d7dc5119642b1cf8ce391f590f2641a
+[INFO] 2025-07-17T16:16:32.919Z - Balance ya existente con id_blce: 959c687a08272bbf500ed30c8d7babb3
+[INFO] 2025-07-17T16:16:32.922Z - Balance ya existente con id_blce: 9e8f485a561ee056a60a70c4fd41bb22
+[INFO] 2025-07-17T16:16:32.924Z - Balance ya existente con id_blce: 9409360c7240d10a1116c190d91d7931
+[INFO] 2025-07-17T16:19:59.922Z - Balance ya existente con id_blce: d5f00d380cbd2a6233a988872428ae50
+[INFO] 2025-07-17T16:19:59.924Z - Balance ya existente con id_blce: d78eb2793781b17d9014c76aecca7b9a
+[INFO] 2025-07-17T16:19:59.926Z - Balance ya existente con id_blce: 06abe07cd3188d706778fb808a8b1d1c
+[INFO] 2025-07-17T16:19:59.928Z - Balance ya existente con id_blce: 461b6ed01eba6df990d81969c4db9ac1
+[INFO] 2025-07-17T16:19:59.931Z - Balance ya existente con id_blce: b2018d3560b8bbec974e528ca752f2ef
+[INFO] 2025-07-17T16:19:59.932Z - Balance ya existente con id_blce: 76aa830d398299a90fc313ec3fc8ebdd
+[INFO] 2025-07-17T16:19:59.933Z - Balance ya existente con id_blce: 155d5c7aa73b052a5e878d8b3193546d
+[INFO] 2025-07-17T16:19:59.935Z - Balance ya existente con id_blce: e29c4081eac809abede4d90c1f0b83b4
+[INFO] 2025-07-17T16:19:59.936Z - Balance ya existente con id_blce: a8f9c936c8dd712832521f1bfdc1b2e2
+[INFO] 2025-07-17T16:19:59.937Z - Balance ya existente con id_blce: d7f1ad36ee74a3a24e68b3cf534aa552
+[INFO] 2025-07-17T16:19:59.938Z - Balance ya existente con id_blce: 6ad4b5a0365cabc64416ba67b054f6c0
+[INFO] 2025-07-17T16:19:59.940Z - Balance ya existente con id_blce: 834356ac3be55d0ff33d0e63adee87f4
+[INFO] 2025-07-17T16:19:59.943Z - Balance ya existente con id_blce: f4b3d32a8f794617adb271c808de91d6
+[INFO] 2025-07-17T16:19:59.945Z - Balance ya existente con id_blce: 9f3bc33d8bf7122fbbfaf512d475ec45
+[INFO] 2025-07-17T16:19:59.947Z - Balance ya existente con id_blce: 7ea813a8929d703ac3c1611ecbb18464
+[INFO] 2025-07-17T16:19:59.949Z - Balance ya existente con id_blce: e03d2e010048ce08f0c215d1baa829d4
+[INFO] 2025-07-17T16:19:59.951Z - Balance ya existente con id_blce: 37c2be95f6a9b6cfa05321a33722e077
+[INFO] 2025-07-17T16:19:59.954Z - Balance ya existente con id_blce: ffe96b45989c7cc53dd5dc9e26e70575
+[INFO] 2025-07-17T16:19:59.956Z - Balance ya existente con id_blce: 2b6389148d3c2a629850fc5d9c194607
+[INFO] 2025-07-17T16:19:59.958Z - Balance ya existente con id_blce: cc43b7f96a9ab879652c36915458e6f1
+[INFO] 2025-07-17T16:19:59.960Z - Balance ya existente con id_blce: f6b9703a0bd6292e82e34d8e7c14998d
+[INFO] 2025-07-17T16:19:59.961Z - Balance ya existente con id_blce: 09cf568a38c66a71c8bfda527db024bc
+[INFO] 2025-07-17T16:19:59.965Z - Balance ya existente con id_blce: 3b1a2b844a64327975fb7a98d503ceed
+[INFO] 2025-07-17T16:19:59.967Z - Balance ya existente con id_blce: 43701bc78d9bcc011babeba88984f258
+[INFO] 2025-07-17T16:19:59.968Z - Balance ya existente con id_blce: dc7e157b145d9d4ddd94e8565f3c3568
+[INFO] 2025-07-17T16:19:59.969Z - Balance ya existente con id_blce: a9b451a7946bfb40e098f6efc8931d60
+[INFO] 2025-07-17T16:19:59.971Z - Balance ya existente con id_blce: 71681a9e33a21dfde170b9ad64263546
+[INFO] 2025-07-17T16:19:59.973Z - Balance ya existente con id_blce: c1b8a2dc7ca4448a4598784e6ae42da5
+[INFO] 2025-07-17T16:19:59.975Z - Balance ya existente con id_blce: cb9476480622d4affee899401e640f50
+[INFO] 2025-07-17T16:19:59.977Z - Balance ya existente con id_blce: 0678e09513257718b3c25a0dbc9e71d0
+[INFO] 2025-07-17T16:19:59.979Z - Balance ya existente con id_blce: a47c9e5d027d144802f358a7657f7b4f
+[INFO] 2025-07-17T16:19:59.981Z - Balance ya existente con id_blce: b17079a1cad523bacfbcd9f31dd3c788
+[INFO] 2025-07-17T16:19:59.983Z - Balance ya existente con id_blce: cc53f4d3ce939ab24c8e74debd9cb0f3
+[INFO] 2025-07-17T16:19:59.986Z - Balance ya existente con id_blce: a3de93b110b51a316bc31df26ff6bd77
+[INFO] 2025-07-17T16:19:59.988Z - Balance ya existente con id_blce: d7be53480cb5959d387d5dbfba43d0e4
+[INFO] 2025-07-17T16:19:59.989Z - Balance ya existente con id_blce: 91d69315860608c0a646f1b238453e8b
+[INFO] 2025-07-17T16:19:59.992Z - Balance ya existente con id_blce: 40a69c788173ef7d1cf5249a7496a533
+[INFO] 2025-07-17T16:19:59.995Z - Balance ya existente con id_blce: 19c0386419c9fdd64bdbbd94ad795481
+[INFO] 2025-07-17T16:19:59.998Z - Balance ya existente con id_blce: 5506b8d86c4705640ccacbbc19ccaf16
+[INFO] 2025-07-17T16:20:00.000Z - Balance ya existente con id_blce: ce4273969ddd8ef2dd88a28d200d6a50
+[INFO] 2025-07-17T16:20:00.001Z - Balance ya existente con id_blce: 137d289d9b27474ee9356e5e7b8fe428
+[INFO] 2025-07-17T16:20:00.003Z - Balance ya existente con id_blce: 200b3544c853d29ae8c026926dc7de85
+[INFO] 2025-07-17T16:20:00.004Z - Balance ya existente con id_blce: f985c9b5c144890fd2fcb41a057aeb2c
+[INFO] 2025-07-17T16:20:00.006Z - Balance ya existente con id_blce: fa49981790ce81f45dc2a3ffdbedf48a
+[INFO] 2025-07-17T16:20:00.012Z - Balance ya existente con id_blce: 3e953a233fdcbace3600fb9b773ce927
+[INFO] 2025-07-17T16:20:00.015Z - Balance ya existente con id_blce: c53736b82dba63ce93c7ea95ed9777f7
+[INFO] 2025-07-17T16:20:00.018Z - Balance ya existente con id_blce: 1d7dc5119642b1cf8ce391f590f2641a
+[INFO] 2025-07-17T16:20:00.020Z - Balance ya existente con id_blce: 9409360c7240d10a1116c190d91d7931
+[ACTION] 2025-07-17T17:22:15.292Z - User undefined - CREAR_BALANCE_BULK - Insertados: 48
+[ACTION] 2025-07-17T17:29:03.912Z - User undefined - CREAR_BALANCE_BULK - Insertados: 57 con id_blce: fa992fc8df2741b39cf23cbe027b497d
+[ACTION] 2025-07-17T17:37:12.385Z - User undefined - CREAR_BALANCE_BULK - Insertados: 57 con id_blce: cf3358aa2e72b30f5e6a9e5d08efd718
+[ACTION] 2025-07-17T17:38:59.463Z - User undefined - CREAR_BALANCE_BULK - Insertados: 57 con id_blce: cf3358aa2e72b30f5e6a9e5d08efd718
+[ACTION] 2025-07-17T21:31:16.028Z - User undefined - CREAR_BALANCE_BULK - Insertados: 48 con id_blce: d5f00d380cbd2a6233a988872428ae50
+[ACTION] 2025-07-18T15:34:47.271Z - User undefined - LOGIN - Usuario admin@inevada.cl inició sesión
+[ACTION] 2025-07-18T15:35:17.074Z - User undefined - CREAR_BALANCE_BULK - Insertados: 57 con id_blce: 7b13b0de7d51dcd631790586c8d7df46
+[ACTION] 2025-07-18T15:36:52.261Z - User undefined - CREAR_BALANCE_BULK - Insertados: 57 con id_blce: 7b13b0de7d51dcd631790586c8d7df46
+[ACTION] 2025-07-18T15:38:45.678Z - User undefined - CREAR_BALANCE_BULK - Insertados: 57 con id_blce: 7b13b0de7d51dcd631790586c8d7df46
+[ACTION] 2025-07-18T18:19:49.845Z - User undefined - CREAR_BALANCE_BULK - Insertados: 48 con id_blce: d5f00d380cbd2a6233a988872428ae50
+[ACTION] 2025-07-18T19:37:04.708Z - User undefined - CREAR_BALANCE_BULK - Insertados: 46 con id_blce: 0d368bdbfca8cb5f5d8683931aaed86b
+[ACTION] 2025-07-18T19:47:22.633Z - User undefined - CREAR_BALANCE_BULK - Insertados: 57 con id_blce: 34a99c0e2009fd4a1ae502b91a33f238
+[ACTION] 2025-07-21T15:16:48.491Z - User undefined - LOGIN - Usuario admin@inevada.cl inició sesión
+[ACTION] 2025-07-21T15:18:07.469Z - User undefined - CREAR_BALANCE_BULK - Insertados: 57 con id_blce: 71b9ef6ae033df354cf48f90697f4635
+[ACTION] 2025-07-21T15:22:15.498Z - User undefined - CREAR_BALANCE_BULK - Insertados: 48 con id_blce: d5f00d380cbd2a6233a988872428ae50
+[ACTION] 2025-07-21T15:30:07.638Z - User 1 - CREAR_BALANCE_BULK - Insertados: 57 con id_blce: 04fbde2ca0271cf9794893da58b243ce
+[ACTION] 2025-07-21T16:03:41.750Z - User 1 - CREAR_BALANCE_BULK - Insertados: 57 con id_blce: f876f186ac1367ee63ed2875bc963e3b
+[ACTION] 2025-07-21T16:12:52.369Z - User 1 - CREAR_BALANCE_BULK - Insertados: 48 con id_blce: a4186b5899b00adf29b5861e90902971
+[INFO] 2025-07-21T17:44:57.430Z - Usuario Administrador (undefined) solicitó balance con ID: d5f00d380cbd2a6233a988872428ae50
+[INFO] 2025-07-21T17:44:57.431Z - Iniciando búsqueda de balance con ID: d5f00d380cbd2a6233a988872428ae50
+[INFO] 2025-07-21T17:44:57.433Z - Balance con ID d5f00d380cbd2a6233a988872428ae50 no encontrado o inválido
+[INFO] 2025-07-21T17:45:19.738Z - Usuario Administrador (1) solicitó balance con ID: d5f00d380cbd2a6233a988872428ae50
+[INFO] 2025-07-21T17:45:19.741Z - Iniciando búsqueda de balance con ID: d5f00d380cbd2a6233a988872428ae50
+[INFO] 2025-07-21T17:45:19.742Z - Balance con ID d5f00d380cbd2a6233a988872428ae50 no encontrado o inválido
+[INFO] 2025-07-21T17:47:58.580Z - Usuario Administrador (1) solicitó balance con ID: d5f00d380cbd2a6233a988872428ae50
+[INFO] 2025-07-21T17:47:58.582Z - Iniciando búsqueda de balance con ID: d5f00d380cbd2a6233a988872428ae50
+[INFO] 2025-07-21T17:47:58.586Z - Balance encontrado con ID: d5f00d380cbd2a6233a988872428ae50
+[INFO] 2025-07-21T19:32:25.368Z - Usuario Administrador (1) solicitó balance con ID: d5f00d380cbd2a6233a988872428ae50
+[INFO] 2025-07-21T19:32:25.371Z - Iniciando búsqueda de balance con ID: d5f00d380cbd2a6233a988872428ae50
+[INFO] 2025-07-21T19:32:25.376Z - Balance encontrado con ID: d5f00d380cbd2a6233a988872428ae50
+[ACTION] 2025-07-21T21:27:55.534Z - User 1 - CREAR_BALANCE_BULK - Insertados: 57 con id_blce: 19f6abf9026c84731e89e4eb9484815c

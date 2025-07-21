@@ -14,3 +14,17 @@
 [ERROR] 2025-07-15T21:19:51.382Z - Error en BalanceService.createBulk: Unknown column 'fecha_procesado' in 'where clause'
 [ERROR] 2025-07-15T21:20:36.919Z - Error en BalanceService.createBulk: Unknown column 'fecha_procesado' in 'where clause'
 [ERROR] 2025-07-15T21:23:23.255Z - Error en BalanceService.createBulk: Field 'id_blce' doesn't have a default value
+[ERROR] 2025-07-17T16:03:25.595Z - Error en BalanceService.createBulk: generarIdBalance is not defined
+[ERROR] 2025-07-17T16:04:15.161Z - Error en BalanceService.createBulk: generarIdBalance is not defined
+[ERROR] 2025-07-17T16:12:53.100Z - Error en BalanceService.createBulk: db is not defined
+[ERROR] 2025-07-17T16:22:00.877Z - Error en BalanceService.createBulk: Field 'id_blce' doesn't have a default value
+[ERROR] 2025-07-17T16:22:43.834Z - Error en BalanceService.createBulk: Incorrect integer value: 'd5f00d380cbd2a6233a988872428ae50' for column 'id_blce' at row 1
+[ERROR] 2025-07-17T21:20:40.464Z - Error en BalanceService.createBulk: a is not defined
+[ERROR] 2025-07-18T16:12:33.828Z - Error en BalanceService.getDistinctBalances: idUser is not defined
+[ERROR] 2025-07-18T16:13:06.058Z - Error en BalanceService.getDistinctBalances: idUser is not defined
+[ERROR] 2025-07-18T16:13:56.397Z - Error en BalanceService.getDistinctBalances: Unknown column 'es.descripcion' in 'field list'
+[WARN] 2025-07-21T17:43:32.162Z - Acceso no autorizado a getById
+[WARN] 2025-07-21T17:43:42.409Z - Acceso no autorizado a getById
+[WARN] 2025-07-21T17:43:43.522Z - Acceso no autorizado a getById
+[WARN] 2025-07-21T17:44:57.432Z - ID de balance no cumple con el formato UUID: d5f00d380cbd2a6233a988872428ae50
+[WARN] 2025-07-21T17:45:19.741Z - ID de balance no cumple con el formato UUID: d5f00d380cbd2a6233a988872428ae50

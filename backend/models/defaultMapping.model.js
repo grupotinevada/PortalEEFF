@@ -28,6 +28,17 @@ class DefaultMappingModel {
     return result;
   }
 
+//AQUI ESTA EL ENDPOINT PARA LLAMAR A LOS ESTADOS JIJIJIJI
+    static async findAllEstados() {
+    try {
+      const [rows] = await pool.query(
+        'SELECT * FROM estado'
+      );
+      return rows;
+    } catch (error) {
+      throw new Error(`Error al obtener estado: ${error.message}`);
+    }
+  }
 }
 
 module.exports = DefaultMappingModel;

@@ -1,141 +1,235 @@
+const { ConsoleLogger } = require('@angular/compiler-cli');
 const BalanceModel = require('../models/balance.model');
 const Logger = require('../utils/logger.utils');
+const crypto = require('crypto');
 
 /**
  * Servicio para gestionar balances
  */
+
+function generarIdBalance({ num_cuenta, id_empresa, ejercicio, fecha_inicio, fecha_fin }) {
+  const raw = `${num_cuenta}|${id_empresa}|${ejercicio}|${fecha_inicio}|${fecha_fin}`;
+  return crypto.createHash('md5').update(raw).digest('hex');
+}
+
+
 class BalanceService {
-  /**
-   * Crea un nuevo balance
-   * @param {Object} balanceData - Datos del balance (num_cuenta, nombre, saldo, fecha_procesado, id_user, id_empresa)
-   * @param {number} userId - ID del usuario que realiza la acción (para logging)
-   * @returns {Object} Resultado de la operación
-   */
-  static async create(balanceData, userId) {
-    const { num_cuenta, id_empresa, fecha_procesado } = balanceData;
-    console.log('Hola desde BalanceService.create', balanceData);
-    try {
-      const exists = await BalanceModel.existsByCuentaEmpresaFecha(num_cuenta, id_empresa, fecha_procesado);
-
-      if (exists) {
-        return {
-          success: false,
-          message: `Ya existe un balance para la cuenta ${num_cuenta}, empresa ${id_empresa} y fecha ${fecha_procesado}`
-        };
-      }
-
-      const result = await BalanceModel.create(balanceData);
-
-      Logger.userAction(userId, 'CREAR_BALANCE', `Cuenta: ${num_cuenta}, Empresa: ${id_empresa}, Fecha: ${fecha_procesado}`);
-
-      return {
-        success: true,
-        message: 'Balance insertado correctamente',
-        balance: result
-      };
-    } catch (error) {
-      Logger.error(`Error en BalanceService.create: ${error.message}`);
-      return { success: false, message: 'Error al insertar el balance' };
-    }
-  }
-  /**
+ /**
    * Crea un array de balances
    * @param {string} balances - Array del balance (num_cuenta, nombre, saldo, fecha_procesado, id_user, id_empresa)
    * @param {string} userId - Id del usaurio que realiza la acción (para logging)
    * @returns {Object} Resultado de la operación
    */
-static async createBulk(balances, userId) {
-  try {
-    // Filtrar balances ya existentes (opcional pero recomendable)
-    const balancesToInsert = [];
-    for (const b of balances) {
-      const exists = await BalanceModel.existsByCuentaEmpresaFecha(
-        b.num_cuenta,
-        b.id_empresa,
-        b.ejercicio
-      );
-      if (!exists) {
-        b.id_user = userId;
-        balancesToInsert.push(b);
-      }
-    }
-
-    if (balancesToInsert.length === 0) {
-      return { success: false, message: 'Todos los balances ya existen.' };
-    }
-    console.log('Balances a insertar:', balancesToInsert);
-    const result = await BalanceModel.createBulk(balancesToInsert);
-
-    Logger.userAction(userId, 'CREAR_BALANCE_BULK', `Insertados: ${result.inserted}`);
-    return {
-      success: true,
-      message: `Se insertaron ${result.inserted} balances.`,
-      inserted: result.inserted
-    };
-  } catch (error) {
-    Logger.error(`Error en BalanceService.createBulk: ${error.message}`);
-    return { success: false, message: 'Error al insertar balances masivamente' };
-  }
-}
-  /**
-   * Obtiene balances por empresa y fecha
-   * @param {string} id_empresa - ID de la empresa
-   * @param {string} fecha_inicio - Fecha del balance desde
-   * @param {string} fecha_fin - Fecha del balance fin
-   * @returns {Object} Resultado de la operación
-   */
-// services/balance.service.js
 
 
-static async getByEmpresaYPeriodoFlexible({ id_empresa, fecha_inicio, fecha_fin, fecha_consulta }) {
-  try {
-    let balances;
-    let modoConsulta;
-
-    if (fecha_inicio && fecha_fin) {
-      modoConsulta = 'rango';
-      Logger.info(`Consultando balances por rango: Empresa ${id_empresa}, Desde ${fecha_inicio} hasta ${fecha_fin}`);
-      balances = await BalanceModel.findByEmpresaEnRango(id_empresa, fecha_inicio, fecha_fin);
-    } else if (fecha_consulta) {
-      modoConsulta = 'única';
-      Logger.info(`Consultando balances por fecha única: Empresa ${id_empresa}, Fecha ${fecha_consulta}`);
-      balances = await BalanceModel.findByEmpresaYFechaUnica(id_empresa, fecha_consulta);
-    } else {
-      Logger.warn(`Consulta fallida: parámetros insuficientes para empresa ${id_empresa}`);
-      return { success: false, message: 'Parámetros insuficientes' };
-    }
-
-    return {
-      success: true,
-      modo: modoConsulta,
-      data: balances
-    };
-  } catch (error) {
-    Logger.error(`Error en getByEmpresaYPeriodoFlexible: ${error.message}`);
-    return { success: false, message: 'Error al obtener balances' };
-  }
-}
-
-
-  /**
-   * Obtiene todos los balances
-   * @returns {Object} Resultado de la operación
-   */
-  static async getAll() {
+  static async createBulk(balances, userId) {
     try {
-      const balances = await BalanceModel.findAll();
+      if (!Array.isArray(balances) || balances.length === 0) {
+        return { success: false, message: 'No se recibió ningún balance.' };
+      }
+
+      const primerBalance = balances[0];
+      const claves = ['num_cuenta', 'nombre_balance' , 'id_empresa', 'ejercicio', 'fecha_inicio', 'fecha_fin'];
+
+      // Validación general de campos mínimos en el primer balance
+      for (const campo of claves) {
+        if (!primerBalance[campo]) {
+          return { success: false, message: `Falta el campo requerido: ${campo}` };
+        }
+      }
+
+      const { id_empresa, nombre_balance, ejercicio, fecha_inicio, fecha_fin } = primerBalance;
+      console.log("Datos del primer balance:", primerBalance);
+      // Validar consistencia en todo el lote
+      const cuentasVistas = new Set();
+
+      for (const b of balances) {
+        // 1. Que todos tengan los mismos datos clave
+        if (
+          b.nombre_balance !== nombre_balance ||
+          b.id_empresa !== id_empresa ||
+          b.ejercicio !== ejercicio ||
+          b.fecha_inicio !== fecha_inicio ||
+          b.fecha_fin !== fecha_fin
+        ) {
+          return {
+            success: false,
+            message: 'Todos los balances deben compartir la misma empresa, ejercicio y rango de fechas.',
+          };
+        }
+
+        // 2. Validar que fecha_inicio <= fecha_fin
+        if (new Date(b.fecha_inicio) > new Date(b.fecha_fin)) {
+          return {
+            success: false,
+            message: 'La fecha de inicio no puede ser mayor que la fecha de fin.',
+          };
+        }
+
+        // 3. Validar que ambas fechas están dentro del ejercicio
+        const anioInicio = parseInt(b.fecha_inicio.substring(0, 4));
+        const anioFin = parseInt(b.fecha_fin.substring(0, 4));
+
+
+
+        if (anioInicio !== parseInt(ejercicio) || anioFin !== parseInt(ejercicio)) {
+          return {
+            success: false,
+            message: `Las fechas deben pertenecer al año del ejercicio ${ejercicio}.`,
+          };
+        }
+
+        // 4. Validar duplicados de num_cuenta dentro del lote
+        if (cuentasVistas.has(b.num_cuenta)) {
+          return {
+            success: false,
+            message: `Cuenta duplicada en el lote: ${b.num_cuenta}`,
+          };
+        }
+
+        cuentasVistas.add(b.num_cuenta);
+      }
+
+      // Generar un único id_blce para el grupo
+      const id_blce = generarIdBalance(primerBalance);
+
+      // Validar existencia previa
+      const exists = await BalanceModel.existsByIdBlce(id_blce);
+      if (exists) {
+        return { success: false, message: `Ya existe un balance con el identificador: ${id_blce}, intentalo de nuevo` };
+      }
+
+      // Validar existencia previa por nombre_conjunto
+      const nombreConjunto = primerBalance.nombre_balance || primerBalance.nombre_conjunto;
+
+      if (!nombreConjunto) {
+        return { success: false, message: 'El campo Nombre del Balance es requerido. \n code: nombre_conjunto_blce_ser_137' };
+      }
+
+      const conjuntoDuplicado = await BalanceModel.existsByNombreConjunto(nombreConjunto, userId);
+      if (conjuntoDuplicado) {
+        return {
+          success: false,
+          message: `Ya existe un conjunto con el nombre "${nombreConjunto}".`,
+        };
+      }
+      const balancesToInsert = balances.map((b) => ({
+        ...b,
+        id_blce,
+        id_user: userId,
+        id_estado: 1
+      }));
+
+      const result = await BalanceModel.createBulk(balancesToInsert);
+
+      Logger.userAction(userId, 'CREAR_BALANCE_BULK', `Insertados: ${result.inserted} con id_blce: ${id_blce}`);
+      return {
+        success: true,
+        message: `Se insertaron ${result.inserted} balances con id_blce ${id_blce}.`,
+        inserted: result.inserted,
+      };
+
+    } catch (error) {
+      Logger.error(`Error en BalanceService.createBulk: ${error.message}`);
+      return { success: false, message: 'Error al insertar balances masivamente.' };
+    }
+  }
+
+
+
+
+
+  // CARGA DE BALANCES 
+static async getById(id_blce) {
+  try {
+    Logger.info(`Iniciando búsqueda de balance con ID: ${id_blce}`);
+
+    // Validación básica: existencia y tipo string no vacío
+    if (typeof id_blce !== 'string' || id_blce.trim().length === 0) {
+      Logger.warn(`ID de balance inválido recibido: ${id_blce}`);
+      return { success: false, message: 'ID de balance inválido' };
+    }
+
+    const md5Regex = /^[a-f0-9]{32}$/i;
+    if (!md5Regex.test(id_blce)) {
+      Logger.warn(`ID de balance no cumple con el formato MD5 esperado: ${id_blce}`);
+      return { success: false, message: 'Formato de ID no válido' };
+    }
+
+
+    const balances = await BalanceModel.findById(id_blce);
+
+    if (!balances || balances.length === 0) {
+      Logger.info(`No se encontró balance con ID: ${id_blce}`);
+      return { success: false, message: 'Balance no encontrado' };
+    }
+
+    Logger.info(`Balance encontrado con ID: ${id_blce}`);
+    return {
+      success: true,
+      data: balances,
+    };
+  } catch (error) {
+    Logger.error(`Error en BalanceService.getById: ${error.message}`);
+    return {
+      success: false,
+      message: 'Error al obtener el balance',
+    };
+  }
+}
+  
+
+  static async getDistinctBalances(query) {
+    try {
+      const {
+        nombre,
+        ejercicio,
+        fechaInicio,
+        fechaFin,
+        idEmpresa,
+        idEstado,
+        idUser,
+        limit = 10,
+        offset = 0
+      } = query;
+
+      if (fechaInicio && fechaFin && new Date(fechaInicio) > new Date(fechaFin)) {
+        return {
+          success: false,
+          message: 'La fecha de inicio no puede ser posterior a la fecha de fin.'
+        };
+      }
+
+      const filters = {
+        nombre,
+        ejercicio,
+        fechaInicio,
+        fechaFin,
+        idEmpresa,
+        idEstado,
+        idUser,
+        limit,
+        offset
+      };
+
+      const [data, total] = await Promise.all([
+        BalanceModel.findDistinctBalances(filters),
+        BalanceModel.countDistinctBalances(filters)
+      ]);
 
       return {
         success: true,
-        data: balances
+        data,
+        total
       };
+
     } catch (error) {
-      Logger.error(`Error en BalanceService.getAll: ${error.message}`);
-      return { success: false, message: 'Error al obtener balances' };
+      Logger.error(`Error en BalanceService.getDistinctBalances: ${error.message}`);
+      return { success: false, message: 'Error al obtener balances.' };
     }
   }
 
-    static async getFsaCategoria() {
+  static async getFsaCategoria() {
     try {
       const balances = await BalanceModel.getFsaCategoria();
 
