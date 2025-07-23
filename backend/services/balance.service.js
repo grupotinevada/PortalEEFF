@@ -1,4 +1,3 @@
-const { ConsoleLogger } = require('@angular/compiler-cli');
 const BalanceModel = require('../models/balance.model');
 const Logger = require('../utils/logger.utils');
 const crypto = require('crypto');
