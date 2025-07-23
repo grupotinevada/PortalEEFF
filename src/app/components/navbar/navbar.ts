@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, Inject } from '@angular/core';
 import { AuthService } from '../../services/auth.service';
 import { Router } from '@angular/router';
 
@@ -9,8 +9,9 @@ import { Router } from '@angular/router';
   styleUrl: './navbar.css'
 })
 export class Navbar {
-constructor(private authService: AuthService,
-            private router: Router
+constructor(
+  private authService: AuthService,
+  @Inject(Router) private router: Router
 ){}
   logout(): void {
   this.authService.logout().subscribe({

@@ -165,6 +165,7 @@ static async getById(id_blce) {
     }
 
     Logger.info(`Balance encontrado con ID: ${id_blce}`);
+    console.log(`Balance encontrado: `, balances);
     return {
       success: true,
       data: balances,

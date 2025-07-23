@@ -10,8 +10,8 @@ import { Navbar } from '../navbar/navbar';
 import { EmpresaService } from '../../services/empresa.service';
 import { Empresa } from '../../models/empresa.model';
 import { Spinner } from '../spinner/spinner';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ModalDetalle } from '../modal-detalle/modal-detalle';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'app-balances',
@@ -186,10 +186,11 @@ export class Balances implements OnInit {
 
   abrirModal(id: string) {
     const modalRef = this.modalService.open(ModalDetalle, {
-      windowClass: 'modal-fullscreen-custom',
+      fullscreen: true,
       backdrop: 'static',
       centered: false, // no lo necesitamos centrado porque ocupa toda la pantalla
-      size: 'xl' // opcional
+      
+
     });
     // Pasa los datos al modal
     modalRef.componentInstance.empresas = this.empresas;

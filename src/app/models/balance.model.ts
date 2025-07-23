@@ -1,6 +1,21 @@
-export interface IBalance {
+export interface IBalance {   //solo lo usa el balance.service.createBulk
   num_cuenta: string;
   nombre: string;
+  saldo: number;
+  fecha_procesado: string;
+  id_user?: number;
+  id_empresa: string;
+  id_fsa?: string;
+}
+
+export interface IBalanceGet{ // solo lo usa el balance.service.getBalanceById, este es la interfaz mas reciente del backend
+  id_blce: string,
+  num_cuenta: string;
+  nombre: string;
+  nombre_conjunto: string;
+  ejercicio: string;
+  fecha_inicio: Date;
+  fecha_fin: Date;
   saldo: number;
   fecha_procesado: string;
   id_user?: number;
@@ -13,6 +28,45 @@ export interface IDefaultMapping {
   id_fsa: string;
   id_empresa: string;
 }
+
+
+//Nueva comparativa:
+export interface IVistaEEFF {
+  categoria: string;
+  saldo: number;
+  subcategorias: {
+    id_fsa: string;
+    descripcion: string;
+    saldo: number;
+    cuentas: {
+      num_cuenta: string;
+      nombre: string;
+      saldo: number;
+      id_fsa: string;
+    }[];
+  }[];
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 //interfaces para la comparativa

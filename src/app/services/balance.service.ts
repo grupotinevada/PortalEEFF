@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
-import { BalanceResumenResponse, IBalance } from '../models/balance.model';
-import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
+import { BalanceResumenResponse, IBalance, IBalanceGet } from '../models/balance.model';
+import { HttpClient, HttpErrorResponse, HttpHeaders, HttpParams } from '@angular/common/http';
 import { environment } from '../../environments/environment.development';
-import { map, Observable } from 'rxjs';
+import { catchError, map, Observable, throwError } from 'rxjs';
 import { IFsa } from '../models/fsa.model';
 
 @Injectable({
@@ -24,15 +24,6 @@ createBalance(balance: IBalance): Observable<any> {
 
 createBalanceBulk(balances: IBalance[]): Observable<any> {
   return this.http.post(`${this.apiUrl}/bulk`, balances, {
-    withCredentials: true,
-    headers: new HttpHeaders({
-      'Content-Type': 'application/json'
-    })
-  });
-}
-
-getAllBalances(): Observable<{ success: boolean; data: IBalance[] }> {
-  return this.http.get<{ success: boolean; data: IBalance[] }>(this.apiUrl, {
     withCredentials: true,
     headers: new HttpHeaders({
       'Content-Type': 'application/json'
@@ -75,19 +66,28 @@ getAllFsa() {
   }
 
 
-getBalanceById(id: string): Observable<IBalance[]> {
-  return this.http.get<{ success: boolean; data: IBalance[]; message?: string }>(
-    `${this.apiUrl}/balance/search/${id}`,
-    {
-      withCredentials: true,
-      headers: new HttpHeaders({
-        'Content-Type': 'application/json'
-      })
-    }
-  ).pipe(
-    map(response => response.data)
+getBalanceById(id: string): Observable<IBalanceGet[]> {
+  const url = `${this.apiUrl}/balance/${id}`;
+
+  return this.http.get<{ success: boolean; data: IBalanceGet[] }>(url, {
+    headers: new HttpHeaders({
+      'Content-Type': 'application/json'
+    }),
+    withCredentials: true // solo si estás usando cookies o sesiones
+  }).pipe(
+    map(response => {
+      if (!response.success || !Array.isArray(response.data)) {
+        throw new Error('Respuesta de API inválida');
+      }
+      return response.data;
+    }),
+    catchError((error: HttpErrorResponse) => {
+      console.error('Error al obtener balance:', error);
+      return throwError(() => new Error('Error en la petición de balance'));
+    })
   );
 }
+
 
 
 }

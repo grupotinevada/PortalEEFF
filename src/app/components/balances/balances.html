@@ -2,7 +2,7 @@
 
 <!-- Filtros -->
 <main class="container-fluid">
-  <div class="card shadow-sm border-0 mt-2">
+  <div class="card shadow-sm border-0 mt-2 bg-transparent">
     <div class="card-body">
       <h5 class="fw-semibold mb-3 text-success">🧪 Filtros de búsqueda</h5>
       <form>
@@ -68,21 +68,21 @@
           <div class="col d-flex gap-1">
             <button
               type="button"
-              class="btn btn-success btn-sm"
+              class="btn btn-warning btn-sm"
               (click)="onApplyFilters()"
             >
               Filtrar
             </button>
             <button
               type="button"
-              class="btn btn-outline-secondary btn-sm"
+              class="btn btn-secondary btn-sm"
               (click)="onResetFilters()"
             >
               Limpiar
             </button>
-            <!-- <button type="button" class="btn btn-outline-success btn-sm" (click)="onExport()">
-            <i class="bi bi-download"></i> Exportar
-          </button> -->
+            <button type="button" class="btn btn-outline-primary btn-sm" disabled>
+            <i class="bi bi-download"></i> Exportar Lista de balances
+          </button>
           </div>
         </div>
       </form>
@@ -132,6 +132,7 @@
                   type="button"
                   class="btn btn-outline-primary btn-sm me-1"
                   title="Editar"
+                  disabled
                 >
                   <i class="bi bi-pencil"></i>
                 </button>
@@ -147,6 +148,7 @@
                   type="button"
                   class="btn btn-outline-danger btn-sm"
                   title="Eliminar"
+                  disabled
                 >
                   <i class="bi bi-trash"></i>
                 </button>

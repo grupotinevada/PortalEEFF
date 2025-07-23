@@ -240,3 +240,282 @@
 [INFO] 2025-07-21T19:32:25.371Z - Iniciando búsqueda de balance con ID: d5f00d380cbd2a6233a988872428ae50
 [INFO] 2025-07-21T19:32:25.376Z - Balance encontrado con ID: d5f00d380cbd2a6233a988872428ae50
 [ACTION] 2025-07-21T21:27:55.534Z - User 1 - CREAR_BALANCE_BULK - Insertados: 57 con id_blce: 19f6abf9026c84731e89e4eb9484815c
+[INFO] 2025-07-21T21:54:11.539Z - Usuario Administrador (1) solicitó balance con ID: d5f00d380cbd2a6233a988872428ae50
+[INFO] 2025-07-21T21:54:11.540Z - Iniciando búsqueda de balance con ID: d5f00d380cbd2a6233a988872428ae50
+[INFO] 2025-07-21T21:54:11.546Z - Balance encontrado con ID: d5f00d380cbd2a6233a988872428ae50
+[INFO] 2025-07-21T21:54:18.054Z - Usuario Administrador (1) solicitó balance con ID: 04fbde2ca0271cf9794893da58b243ce
+[INFO] 2025-07-21T21:54:18.055Z - Iniciando búsqueda de balance con ID: 04fbde2ca0271cf9794893da58b243ce
+[INFO] 2025-07-21T21:54:18.057Z - Balance encontrado con ID: 04fbde2ca0271cf9794893da58b243ce
+[INFO] 2025-07-21T21:55:10.238Z - Usuario Administrador (1) solicitó balance con ID: 04fbde2ca0271cf9794893da58b243ce
+[INFO] 2025-07-21T21:55:10.239Z - Iniciando búsqueda de balance con ID: 04fbde2ca0271cf9794893da58b243ce
+[INFO] 2025-07-21T21:55:10.242Z - Balance encontrado con ID: 04fbde2ca0271cf9794893da58b243ce
+[INFO] 2025-07-22T13:21:51.518Z - Usuario Administrador (1) solicitó balance con ID: d5f00d380cbd2a6233a988872428ae50
+[INFO] 2025-07-22T13:21:51.774Z - Iniciando búsqueda de balance con ID: d5f00d380cbd2a6233a988872428ae50
+[INFO] 2025-07-22T13:21:51.778Z - Balance encontrado con ID: d5f00d380cbd2a6233a988872428ae50
+[INFO] 2025-07-22T13:22:04.146Z - Usuario Administrador (1) solicitó balance con ID: d5f00d380cbd2a6233a988872428ae50
+[INFO] 2025-07-22T13:22:04.152Z - Iniciando búsqueda de balance con ID: d5f00d380cbd2a6233a988872428ae50
+[INFO] 2025-07-22T13:22:04.156Z - Balance encontrado con ID: d5f00d380cbd2a6233a988872428ae50
+[INFO] 2025-07-22T13:22:10.406Z - Usuario Administrador (1) solicitó balance con ID: 04fbde2ca0271cf9794893da58b243ce
+[INFO] 2025-07-22T13:22:10.408Z - Iniciando búsqueda de balance con ID: 04fbde2ca0271cf9794893da58b243ce
+[INFO] 2025-07-22T13:22:10.410Z - Balance encontrado con ID: 04fbde2ca0271cf9794893da58b243ce
+[INFO] 2025-07-22T13:33:12.828Z - Usuario Administrador (1) solicitó balance con ID: d5f00d380cbd2a6233a988872428ae50
+[INFO] 2025-07-22T13:33:12.830Z - Iniciando búsqueda de balance con ID: d5f00d380cbd2a6233a988872428ae50
+[INFO] 2025-07-22T13:33:12.833Z - Balance encontrado con ID: d5f00d380cbd2a6233a988872428ae50
+[INFO] 2025-07-22T13:40:21.261Z - Usuario Administrador (1) solicitó balance con ID: d5f00d380cbd2a6233a988872428ae50
+[INFO] 2025-07-22T13:40:21.262Z - Iniciando búsqueda de balance con ID: d5f00d380cbd2a6233a988872428ae50
+[INFO] 2025-07-22T13:40:21.268Z - Balance encontrado con ID: d5f00d380cbd2a6233a988872428ae50
+[INFO] 2025-07-22T13:40:53.058Z - Usuario Administrador (1) solicitó balance con ID: d5f00d380cbd2a6233a988872428ae50
+[INFO] 2025-07-22T13:40:53.060Z - Iniciando búsqueda de balance con ID: d5f00d380cbd2a6233a988872428ae50
+[INFO] 2025-07-22T13:40:53.068Z - Balance encontrado con ID: d5f00d380cbd2a6233a988872428ae50
+[INFO] 2025-07-22T13:41:17.006Z - Usuario Administrador (1) solicitó balance con ID: d5f00d380cbd2a6233a988872428ae50
+[INFO] 2025-07-22T13:41:17.013Z - Iniciando búsqueda de balance con ID: d5f00d380cbd2a6233a988872428ae50
+[INFO] 2025-07-22T13:41:17.018Z - Balance encontrado con ID: d5f00d380cbd2a6233a988872428ae50
+[INFO] 2025-07-22T13:41:37.764Z - Usuario Administrador (1) solicitó balance con ID: d5f00d380cbd2a6233a988872428ae50
+[INFO] 2025-07-22T13:41:37.766Z - Iniciando búsqueda de balance con ID: d5f00d380cbd2a6233a988872428ae50
+[INFO] 2025-07-22T13:41:37.770Z - Balance encontrado con ID: d5f00d380cbd2a6233a988872428ae50
+[INFO] 2025-07-22T13:41:51.673Z - Usuario Administrador (1) solicitó balance con ID: d5f00d380cbd2a6233a988872428ae50
+[INFO] 2025-07-22T13:41:51.674Z - Iniciando búsqueda de balance con ID: d5f00d380cbd2a6233a988872428ae50
+[INFO] 2025-07-22T13:41:51.681Z - Balance encontrado con ID: d5f00d380cbd2a6233a988872428ae50
+[INFO] 2025-07-22T13:42:15.993Z - Usuario Administrador (1) solicitó balance con ID: d5f00d380cbd2a6233a988872428ae50
+[INFO] 2025-07-22T13:42:16.002Z - Iniciando búsqueda de balance con ID: d5f00d380cbd2a6233a988872428ae50
+[INFO] 2025-07-22T13:42:16.009Z - Balance encontrado con ID: d5f00d380cbd2a6233a988872428ae50
+[INFO] 2025-07-22T13:46:19.638Z - Usuario Administrador (1) solicitó balance con ID: a4186b5899b00adf29b5861e90902971
+[INFO] 2025-07-22T13:46:19.639Z - Iniciando búsqueda de balance con ID: a4186b5899b00adf29b5861e90902971
+[INFO] 2025-07-22T13:46:19.645Z - Balance encontrado con ID: a4186b5899b00adf29b5861e90902971
+[INFO] 2025-07-22T13:46:44.965Z - Usuario Administrador (1) solicitó balance con ID: a4186b5899b00adf29b5861e90902971
+[INFO] 2025-07-22T13:46:44.966Z - Iniciando búsqueda de balance con ID: a4186b5899b00adf29b5861e90902971
+[INFO] 2025-07-22T13:46:44.975Z - Balance encontrado con ID: a4186b5899b00adf29b5861e90902971
+[INFO] 2025-07-22T13:53:23.864Z - Usuario Administrador (1) solicitó balance con ID: d5f00d380cbd2a6233a988872428ae50
+[INFO] 2025-07-22T13:53:23.865Z - Iniciando búsqueda de balance con ID: d5f00d380cbd2a6233a988872428ae50
+[INFO] 2025-07-22T13:53:23.869Z - Balance encontrado con ID: d5f00d380cbd2a6233a988872428ae50
+[INFO] 2025-07-22T13:54:13.073Z - Usuario Administrador (1) solicitó balance con ID: f876f186ac1367ee63ed2875bc963e3b
+[INFO] 2025-07-22T13:54:13.074Z - Iniciando búsqueda de balance con ID: f876f186ac1367ee63ed2875bc963e3b
+[INFO] 2025-07-22T13:54:13.084Z - Balance encontrado con ID: f876f186ac1367ee63ed2875bc963e3b
+[INFO] 2025-07-22T13:54:28.433Z - Usuario Administrador (1) solicitó balance con ID: d5f00d380cbd2a6233a988872428ae50
+[INFO] 2025-07-22T13:54:28.434Z - Iniciando búsqueda de balance con ID: d5f00d380cbd2a6233a988872428ae50
+[INFO] 2025-07-22T13:54:28.439Z - Balance encontrado con ID: d5f00d380cbd2a6233a988872428ae50
+[INFO] 2025-07-22T13:56:25.830Z - Usuario Administrador (1) solicitó balance con ID: d5f00d380cbd2a6233a988872428ae50
+[INFO] 2025-07-22T13:56:25.831Z - Iniciando búsqueda de balance con ID: d5f00d380cbd2a6233a988872428ae50
+[INFO] 2025-07-22T13:56:25.839Z - Balance encontrado con ID: d5f00d380cbd2a6233a988872428ae50
+[INFO] 2025-07-22T13:56:46.678Z - Usuario Administrador (1) solicitó balance con ID: d5f00d380cbd2a6233a988872428ae50
+[INFO] 2025-07-22T13:56:46.679Z - Iniciando búsqueda de balance con ID: d5f00d380cbd2a6233a988872428ae50
+[INFO] 2025-07-22T13:56:46.682Z - Balance encontrado con ID: d5f00d380cbd2a6233a988872428ae50
+[INFO] 2025-07-22T13:59:32.470Z - Usuario Administrador (1) solicitó balance con ID: d5f00d380cbd2a6233a988872428ae50
+[INFO] 2025-07-22T13:59:32.492Z - Iniciando búsqueda de balance con ID: d5f00d380cbd2a6233a988872428ae50
+[INFO] 2025-07-22T13:59:32.496Z - Balance encontrado con ID: d5f00d380cbd2a6233a988872428ae50
+[INFO] 2025-07-22T13:59:41.904Z - Usuario Administrador (1) solicitó balance con ID: d5f00d380cbd2a6233a988872428ae50
+[INFO] 2025-07-22T13:59:41.904Z - Iniciando búsqueda de balance con ID: d5f00d380cbd2a6233a988872428ae50
+[INFO] 2025-07-22T13:59:41.908Z - Balance encontrado con ID: d5f00d380cbd2a6233a988872428ae50
+[INFO] 2025-07-22T13:59:45.884Z - Usuario Administrador (1) solicitó balance con ID: 04fbde2ca0271cf9794893da58b243ce
+[INFO] 2025-07-22T13:59:45.885Z - Iniciando búsqueda de balance con ID: 04fbde2ca0271cf9794893da58b243ce
+[INFO] 2025-07-22T13:59:45.889Z - Balance encontrado con ID: 04fbde2ca0271cf9794893da58b243ce
+[INFO] 2025-07-22T14:01:06.144Z - Usuario Administrador (1) solicitó balance con ID: d5f00d380cbd2a6233a988872428ae50
+[INFO] 2025-07-22T14:01:06.145Z - Iniciando búsqueda de balance con ID: d5f00d380cbd2a6233a988872428ae50
+[INFO] 2025-07-22T14:01:06.148Z - Balance encontrado con ID: d5f00d380cbd2a6233a988872428ae50
+[INFO] 2025-07-22T14:07:26.589Z - Usuario Administrador (1) solicitó balance con ID: d5f00d380cbd2a6233a988872428ae50
+[INFO] 2025-07-22T14:07:26.590Z - Iniciando búsqueda de balance con ID: d5f00d380cbd2a6233a988872428ae50
+[INFO] 2025-07-22T14:07:26.593Z - Balance encontrado con ID: d5f00d380cbd2a6233a988872428ae50
+[INFO] 2025-07-22T14:08:48.515Z - Usuario Administrador (1) solicitó balance con ID: d5f00d380cbd2a6233a988872428ae50
+[INFO] 2025-07-22T14:08:48.516Z - Iniciando búsqueda de balance con ID: d5f00d380cbd2a6233a988872428ae50
+[INFO] 2025-07-22T14:08:48.518Z - Balance encontrado con ID: d5f00d380cbd2a6233a988872428ae50
+[INFO] 2025-07-22T14:09:01.808Z - Usuario Administrador (1) solicitó balance con ID: d5f00d380cbd2a6233a988872428ae50
+[INFO] 2025-07-22T14:09:01.810Z - Iniciando búsqueda de balance con ID: d5f00d380cbd2a6233a988872428ae50
+[INFO] 2025-07-22T14:09:01.813Z - Balance encontrado con ID: d5f00d380cbd2a6233a988872428ae50
+[INFO] 2025-07-22T14:09:04.427Z - Usuario Administrador (1) solicitó balance con ID: d5f00d380cbd2a6233a988872428ae50
+[INFO] 2025-07-22T14:09:04.429Z - Iniciando búsqueda de balance con ID: d5f00d380cbd2a6233a988872428ae50
+[INFO] 2025-07-22T14:09:04.433Z - Balance encontrado con ID: d5f00d380cbd2a6233a988872428ae50
+[INFO] 2025-07-22T14:09:21.524Z - Usuario Administrador (1) solicitó balance con ID: d5f00d380cbd2a6233a988872428ae50
+[INFO] 2025-07-22T14:09:21.524Z - Iniciando búsqueda de balance con ID: d5f00d380cbd2a6233a988872428ae50
+[INFO] 2025-07-22T14:09:21.527Z - Balance encontrado con ID: d5f00d380cbd2a6233a988872428ae50
+[INFO] 2025-07-22T14:13:40.219Z - Usuario Administrador (1) solicitó balance con ID: d5f00d380cbd2a6233a988872428ae50
+[INFO] 2025-07-22T14:13:40.220Z - Iniciando búsqueda de balance con ID: d5f00d380cbd2a6233a988872428ae50
+[INFO] 2025-07-22T14:13:40.222Z - Balance encontrado con ID: d5f00d380cbd2a6233a988872428ae50
+[INFO] 2025-07-22T14:14:58.206Z - Usuario Administrador (1) solicitó balance con ID: d5f00d380cbd2a6233a988872428ae50
+[INFO] 2025-07-22T14:14:58.207Z - Iniciando búsqueda de balance con ID: d5f00d380cbd2a6233a988872428ae50
+[INFO] 2025-07-22T14:14:58.209Z - Balance encontrado con ID: d5f00d380cbd2a6233a988872428ae50
+[INFO] 2025-07-22T14:15:45.808Z - Usuario Administrador (1) solicitó balance con ID: d5f00d380cbd2a6233a988872428ae50
+[INFO] 2025-07-22T14:15:45.809Z - Iniciando búsqueda de balance con ID: d5f00d380cbd2a6233a988872428ae50
+[INFO] 2025-07-22T14:15:45.812Z - Balance encontrado con ID: d5f00d380cbd2a6233a988872428ae50
+[INFO] 2025-07-22T14:28:07.840Z - Usuario Administrador (1) solicitó balance con ID: d5f00d380cbd2a6233a988872428ae50
+[INFO] 2025-07-22T14:28:07.840Z - Iniciando búsqueda de balance con ID: d5f00d380cbd2a6233a988872428ae50
+[INFO] 2025-07-22T14:28:07.845Z - Balance encontrado con ID: d5f00d380cbd2a6233a988872428ae50
+[INFO] 2025-07-22T14:28:11.034Z - Usuario Administrador (1) solicitó balance con ID: f876f186ac1367ee63ed2875bc963e3b
+[INFO] 2025-07-22T14:28:11.035Z - Iniciando búsqueda de balance con ID: f876f186ac1367ee63ed2875bc963e3b
+[INFO] 2025-07-22T14:28:11.038Z - Balance encontrado con ID: f876f186ac1367ee63ed2875bc963e3b
+[INFO] 2025-07-22T14:33:29.761Z - Usuario Administrador (1) solicitó balance con ID: d5f00d380cbd2a6233a988872428ae50
+[INFO] 2025-07-22T14:33:29.762Z - Iniciando búsqueda de balance con ID: d5f00d380cbd2a6233a988872428ae50
+[INFO] 2025-07-22T14:33:29.765Z - Balance encontrado con ID: d5f00d380cbd2a6233a988872428ae50
+[INFO] 2025-07-22T15:12:52.238Z - Usuario Administrador (1) solicitó balance con ID: d5f00d380cbd2a6233a988872428ae50
+[INFO] 2025-07-22T15:12:52.239Z - Iniciando búsqueda de balance con ID: d5f00d380cbd2a6233a988872428ae50
+[INFO] 2025-07-22T15:12:52.242Z - Balance encontrado con ID: d5f00d380cbd2a6233a988872428ae50
+[ACTION] 2025-07-22T15:30:01.623Z - User undefined - LOGIN - Usuario admin@inevada.cl inició sesión
+[INFO] 2025-07-22T15:30:05.828Z - Usuario Administrador (1) solicitó balance con ID: d5f00d380cbd2a6233a988872428ae50
+[INFO] 2025-07-22T15:30:05.829Z - Iniciando búsqueda de balance con ID: d5f00d380cbd2a6233a988872428ae50
+[INFO] 2025-07-22T15:30:05.833Z - Balance encontrado con ID: d5f00d380cbd2a6233a988872428ae50
+[INFO] 2025-07-22T15:35:45.441Z - Usuario Administrador (1) solicitó balance con ID: d5f00d380cbd2a6233a988872428ae50
+[INFO] 2025-07-22T15:35:45.442Z - Iniciando búsqueda de balance con ID: d5f00d380cbd2a6233a988872428ae50
+[INFO] 2025-07-22T15:35:45.445Z - Balance encontrado con ID: d5f00d380cbd2a6233a988872428ae50
+[INFO] 2025-07-22T15:39:11.232Z - Usuario Administrador (1) solicitó balance con ID: d5f00d380cbd2a6233a988872428ae50
+[INFO] 2025-07-22T15:39:11.233Z - Iniciando búsqueda de balance con ID: d5f00d380cbd2a6233a988872428ae50
+[INFO] 2025-07-22T15:39:11.237Z - Balance encontrado con ID: d5f00d380cbd2a6233a988872428ae50
+[INFO] 2025-07-22T15:39:14.357Z - Usuario Administrador (1) solicitó balance con ID: d5f00d380cbd2a6233a988872428ae50
+[INFO] 2025-07-22T15:39:14.358Z - Iniciando búsqueda de balance con ID: d5f00d380cbd2a6233a988872428ae50
+[INFO] 2025-07-22T15:39:14.361Z - Balance encontrado con ID: d5f00d380cbd2a6233a988872428ae50
+[INFO] 2025-07-22T15:39:35.773Z - Usuario Administrador (1) solicitó balance con ID: d5f00d380cbd2a6233a988872428ae50
+[INFO] 2025-07-22T15:39:35.774Z - Iniciando búsqueda de balance con ID: d5f00d380cbd2a6233a988872428ae50
+[INFO] 2025-07-22T15:39:35.779Z - Balance encontrado con ID: d5f00d380cbd2a6233a988872428ae50
+[INFO] 2025-07-22T15:39:39.605Z - Usuario Administrador (1) solicitó balance con ID: f876f186ac1367ee63ed2875bc963e3b
+[INFO] 2025-07-22T15:39:39.606Z - Iniciando búsqueda de balance con ID: f876f186ac1367ee63ed2875bc963e3b
+[INFO] 2025-07-22T15:39:39.611Z - Balance encontrado con ID: f876f186ac1367ee63ed2875bc963e3b
+[INFO] 2025-07-22T15:39:42.116Z - Usuario Administrador (1) solicitó balance con ID: 19f6abf9026c84731e89e4eb9484815c
+[INFO] 2025-07-22T15:39:42.118Z - Iniciando búsqueda de balance con ID: 19f6abf9026c84731e89e4eb9484815c
+[INFO] 2025-07-22T15:39:42.125Z - Balance encontrado con ID: 19f6abf9026c84731e89e4eb9484815c
+[INFO] 2025-07-22T15:40:51.289Z - Usuario Administrador (1) solicitó balance con ID: d5f00d380cbd2a6233a988872428ae50
+[INFO] 2025-07-22T15:40:51.290Z - Iniciando búsqueda de balance con ID: d5f00d380cbd2a6233a988872428ae50
+[INFO] 2025-07-22T15:40:51.294Z - Balance encontrado con ID: d5f00d380cbd2a6233a988872428ae50
+[INFO] 2025-07-22T15:42:36.940Z - Usuario Administrador (1) solicitó balance con ID: d5f00d380cbd2a6233a988872428ae50
+[INFO] 2025-07-22T15:42:36.941Z - Iniciando búsqueda de balance con ID: d5f00d380cbd2a6233a988872428ae50
+[INFO] 2025-07-22T15:42:36.944Z - Balance encontrado con ID: d5f00d380cbd2a6233a988872428ae50
+[INFO] 2025-07-22T15:45:36.828Z - Usuario Administrador (1) solicitó balance con ID: 04fbde2ca0271cf9794893da58b243ce
+[INFO] 2025-07-22T15:45:36.829Z - Iniciando búsqueda de balance con ID: 04fbde2ca0271cf9794893da58b243ce
+[INFO] 2025-07-22T15:45:36.832Z - Balance encontrado con ID: 04fbde2ca0271cf9794893da58b243ce
+[INFO] 2025-07-22T15:46:05.417Z - Usuario Administrador (1) solicitó balance con ID: d5f00d380cbd2a6233a988872428ae50
+[INFO] 2025-07-22T15:46:05.418Z - Iniciando búsqueda de balance con ID: d5f00d380cbd2a6233a988872428ae50
+[INFO] 2025-07-22T15:46:05.421Z - Balance encontrado con ID: d5f00d380cbd2a6233a988872428ae50
+[INFO] 2025-07-22T15:48:40.341Z - Usuario Administrador (1) solicitó balance con ID: d5f00d380cbd2a6233a988872428ae50
+[INFO] 2025-07-22T15:48:40.343Z - Iniciando búsqueda de balance con ID: d5f00d380cbd2a6233a988872428ae50
+[INFO] 2025-07-22T15:48:40.346Z - Balance encontrado con ID: d5f00d380cbd2a6233a988872428ae50
+[INFO] 2025-07-22T15:52:41.434Z - Usuario Administrador (1) solicitó balance con ID: d5f00d380cbd2a6233a988872428ae50
+[INFO] 2025-07-22T15:52:41.435Z - Iniciando búsqueda de balance con ID: d5f00d380cbd2a6233a988872428ae50
+[INFO] 2025-07-22T15:52:41.438Z - Balance encontrado con ID: d5f00d380cbd2a6233a988872428ae50
+[INFO] 2025-07-22T15:54:31.385Z - Usuario Administrador (1) solicitó balance con ID: d5f00d380cbd2a6233a988872428ae50
+[INFO] 2025-07-22T15:54:31.386Z - Iniciando búsqueda de balance con ID: d5f00d380cbd2a6233a988872428ae50
+[INFO] 2025-07-22T15:54:31.388Z - Balance encontrado con ID: d5f00d380cbd2a6233a988872428ae50
+[INFO] 2025-07-22T15:54:41.071Z - Usuario Administrador (1) solicitó balance con ID: d5f00d380cbd2a6233a988872428ae50
+[INFO] 2025-07-22T15:54:41.072Z - Iniciando búsqueda de balance con ID: d5f00d380cbd2a6233a988872428ae50
+[INFO] 2025-07-22T15:54:41.075Z - Balance encontrado con ID: d5f00d380cbd2a6233a988872428ae50
+[INFO] 2025-07-22T15:59:27.735Z - Usuario Administrador (1) solicitó balance con ID: d5f00d380cbd2a6233a988872428ae50
+[INFO] 2025-07-22T15:59:27.736Z - Iniciando búsqueda de balance con ID: d5f00d380cbd2a6233a988872428ae50
+[INFO] 2025-07-22T15:59:27.739Z - Balance encontrado con ID: d5f00d380cbd2a6233a988872428ae50
+[INFO] 2025-07-22T16:00:36.366Z - Usuario Administrador (1) solicitó balance con ID: d5f00d380cbd2a6233a988872428ae50
+[INFO] 2025-07-22T16:00:36.366Z - Iniciando búsqueda de balance con ID: d5f00d380cbd2a6233a988872428ae50
+[INFO] 2025-07-22T16:00:36.369Z - Balance encontrado con ID: d5f00d380cbd2a6233a988872428ae50
+[INFO] 2025-07-22T16:05:49.882Z - Usuario Administrador (1) solicitó balance con ID: d5f00d380cbd2a6233a988872428ae50
+[INFO] 2025-07-22T16:05:49.883Z - Iniciando búsqueda de balance con ID: d5f00d380cbd2a6233a988872428ae50
+[INFO] 2025-07-22T16:05:49.887Z - Balance encontrado con ID: d5f00d380cbd2a6233a988872428ae50
+[INFO] 2025-07-22T16:05:52.383Z - Usuario Administrador (1) solicitó balance con ID: d5f00d380cbd2a6233a988872428ae50
+[INFO] 2025-07-22T16:05:52.384Z - Iniciando búsqueda de balance con ID: d5f00d380cbd2a6233a988872428ae50
+[INFO] 2025-07-22T16:05:52.387Z - Balance encontrado con ID: d5f00d380cbd2a6233a988872428ae50
+[INFO] 2025-07-22T16:06:37.221Z - Usuario Administrador (1) solicitó balance con ID: d5f00d380cbd2a6233a988872428ae50
+[INFO] 2025-07-22T16:06:37.222Z - Iniciando búsqueda de balance con ID: d5f00d380cbd2a6233a988872428ae50
+[INFO] 2025-07-22T16:06:37.225Z - Balance encontrado con ID: d5f00d380cbd2a6233a988872428ae50
+[INFO] 2025-07-22T16:19:38.140Z - Usuario Administrador (1) solicitó balance con ID: d5f00d380cbd2a6233a988872428ae50
+[INFO] 2025-07-22T16:19:38.141Z - Iniciando búsqueda de balance con ID: d5f00d380cbd2a6233a988872428ae50
+[INFO] 2025-07-22T16:19:38.143Z - Balance encontrado con ID: d5f00d380cbd2a6233a988872428ae50
+[INFO] 2025-07-22T16:22:20.536Z - Usuario Administrador (1) solicitó balance con ID: d5f00d380cbd2a6233a988872428ae50
+[INFO] 2025-07-22T16:22:20.638Z - Iniciando búsqueda de balance con ID: d5f00d380cbd2a6233a988872428ae50
+[INFO] 2025-07-22T16:22:20.641Z - Balance encontrado con ID: d5f00d380cbd2a6233a988872428ae50
+[INFO] 2025-07-22T16:40:51.204Z - Usuario Administrador (1) solicitó balance con ID: d5f00d380cbd2a6233a988872428ae50
+[INFO] 2025-07-22T16:40:51.206Z - Iniciando búsqueda de balance con ID: d5f00d380cbd2a6233a988872428ae50
+[INFO] 2025-07-22T16:40:51.211Z - Balance encontrado con ID: d5f00d380cbd2a6233a988872428ae50
+[INFO] 2025-07-22T17:22:32.975Z - Usuario Administrador (1) solicitó balance con ID: d5f00d380cbd2a6233a988872428ae50
+[INFO] 2025-07-22T17:22:33.134Z - Iniciando búsqueda de balance con ID: d5f00d380cbd2a6233a988872428ae50
+[INFO] 2025-07-22T17:22:33.139Z - Balance encontrado con ID: d5f00d380cbd2a6233a988872428ae50
+[INFO] 2025-07-22T17:33:51.541Z - Usuario Administrador (1) solicitó balance con ID: d5f00d380cbd2a6233a988872428ae50
+[INFO] 2025-07-22T17:33:51.543Z - Iniciando búsqueda de balance con ID: d5f00d380cbd2a6233a988872428ae50
+[INFO] 2025-07-22T17:33:51.547Z - Balance encontrado con ID: d5f00d380cbd2a6233a988872428ae50
+[INFO] 2025-07-22T17:53:37.158Z - Usuario Administrador (1) solicitó balance con ID: d5f00d380cbd2a6233a988872428ae50
+[INFO] 2025-07-22T17:53:37.159Z - Iniciando búsqueda de balance con ID: d5f00d380cbd2a6233a988872428ae50
+[INFO] 2025-07-22T17:53:37.162Z - Balance encontrado con ID: d5f00d380cbd2a6233a988872428ae50
+[INFO] 2025-07-22T17:57:19.034Z - Usuario Administrador (1) solicitó balance con ID: d5f00d380cbd2a6233a988872428ae50
+[INFO] 2025-07-22T17:57:19.034Z - Iniciando búsqueda de balance con ID: d5f00d380cbd2a6233a988872428ae50
+[INFO] 2025-07-22T17:57:19.036Z - Balance encontrado con ID: d5f00d380cbd2a6233a988872428ae50
+[INFO] 2025-07-22T19:15:29.255Z - Usuario Administrador (1) solicitó balance con ID: d5f00d380cbd2a6233a988872428ae50
+[INFO] 2025-07-22T19:15:29.256Z - Iniciando búsqueda de balance con ID: d5f00d380cbd2a6233a988872428ae50
+[INFO] 2025-07-22T19:15:29.260Z - Balance encontrado con ID: d5f00d380cbd2a6233a988872428ae50
+[INFO] 2025-07-22T19:18:11.097Z - Usuario Administrador (1) solicitó balance con ID: d5f00d380cbd2a6233a988872428ae50
+[INFO] 2025-07-22T19:18:11.098Z - Iniciando búsqueda de balance con ID: d5f00d380cbd2a6233a988872428ae50
+[INFO] 2025-07-22T19:18:11.101Z - Balance encontrado con ID: d5f00d380cbd2a6233a988872428ae50
+[INFO] 2025-07-22T19:20:59.677Z - Usuario Administrador (1) solicitó balance con ID: d5f00d380cbd2a6233a988872428ae50
+[INFO] 2025-07-22T19:20:59.678Z - Iniciando búsqueda de balance con ID: d5f00d380cbd2a6233a988872428ae50
+[INFO] 2025-07-22T19:20:59.682Z - Balance encontrado con ID: d5f00d380cbd2a6233a988872428ae50
+[INFO] 2025-07-22T19:27:18.990Z - Usuario Administrador (1) solicitó balance con ID: d5f00d380cbd2a6233a988872428ae50
+[INFO] 2025-07-22T19:27:18.991Z - Iniciando búsqueda de balance con ID: d5f00d380cbd2a6233a988872428ae50
+[INFO] 2025-07-22T19:27:18.994Z - Balance encontrado con ID: d5f00d380cbd2a6233a988872428ae50
+[INFO] 2025-07-22T19:31:01.244Z - Usuario Administrador (1) solicitó balance con ID: d5f00d380cbd2a6233a988872428ae50
+[INFO] 2025-07-22T19:31:01.245Z - Iniciando búsqueda de balance con ID: d5f00d380cbd2a6233a988872428ae50
+[INFO] 2025-07-22T19:31:01.247Z - Balance encontrado con ID: d5f00d380cbd2a6233a988872428ae50
+[INFO] 2025-07-22T19:32:54.925Z - Usuario Administrador (1) solicitó balance con ID: d5f00d380cbd2a6233a988872428ae50
+[INFO] 2025-07-22T19:32:54.926Z - Iniciando búsqueda de balance con ID: d5f00d380cbd2a6233a988872428ae50
+[INFO] 2025-07-22T19:32:54.929Z - Balance encontrado con ID: d5f00d380cbd2a6233a988872428ae50
+[INFO] 2025-07-22T19:37:33.424Z - Usuario Administrador (1) solicitó balance con ID: d5f00d380cbd2a6233a988872428ae50
+[INFO] 2025-07-22T19:37:33.425Z - Iniciando búsqueda de balance con ID: d5f00d380cbd2a6233a988872428ae50
+[INFO] 2025-07-22T19:37:33.428Z - Balance encontrado con ID: d5f00d380cbd2a6233a988872428ae50
+[INFO] 2025-07-22T19:37:37.958Z - Usuario Administrador (1) solicitó balance con ID: d5f00d380cbd2a6233a988872428ae50
+[INFO] 2025-07-22T19:37:37.959Z - Iniciando búsqueda de balance con ID: d5f00d380cbd2a6233a988872428ae50
+[INFO] 2025-07-22T19:37:37.962Z - Balance encontrado con ID: d5f00d380cbd2a6233a988872428ae50
+[INFO] 2025-07-22T19:49:35.054Z - Usuario Administrador (1) solicitó balance con ID: d5f00d380cbd2a6233a988872428ae50
+[INFO] 2025-07-22T19:49:35.057Z - Iniciando búsqueda de balance con ID: d5f00d380cbd2a6233a988872428ae50
+[INFO] 2025-07-22T19:49:35.062Z - Balance encontrado con ID: d5f00d380cbd2a6233a988872428ae50
+[INFO] 2025-07-22T19:56:57.405Z - Usuario Administrador (1) solicitó balance con ID: d5f00d380cbd2a6233a988872428ae50
+[INFO] 2025-07-22T19:56:57.406Z - Iniciando búsqueda de balance con ID: d5f00d380cbd2a6233a988872428ae50
+[INFO] 2025-07-22T19:56:57.410Z - Balance encontrado con ID: d5f00d380cbd2a6233a988872428ae50
+[ACTION] 2025-07-22T20:29:56.797Z - User 1 - CREAR_BALANCE_BULK - Insertados: 48 con id_blce: ab2d059a67b3cd2e40a207d252971d18
+[INFO] 2025-07-22T20:30:02.533Z - Usuario Administrador (1) solicitó balance con ID: ab2d059a67b3cd2e40a207d252971d18
+[INFO] 2025-07-22T20:30:02.534Z - Iniciando búsqueda de balance con ID: ab2d059a67b3cd2e40a207d252971d18
+[INFO] 2025-07-22T20:30:02.537Z - Balance encontrado con ID: ab2d059a67b3cd2e40a207d252971d18
+[ACTION] 2025-07-22T20:39:13.230Z - User 1 - CREAR_BALANCE_BULK - Insertados: 57 con id_blce: a39e1c1763cab8f9356d95aa463c32e3
+[INFO] 2025-07-22T20:39:19.414Z - Usuario Administrador (1) solicitó balance con ID: a39e1c1763cab8f9356d95aa463c32e3
+[INFO] 2025-07-22T20:39:19.415Z - Iniciando búsqueda de balance con ID: a39e1c1763cab8f9356d95aa463c32e3
+[INFO] 2025-07-22T20:39:19.418Z - Balance encontrado con ID: a39e1c1763cab8f9356d95aa463c32e3
+[INFO] 2025-07-22T20:52:06.928Z - Usuario Administrador (1) solicitó balance con ID: a39e1c1763cab8f9356d95aa463c32e3
+[INFO] 2025-07-22T20:52:06.930Z - Iniciando búsqueda de balance con ID: a39e1c1763cab8f9356d95aa463c32e3
+[INFO] 2025-07-22T20:52:06.933Z - Balance encontrado con ID: a39e1c1763cab8f9356d95aa463c32e3
+[INFO] 2025-07-22T21:10:54.213Z - Usuario Administrador (1) solicitó balance con ID: ab2d059a67b3cd2e40a207d252971d18
+[INFO] 2025-07-22T21:10:54.214Z - Iniciando búsqueda de balance con ID: ab2d059a67b3cd2e40a207d252971d18
+[INFO] 2025-07-22T21:10:54.216Z - Balance encontrado con ID: ab2d059a67b3cd2e40a207d252971d18
+[INFO] 2025-07-22T21:10:57.110Z - Usuario Administrador (1) solicitó balance con ID: ab2d059a67b3cd2e40a207d252971d18
+[INFO] 2025-07-22T21:10:57.111Z - Iniciando búsqueda de balance con ID: ab2d059a67b3cd2e40a207d252971d18
+[INFO] 2025-07-22T21:10:57.114Z - Balance encontrado con ID: ab2d059a67b3cd2e40a207d252971d18
+[ACTION] 2025-07-22T21:11:55.753Z - User 1 - CREAR_BALANCE_BULK - Insertados: 57 con id_blce: cf3358aa2e72b30f5e6a9e5d08efd718
+[INFO] 2025-07-22T21:12:01.660Z - Usuario Administrador (1) solicitó balance con ID: cf3358aa2e72b30f5e6a9e5d08efd718
+[INFO] 2025-07-22T21:12:01.661Z - Iniciando búsqueda de balance con ID: cf3358aa2e72b30f5e6a9e5d08efd718
+[INFO] 2025-07-22T21:12:01.664Z - Balance encontrado con ID: cf3358aa2e72b30f5e6a9e5d08efd718
+[ACTION] 2025-07-22T21:14:27.542Z - User 1 - CREAR_BALANCE_BULK - Insertados: 48 con id_blce: ab2d059a67b3cd2e40a207d252971d18
+[INFO] 2025-07-22T21:14:32.146Z - Usuario Administrador (1) solicitó balance con ID: ab2d059a67b3cd2e40a207d252971d18
+[INFO] 2025-07-22T21:14:32.146Z - Iniciando búsqueda de balance con ID: ab2d059a67b3cd2e40a207d252971d18
+[INFO] 2025-07-22T21:14:32.149Z - Balance encontrado con ID: ab2d059a67b3cd2e40a207d252971d18
+[INFO] 2025-07-22T21:15:07.816Z - Usuario Administrador (1) solicitó balance con ID: cf3358aa2e72b30f5e6a9e5d08efd718
+[INFO] 2025-07-22T21:15:07.818Z - Iniciando búsqueda de balance con ID: cf3358aa2e72b30f5e6a9e5d08efd718
+[INFO] 2025-07-22T21:15:07.822Z - Balance encontrado con ID: cf3358aa2e72b30f5e6a9e5d08efd718
+[INFO] 2025-07-22T21:25:02.075Z - Usuario Administrador (1) solicitó balance con ID: cf3358aa2e72b30f5e6a9e5d08efd718
+[INFO] 2025-07-22T21:25:02.076Z - Iniciando búsqueda de balance con ID: cf3358aa2e72b30f5e6a9e5d08efd718
+[INFO] 2025-07-22T21:25:02.081Z - Balance encontrado con ID: cf3358aa2e72b30f5e6a9e5d08efd718
+[INFO] 2025-07-22T22:04:11.607Z - Usuario Administrador (1) solicitó balance con ID: cf3358aa2e72b30f5e6a9e5d08efd718
+[INFO] 2025-07-22T22:04:11.608Z - Iniciando búsqueda de balance con ID: cf3358aa2e72b30f5e6a9e5d08efd718
+[INFO] 2025-07-22T22:04:11.611Z - Balance encontrado con ID: cf3358aa2e72b30f5e6a9e5d08efd718
+[INFO] 2025-07-22T22:04:27.874Z - Usuario Administrador (1) solicitó balance con ID: ab2d059a67b3cd2e40a207d252971d18
+[INFO] 2025-07-22T22:04:27.875Z - Iniciando búsqueda de balance con ID: ab2d059a67b3cd2e40a207d252971d18
+[INFO] 2025-07-22T22:04:27.881Z - Balance encontrado con ID: ab2d059a67b3cd2e40a207d252971d18
+[INFO] 2025-07-22T22:05:56.370Z - Usuario Administrador (1) solicitó balance con ID: cf3358aa2e72b30f5e6a9e5d08efd718
+[INFO] 2025-07-22T22:05:56.372Z - Iniciando búsqueda de balance con ID: cf3358aa2e72b30f5e6a9e5d08efd718
+[INFO] 2025-07-22T22:05:56.375Z - Balance encontrado con ID: cf3358aa2e72b30f5e6a9e5d08efd718
+[INFO] 2025-07-23T15:08:11.484Z - Usuario Administrador (1) solicitó balance con ID: cf3358aa2e72b30f5e6a9e5d08efd718
+[INFO] 2025-07-23T15:08:11.488Z - Iniciando búsqueda de balance con ID: cf3358aa2e72b30f5e6a9e5d08efd718
+[INFO] 2025-07-23T15:08:11.494Z - Balance encontrado con ID: cf3358aa2e72b30f5e6a9e5d08efd718
+[ACTION] 2025-07-23T16:48:51.015Z - User undefined - LOGIN - Usuario admin@inevada.cl inició sesión
+[INFO] 2025-07-23T16:49:00.515Z - Usuario Administrador (1) solicitó balance con ID: cf3358aa2e72b30f5e6a9e5d08efd718
+[INFO] 2025-07-23T16:49:00.515Z - Iniciando búsqueda de balance con ID: cf3358aa2e72b30f5e6a9e5d08efd718
+[INFO] 2025-07-23T16:49:00.522Z - Balance encontrado con ID: cf3358aa2e72b30f5e6a9e5d08efd718
+[INFO] 2025-07-23T16:50:02.629Z - Usuario Administrador (1) solicitó balance con ID: cf3358aa2e72b30f5e6a9e5d08efd718
+[INFO] 2025-07-23T16:50:02.630Z - Iniciando búsqueda de balance con ID: cf3358aa2e72b30f5e6a9e5d08efd718
+[INFO] 2025-07-23T16:50:02.632Z - Balance encontrado con ID: cf3358aa2e72b30f5e6a9e5d08efd718
+[INFO] 2025-07-23T17:16:38.693Z - Usuario Administrador (1) solicitó balance con ID: cf3358aa2e72b30f5e6a9e5d08efd718
+[INFO] 2025-07-23T17:16:38.694Z - Iniciando búsqueda de balance con ID: cf3358aa2e72b30f5e6a9e5d08efd718
+[INFO] 2025-07-23T17:16:38.697Z - Balance encontrado con ID: cf3358aa2e72b30f5e6a9e5d08efd718
+[INFO] 2025-07-23T17:18:46.268Z - Usuario Administrador (1) solicitó balance con ID: cf3358aa2e72b30f5e6a9e5d08efd718
+[INFO] 2025-07-23T17:18:46.269Z - Iniciando búsqueda de balance con ID: cf3358aa2e72b30f5e6a9e5d08efd718
+[INFO] 2025-07-23T17:18:46.272Z - Balance encontrado con ID: cf3358aa2e72b30f5e6a9e5d08efd718
+[INFO] 2025-07-23T17:19:03.131Z - Usuario Administrador (1) solicitó balance con ID: cf3358aa2e72b30f5e6a9e5d08efd718
+[INFO] 2025-07-23T17:19:03.132Z - Iniciando búsqueda de balance con ID: cf3358aa2e72b30f5e6a9e5d08efd718
+[INFO] 2025-07-23T17:19:03.134Z - Balance encontrado con ID: cf3358aa2e72b30f5e6a9e5d08efd718
