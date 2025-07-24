@@ -429,7 +429,7 @@ private readHtmlFile(file: File): void {
         nombreKey,
         'Saldo Actual',
         'Ejercicio',
-        'ID Empresa',
+        'Mapping',
         'FSA',
         'Nombre Balance',
         'Fecha Inicio',

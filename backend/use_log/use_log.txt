@@ -519,3 +519,11 @@
 [INFO] 2025-07-23T17:19:03.131Z - Usuario Administrador (1) solicitó balance con ID: cf3358aa2e72b30f5e6a9e5d08efd718
 [INFO] 2025-07-23T17:19:03.132Z - Iniciando búsqueda de balance con ID: cf3358aa2e72b30f5e6a9e5d08efd718
 [INFO] 2025-07-23T17:19:03.134Z - Balance encontrado con ID: cf3358aa2e72b30f5e6a9e5d08efd718
+[INFO] 2025-07-23T21:07:05.958Z - Usuario Administrador (1) solicitó balance con ID: cf3358aa2e72b30f5e6a9e5d08efd718
+[INFO] 2025-07-23T21:07:05.959Z - Iniciando búsqueda de balance con ID: cf3358aa2e72b30f5e6a9e5d08efd718
+[INFO] 2025-07-23T21:07:05.962Z - Balance encontrado con ID: cf3358aa2e72b30f5e6a9e5d08efd718
+[ACTION] 2025-07-23T21:42:44.975Z - User 1 - CREAR_BALANCE_BULK - Insertados: 57 con id_blce: d225674fc970644ee933433d839fc493
+[INFO] 2025-07-23T21:42:47.528Z - Usuario Administrador (1) solicitó balance con ID: d225674fc970644ee933433d839fc493
+[INFO] 2025-07-23T21:42:47.529Z - Iniciando búsqueda de balance con ID: d225674fc970644ee933433d839fc493
+[INFO] 2025-07-23T21:42:47.531Z - Balance encontrado con ID: d225674fc970644ee933433d839fc493
+[ACTION] 2025-07-23T21:46:36.389Z - User 1 - CREAR_BALANCE_BULK - Insertados: 48 con id_blce: e9b27545411ef3b2b4d22f778c20ed91
