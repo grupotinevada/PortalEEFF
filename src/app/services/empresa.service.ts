@@ -1,8 +1,9 @@
 import { Injectable } from '@angular/core';
-import { Empresa } from '../models/empresa.model';
 import { environment } from '../../environments/environment.development';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { IEmpresa } from '../models/empresa.model';
+
 @Injectable({
   providedIn: 'root'
 })
@@ -11,10 +12,10 @@ export class EmpresaService {
 
   constructor(private http: HttpClient) { }
 
-getEmpresas(): Observable<{ success: boolean; data: Empresa[] }> {
-  return this.http.get<{ success: boolean; data: Empresa[] }>(this.apiUrl, {
+getEmpresas(): Observable<{ success: boolean; data: IEmpresa[] }> {
+  return this.http.get<{ success: boolean; data: IEmpresa[] }>(this.apiUrl, {
     withCredentials: true
   });
 }
-}
 
+}

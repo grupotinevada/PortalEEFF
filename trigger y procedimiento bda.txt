@@ -2,7 +2,7 @@
 DELIMITER $$
 
 CREATE PROCEDURE sp_estado_financiero_comparativo5(
-    IN p_id_empresa VARCHAR(10),
+    IN p_id_mapping VARCHAR(10),
     IN p_año_base INT,
     IN p_año_comparacion INT
 )
@@ -12,12 +12,12 @@ BEGIN
 
     SELECT COUNT(*) INTO v_count_base
     FROM balance b
-    WHERE b.id_empresa = p_id_empresa 
+    WHERE b.id_mapping = p_id_mapping 
     AND YEAR(b.fecha_procesado) = p_año_base;
 
     SELECT COUNT(*) INTO v_count_comp
     FROM balance b
-    WHERE b.id_empresa = p_id_empresa 
+    WHERE b.id_mapping = p_id_mapping 
     AND YEAR(b.fecha_procesado) = p_año_comparacion;
 
     IF v_count_base = 0 AND v_count_comp = 0 THEN
@@ -33,11 +33,11 @@ BEGIN
                 f.desc AS descripcion,
                 SUM(b.saldo) AS monto
             FROM balance b
-            INNER JOIN cta_fsa_mapping cfm ON b.id_blce = cfm.id_blce AND b.id_empresa = cfm.id_empresa
+            INNER JOIN cta_fsa_mapping cfm ON b.id_blce = cfm.id_blce AND b.id_mapping = cfm.id_mapping
             INNER JOIN fsa f ON cfm.id_fsa = f.id_fsa
             INNER JOIN categoria c ON f.id_cate = c.id_cate
             WHERE c.id_cate = 1 
-            AND b.id_empresa = p_id_empresa
+            AND b.id_mapping = p_id_mapping
             AND YEAR(b.fecha_procesado) = p_año_base
             GROUP BY f.id_fsa, f.desc
             
@@ -51,11 +51,11 @@ BEGIN
                 'Total activos corrientes' as descripcion,
                 SUM(b.saldo) AS monto
             FROM balance b
-            INNER JOIN cta_fsa_mapping cfm ON b.id_blce = cfm.id_blce AND b.id_empresa = cfm.id_empresa
+            INNER JOIN cta_fsa_mapping cfm ON b.id_blce = cfm.id_blce AND b.id_mapping = cfm.id_mapping
             INNER JOIN fsa f ON cfm.id_fsa = f.id_fsa
             INNER JOIN categoria c ON f.id_cate = c.id_cate
             WHERE c.id_cate = 1 
-            AND b.id_empresa = p_id_empresa
+            AND b.id_mapping = p_id_mapping
             AND YEAR(b.fecha_procesado) = p_año_base
             
             UNION ALL
@@ -68,11 +68,11 @@ BEGIN
                 f.desc AS descripcion,
                 SUM(b.saldo) AS monto
             FROM balance b
-            INNER JOIN cta_fsa_mapping cfm ON b.id_blce = cfm.id_blce AND b.id_empresa = cfm.id_empresa
+            INNER JOIN cta_fsa_mapping cfm ON b.id_blce = cfm.id_blce AND b.id_mapping = cfm.id_mapping
             INNER JOIN fsa f ON cfm.id_fsa = f.id_fsa
             INNER JOIN categoria c ON f.id_cate = c.id_cate
             WHERE c.id_cate = 2 
-            AND b.id_empresa = p_id_empresa
+            AND b.id_mapping = p_id_mapping
             AND YEAR(b.fecha_procesado) = p_año_base
             GROUP BY f.id_fsa, f.desc
             
@@ -86,11 +86,11 @@ BEGIN
                 'Total activos no corrientes' as descripcion,
                 SUM(b.saldo) AS monto
             FROM balance b
-            INNER JOIN cta_fsa_mapping cfm ON b.id_blce = cfm.id_blce AND b.id_empresa = cfm.id_empresa
+            INNER JOIN cta_fsa_mapping cfm ON b.id_blce = cfm.id_blce AND b.id_mapping = cfm.id_mapping
             INNER JOIN fsa f ON cfm.id_fsa = f.id_fsa
             INNER JOIN categoria c ON f.id_cate = c.id_cate
             WHERE c.id_cate = 2 
-            AND b.id_empresa = p_id_empresa
+            AND b.id_mapping = p_id_mapping
             AND YEAR(b.fecha_procesado) = p_año_base
             
             UNION ALL
@@ -103,11 +103,11 @@ BEGIN
                 'TOTAL ACTIVOS' as descripcion,
                 SUM(b.saldo) AS monto
             FROM balance b
-            INNER JOIN cta_fsa_mapping cfm ON b.id_blce = cfm.id_blce AND b.id_empresa = cfm.id_empresa
+            INNER JOIN cta_fsa_mapping cfm ON b.id_blce = cfm.id_blce AND b.id_mapping = cfm.id_mapping
             INNER JOIN fsa f ON cfm.id_fsa = f.id_fsa
             INNER JOIN categoria c ON f.id_cate = c.id_cate
             WHERE c.id_cate IN (1, 2) 
-            AND b.id_empresa = p_id_empresa
+            AND b.id_mapping = p_id_mapping
             AND YEAR(b.fecha_procesado) = p_año_base
             
             UNION ALL
@@ -120,11 +120,11 @@ BEGIN
                 f.desc AS descripcion,
                 SUM(b.saldo) AS monto
             FROM balance b
-            INNER JOIN cta_fsa_mapping cfm ON b.id_blce = cfm.id_blce AND b.id_empresa = cfm.id_empresa
+            INNER JOIN cta_fsa_mapping cfm ON b.id_blce = cfm.id_blce AND b.id_mapping = cfm.id_mapping
             INNER JOIN fsa f ON cfm.id_fsa = f.id_fsa
             INNER JOIN categoria c ON f.id_cate = c.id_cate
             WHERE c.id_cate = 3 
-            AND b.id_empresa = p_id_empresa
+            AND b.id_mapping = p_id_mapping
             AND YEAR(b.fecha_procesado) = p_año_base
             GROUP BY f.id_fsa, f.desc
             
@@ -138,11 +138,11 @@ BEGIN
                 'Total pasivos corrientes' as descripcion,
                 SUM(b.saldo) AS monto
             FROM balance b
-            INNER JOIN cta_fsa_mapping cfm ON b.id_blce = cfm.id_blce AND b.id_empresa = cfm.id_empresa
+            INNER JOIN cta_fsa_mapping cfm ON b.id_blce = cfm.id_blce AND b.id_mapping = cfm.id_mapping
             INNER JOIN fsa f ON cfm.id_fsa = f.id_fsa
             INNER JOIN categoria c ON f.id_cate = c.id_cate
             WHERE c.id_cate = 3 
-            AND b.id_empresa = p_id_empresa
+            AND b.id_mapping = p_id_mapping
             AND YEAR(b.fecha_procesado) = p_año_base
             
             UNION ALL
@@ -155,11 +155,11 @@ BEGIN
                 f.desc AS descripcion,
                 SUM(b.saldo) AS monto
             FROM balance b
-            INNER JOIN cta_fsa_mapping cfm ON b.id_blce = cfm.id_blce AND b.id_empresa = cfm.id_empresa
+            INNER JOIN cta_fsa_mapping cfm ON b.id_blce = cfm.id_blce AND b.id_mapping = cfm.id_mapping
             INNER JOIN fsa f ON cfm.id_fsa = f.id_fsa
             INNER JOIN categoria c ON f.id_cate = c.id_cate
             WHERE c.id_cate = 4 
-            AND b.id_empresa = p_id_empresa
+            AND b.id_mapping = p_id_mapping
             AND YEAR(b.fecha_procesado) = p_año_base
             GROUP BY f.id_fsa, f.desc
             
@@ -173,11 +173,11 @@ BEGIN
                 'Total pasivos no corrientes' as descripcion,
                 SUM(b.saldo) AS monto
             FROM balance b
-            INNER JOIN cta_fsa_mapping cfm ON b.id_blce = cfm.id_blce AND b.id_empresa = cfm.id_empresa
+            INNER JOIN cta_fsa_mapping cfm ON b.id_blce = cfm.id_blce AND b.id_mapping = cfm.id_mapping
             INNER JOIN fsa f ON cfm.id_fsa = f.id_fsa
             INNER JOIN categoria c ON f.id_cate = c.id_cate
             WHERE c.id_cate = 4 
-            AND b.id_empresa = p_id_empresa
+            AND b.id_mapping = p_id_mapping
             AND YEAR(b.fecha_procesado) = p_año_base
             
             UNION ALL
@@ -190,11 +190,11 @@ BEGIN
                 'TOTAL PASIVOS' as descripcion,
                 SUM(b.saldo) AS monto
             FROM balance b
-            INNER JOIN cta_fsa_mapping cfm ON b.id_blce = cfm.id_blce AND b.id_empresa = cfm.id_empresa
+            INNER JOIN cta_fsa_mapping cfm ON b.id_blce = cfm.id_blce AND b.id_mapping = cfm.id_mapping
             INNER JOIN fsa f ON cfm.id_fsa = f.id_fsa
             INNER JOIN categoria c ON f.id_cate = c.id_cate
             WHERE c.id_cate IN (3, 4) 
-            AND b.id_empresa = p_id_empresa
+            AND b.id_mapping = p_id_mapping
             AND YEAR(b.fecha_procesado) = p_año_base
             
             UNION ALL
@@ -207,11 +207,11 @@ BEGIN
                 f.desc AS descripcion,
                 SUM(b.saldo) AS monto
             FROM balance b
-            INNER JOIN cta_fsa_mapping cfm ON b.id_blce = cfm.id_blce AND b.id_empresa = cfm.id_empresa
+            INNER JOIN cta_fsa_mapping cfm ON b.id_blce = cfm.id_blce AND b.id_mapping = cfm.id_mapping
             INNER JOIN fsa f ON cfm.id_fsa = f.id_fsa
             INNER JOIN categoria c ON f.id_cate = c.id_cate
             WHERE c.id_cate = 5 
-            AND b.id_empresa = p_id_empresa
+            AND b.id_mapping = p_id_mapping
             AND YEAR(b.fecha_procesado) = p_año_base
             GROUP BY f.id_fsa, f.desc
             
@@ -225,11 +225,11 @@ BEGIN
                 'TOTAL PATRIMONIO' as descripcion,
                 SUM(b.saldo) AS monto
             FROM balance b
-            INNER JOIN cta_fsa_mapping cfm ON b.id_blce = cfm.id_blce AND b.id_empresa = cfm.id_empresa
+            INNER JOIN cta_fsa_mapping cfm ON b.id_blce = cfm.id_blce AND b.id_mapping = cfm.id_mapping
             INNER JOIN fsa f ON cfm.id_fsa = f.id_fsa
             INNER JOIN categoria c ON f.id_cate = c.id_cate
             WHERE c.id_cate = 5 
-            AND b.id_empresa = p_id_empresa
+            AND b.id_mapping = p_id_mapping
             AND YEAR(b.fecha_procesado) = p_año_base
             
             UNION ALL
@@ -242,11 +242,11 @@ BEGIN
                 'TOTAL PASIVO + PATRIMONIO' as descripcion,
                 SUM(b.saldo) AS monto
             FROM balance b
-            INNER JOIN cta_fsa_mapping cfm ON b.id_blce = cfm.id_blce AND b.id_empresa = cfm.id_empresa
+            INNER JOIN cta_fsa_mapping cfm ON b.id_blce = cfm.id_blce AND b.id_mapping = cfm.id_mapping
             INNER JOIN fsa f ON cfm.id_fsa = f.id_fsa
             INNER JOIN categoria c ON f.id_cate = c.id_cate
             WHERE c.id_cate IN (3, 4, 5) 
-            AND b.id_empresa = p_id_empresa
+            AND b.id_mapping = p_id_mapping
             AND YEAR(b.fecha_procesado) = p_año_base
             
             UNION ALL
@@ -259,11 +259,11 @@ BEGIN
                 f.desc AS descripcion,
                 SUM(b.saldo) AS monto
             FROM balance b
-            INNER JOIN cta_fsa_mapping cfm ON b.id_blce = cfm.id_blce AND b.id_empresa = cfm.id_empresa
+            INNER JOIN cta_fsa_mapping cfm ON b.id_blce = cfm.id_blce AND b.id_mapping = cfm.id_mapping
             INNER JOIN fsa f ON cfm.id_fsa = f.id_fsa
             INNER JOIN categoria c ON f.id_cate = c.id_cate
             WHERE c.id_cate = 6 
-            AND b.id_empresa = p_id_empresa
+            AND b.id_mapping = p_id_mapping
             AND YEAR(b.fecha_procesado) = p_año_base
             GROUP BY f.id_fsa, f.desc
         ),
@@ -277,11 +277,11 @@ BEGIN
                 f.desc AS descripcion,
                 SUM(b.saldo) AS monto
             FROM balance b
-            INNER JOIN cta_fsa_mapping cfm ON b.id_blce = cfm.id_blce AND b.id_empresa = cfm.id_empresa
+            INNER JOIN cta_fsa_mapping cfm ON b.id_blce = cfm.id_blce AND b.id_mapping = cfm.id_mapping
             INNER JOIN fsa f ON cfm.id_fsa = f.id_fsa
             INNER JOIN categoria c ON f.id_cate = c.id_cate
             WHERE c.id_cate = 1 
-            AND b.id_empresa = p_id_empresa
+            AND b.id_mapping = p_id_mapping
             AND YEAR(b.fecha_procesado) = p_año_comparacion
             GROUP BY f.id_fsa, f.desc
             
@@ -295,11 +295,11 @@ BEGIN
                 'Total activos corrientes' as descripcion,
                 SUM(b.saldo) AS monto
             FROM balance b
-            INNER JOIN cta_fsa_mapping cfm ON b.id_blce = cfm.id_blce AND b.id_empresa = cfm.id_empresa
+            INNER JOIN cta_fsa_mapping cfm ON b.id_blce = cfm.id_blce AND b.id_mapping = cfm.id_mapping
             INNER JOIN fsa f ON cfm.id_fsa = f.id_fsa
             INNER JOIN categoria c ON f.id_cate = c.id_cate
             WHERE c.id_cate = 1 
-            AND b.id_empresa = p_id_empresa
+            AND b.id_mapping = p_id_mapping
             AND YEAR(b.fecha_procesado) = p_año_comparacion
             
             UNION ALL
@@ -312,11 +312,11 @@ BEGIN
                 f.desc AS descripcion,
                 SUM(b.saldo) AS monto
             FROM balance b
-            INNER JOIN cta_fsa_mapping cfm ON b.id_blce = cfm.id_blce AND b.id_empresa = cfm.id_empresa
+            INNER JOIN cta_fsa_mapping cfm ON b.id_blce = cfm.id_blce AND b.id_mapping = cfm.id_mapping
             INNER JOIN fsa f ON cfm.id_fsa = f.id_fsa
             INNER JOIN categoria c ON f.id_cate = c.id_cate
             WHERE c.id_cate = 2 
-            AND b.id_empresa = p_id_empresa
+            AND b.id_mapping = p_id_mapping
             AND YEAR(b.fecha_procesado) = p_año_comparacion
             GROUP BY f.id_fsa, f.desc
             
@@ -330,11 +330,11 @@ BEGIN
                 'Total activos no corrientes' as descripcion,
                 SUM(b.saldo) AS monto
             FROM balance b
-            INNER JOIN cta_fsa_mapping cfm ON b.id_blce = cfm.id_blce AND b.id_empresa = cfm.id_empresa
+            INNER JOIN cta_fsa_mapping cfm ON b.id_blce = cfm.id_blce AND b.id_mapping = cfm.id_mapping
             INNER JOIN fsa f ON cfm.id_fsa = f.id_fsa
             INNER JOIN categoria c ON f.id_cate = c.id_cate
             WHERE c.id_cate = 2 
-            AND b.id_empresa = p_id_empresa
+            AND b.id_mapping = p_id_mapping
             AND YEAR(b.fecha_procesado) = p_año_comparacion
             
             UNION ALL
@@ -347,11 +347,11 @@ BEGIN
                 'TOTAL ACTIVOS' as descripcion,
                 SUM(b.saldo) AS monto
             FROM balance b
-            INNER JOIN cta_fsa_mapping cfm ON b.id_blce = cfm.id_blce AND b.id_empresa = cfm.id_empresa
+            INNER JOIN cta_fsa_mapping cfm ON b.id_blce = cfm.id_blce AND b.id_mapping = cfm.id_mapping
             INNER JOIN fsa f ON cfm.id_fsa = f.id_fsa
             INNER JOIN categoria c ON f.id_cate = c.id_cate
             WHERE c.id_cate IN (1, 2) 
-            AND b.id_empresa = p_id_empresa
+            AND b.id_mapping = p_id_mapping
             AND YEAR(b.fecha_procesado) = p_año_comparacion
             
             UNION ALL
@@ -364,11 +364,11 @@ BEGIN
                 f.desc AS descripcion,
                 SUM(b.saldo) AS monto
             FROM balance b
-            INNER JOIN cta_fsa_mapping cfm ON b.id_blce = cfm.id_blce AND b.id_empresa = cfm.id_empresa
+            INNER JOIN cta_fsa_mapping cfm ON b.id_blce = cfm.id_blce AND b.id_mapping = cfm.id_mapping
             INNER JOIN fsa f ON cfm.id_fsa = f.id_fsa
             INNER JOIN categoria c ON f.id_cate = c.id_cate
             WHERE c.id_cate = 3 
-            AND b.id_empresa = p_id_empresa
+            AND b.id_mapping = p_id_mapping
             AND YEAR(b.fecha_procesado) = p_año_comparacion
             GROUP BY f.id_fsa, f.desc
             
@@ -382,11 +382,11 @@ BEGIN
                 'Total pasivos corrientes' as descripcion,
                 SUM(b.saldo) AS monto
             FROM balance b
-            INNER JOIN cta_fsa_mapping cfm ON b.id_blce = cfm.id_blce AND b.id_empresa = cfm.id_empresa
+            INNER JOIN cta_fsa_mapping cfm ON b.id_blce = cfm.id_blce AND b.id_mapping = cfm.id_mapping
             INNER JOIN fsa f ON cfm.id_fsa = f.id_fsa
             INNER JOIN categoria c ON f.id_cate = c.id_cate
             WHERE c.id_cate = 3 
-            AND b.id_empresa = p_id_empresa
+            AND b.id_mapping = p_id_mapping
             AND YEAR(b.fecha_procesado) = p_año_comparacion
             
             UNION ALL
@@ -399,11 +399,11 @@ BEGIN
                 f.desc AS descripcion,
                 SUM(b.saldo) AS monto
             FROM balance b
-            INNER JOIN cta_fsa_mapping cfm ON b.id_blce = cfm.id_blce AND b.id_empresa = cfm.id_empresa
+            INNER JOIN cta_fsa_mapping cfm ON b.id_blce = cfm.id_blce AND b.id_mapping = cfm.id_mapping
             INNER JOIN fsa f ON cfm.id_fsa = f.id_fsa
             INNER JOIN categoria c ON f.id_cate = c.id_cate
             WHERE c.id_cate = 4 
-            AND b.id_empresa = p_id_empresa
+            AND b.id_mapping = p_id_mapping
             AND YEAR(b.fecha_procesado) = p_año_comparacion
             GROUP BY f.id_fsa, f.desc
             
@@ -417,11 +417,11 @@ BEGIN
                 'Total pasivos no corrientes' as descripcion,
                 SUM(b.saldo) AS monto
             FROM balance b
-            INNER JOIN cta_fsa_mapping cfm ON b.id_blce = cfm.id_blce AND b.id_empresa = cfm.id_empresa
+            INNER JOIN cta_fsa_mapping cfm ON b.id_blce = cfm.id_blce AND b.id_mapping = cfm.id_mapping
             INNER JOIN fsa f ON cfm.id_fsa = f.id_fsa
             INNER JOIN categoria c ON f.id_cate = c.id_cate
             WHERE c.id_cate = 4 
-            AND b.id_empresa = p_id_empresa
+            AND b.id_mapping = p_id_mapping
             AND YEAR(b.fecha_procesado) = p_año_comparacion
             
             UNION ALL
@@ -434,11 +434,11 @@ BEGIN
                 'TOTAL PASIVOS' as descripcion,
                 SUM(b.saldo) AS monto
             FROM balance b
-            INNER JOIN cta_fsa_mapping cfm ON b.id_blce = cfm.id_blce AND b.id_empresa = cfm.id_empresa
+            INNER JOIN cta_fsa_mapping cfm ON b.id_blce = cfm.id_blce AND b.id_mapping = cfm.id_mapping
             INNER JOIN fsa f ON cfm.id_fsa = f.id_fsa
             INNER JOIN categoria c ON f.id_cate = c.id_cate
             WHERE c.id_cate IN (3, 4) 
-            AND b.id_empresa = p_id_empresa
+            AND b.id_mapping = p_id_mapping
             AND YEAR(b.fecha_procesado) = p_año_comparacion
             
             UNION ALL
@@ -451,11 +451,11 @@ BEGIN
                 f.desc AS descripcion,
                 SUM(b.saldo) AS monto
             FROM balance b
-            INNER JOIN cta_fsa_mapping cfm ON b.id_blce = cfm.id_blce AND b.id_empresa = cfm.id_empresa
+            INNER JOIN cta_fsa_mapping cfm ON b.id_blce = cfm.id_blce AND b.id_mapping = cfm.id_mapping
             INNER JOIN fsa f ON cfm.id_fsa = f.id_fsa
             INNER JOIN categoria c ON f.id_cate = c.id_cate
             WHERE c.id_cate = 5 
-            AND b.id_empresa = p_id_empresa
+            AND b.id_mapping = p_id_mapping
             AND YEAR(b.fecha_procesado) = p_año_comparacion
             GROUP BY f.id_fsa, f.desc
             
@@ -469,11 +469,11 @@ BEGIN
                 'TOTAL PATRIMONIO' as descripcion,
                 SUM(b.saldo) AS monto
             FROM balance b
-            INNER JOIN cta_fsa_mapping cfm ON b.id_blce = cfm.id_blce AND b.id_empresa = cfm.id_empresa
+            INNER JOIN cta_fsa_mapping cfm ON b.id_blce = cfm.id_blce AND b.id_mapping = cfm.id_mapping
             INNER JOIN fsa f ON cfm.id_fsa = f.id_fsa
             INNER JOIN categoria c ON f.id_cate = c.id_cate
             WHERE c.id_cate = 5 
-            AND b.id_empresa = p_id_empresa
+            AND b.id_mapping = p_id_mapping
             AND YEAR(b.fecha_procesado) = p_año_comparacion
             
             UNION ALL
@@ -486,11 +486,11 @@ BEGIN
                 'TOTAL PASIVO + PATRIMONIO' as descripcion,
                 SUM(b.saldo) AS monto
             FROM balance b
-            INNER JOIN cta_fsa_mapping cfm ON b.id_blce = cfm.id_blce AND b.id_empresa = cfm.id_empresa
+            INNER JOIN cta_fsa_mapping cfm ON b.id_blce = cfm.id_blce AND b.id_mapping = cfm.id_mapping
             INNER JOIN fsa f ON cfm.id_fsa = f.id_fsa
             INNER JOIN categoria c ON f.id_cate = c.id_cate
             WHERE c.id_cate IN (3, 4, 5) 
-            AND b.id_empresa = p_id_empresa
+            AND b.id_mapping = p_id_mapping
             AND YEAR(b.fecha_procesado) = p_año_comparacion
             
             UNION ALL
@@ -503,11 +503,11 @@ BEGIN
                 f.desc AS descripcion,
                 SUM(b.saldo) AS monto
             FROM balance b
-            INNER JOIN cta_fsa_mapping cfm ON b.id_blce = cfm.id_blce AND b.id_empresa = cfm.id_empresa
+            INNER JOIN cta_fsa_mapping cfm ON b.id_blce = cfm.id_blce AND b.id_mapping = cfm.id_mapping
             INNER JOIN fsa f ON cfm.id_fsa = f.id_fsa
             INNER JOIN categoria c ON f.id_cate = c.id_cate
             WHERE c.id_cate = 6 
-            AND b.id_empresa = p_id_empresa
+            AND b.id_mapping = p_id_mapping
             AND YEAR(b.fecha_procesado) = p_año_comparacion
             GROUP BY f.id_fsa, f.desc
         ),
@@ -547,7 +547,7 @@ BEGIN
         )
 
         SELECT 
-            p_id_empresa AS empresa,
+            p_id_mapping AS mapping,
             p_año_base AS año_1,
             p_año_comparacion AS año_2,
             CASE 
@@ -592,16 +592,16 @@ BEGIN
   DECLARE new_fsa_code VARCHAR(20);
   DECLARE exists_fsa INT;
 
-  -- Buscar si la cuenta de la empresa ya está mapeada (evitar duplicación)
+  -- Buscar si la cuenta de la mapping ya está mapeada (evitar duplicación)
   SELECT COUNT(*) INTO exists_fsa
   FROM cta_fsa_mapping
-  WHERE id_blce = NEW.id_blce AND id_empresa = NEW.id_empresa;
+  WHERE id_blce = NEW.id_blce AND id_mapping = NEW.id_mapping;
 
   IF exists_fsa = 0 THEN
     -- Intentar obtener desde default mapping
     SELECT id_fsa INTO mapped_fsa
     FROM default_cta_fsa_mapping
-    WHERE num_cuenta = NEW.num_cuenta AND id_empresa = 'Map-Default'
+    WHERE num_cuenta = NEW.num_cuenta AND id_mapping = 'Map-Default'
     LIMIT 1;
 
     -- Si no existe en default mapping, crear nuevo FSA incremental
@@ -616,7 +616,7 @@ BEGIN
       VALUES (new_fsa_code, 'no hay descripcion de activo', NULL);
 
       -- Insertar en default_cta_fsa_mapping
-      INSERT INTO default_cta_fsa_mapping (num_cuenta, id_fsa, id_empresa)
+      INSERT INTO default_cta_fsa_mapping (num_cuenta, id_fsa, id_mapping)
       VALUES (NEW.num_cuenta, new_fsa_code, 'Map-Default');
 
       -- Actualizar el contador
@@ -626,8 +626,8 @@ BEGIN
     END IF;
 
     -- Insertar finalmente en cta_fsa_mapping
-    INSERT INTO cta_fsa_mapping (id_blce, id_fsa, id_empresa)
-    VALUES (NEW.id_blce, mapped_fsa, NEW.id_empresa);
+    INSERT INTO cta_fsa_mapping (id_blce, id_fsa, id_mapping)
+    VALUES (NEW.id_blce, mapped_fsa, NEW.id_mapping);
   END IF;
 END$$
 
@@ -637,7 +637,7 @@ DELIMITER ;
 
 -- datos
 
-INSERT INTO default_cta_fsa_mapping (num_cuenta, id_fsa, id_empresa) VALUES
+INSERT INTO default_cta_fsa_mapping (num_cuenta, id_fsa, id_mapping) VALUES
 ('1101010020','11-010','Map-Default'),
 ('1101010021','11-010','Map-Default'),
 ('1101010022','11-010','Map-Default'),
@@ -687,7 +687,7 @@ INSERT INTO default_cta_fsa_mapping (num_cuenta, id_fsa, id_empresa) VALUES
 
 
 // 2024
-INSERT INTO balance (num_cuenta, nombre, saldo, fecha_procesado, id_user, id_empresa) VALUES
+INSERT INTO balance (num_cuenta, nombre, saldo, fecha_procesado, id_user, id_mapping) VALUES
 ('1101010020','Banco Sant./Stgo. Cuenta Principal',3564608,'2024-07-02',1,'CV19'),
 ('1101010021','Banco Santander/Stgo. Cuenta Entradas (Dep.)',0,'2024-07-02',1,'CV19'),
 ('1101010022','Banco Santander/Stgo. Cuenta Salidas (Cheques)',0,'2024-07-02',1,'CV19'),
@@ -703,7 +703,7 @@ INSERT INTO balance (num_cuenta, nombre, saldo, fecha_procesado, id_user, id_emp
 ('1106000000','DEUDORES VARIOS 1',0,'2024-07-02',1,'CV19'),
 ('1107000000','DOCUMENTOS Y CUENTAS POR COBRAR',36517714923,'2024-07-02',1,'CV19'),
 ('1110000100','Anticipo a Proveedores',87250,'2024-07-02',1,'CV19'),
-('1301000000','Inversiones en empresas relacionadas',51710372208,'2024-07-02',1,'CV19'),
+('1301000000','Inversiones en mappings relacionadas',51710372208,'2024-07-02',1,'CV19'),
 ('1302500000','Inversiones en otras sociedades',313922865,'2024-07-02',1,'CV19'),
 ('2104000000','Dividendos por pagar',0,'2024-07-02',1,'CV19'),
 ('2105000001','Doctos y cuentas por pagar Emp. Relacionadas C/P',-8622666946,'2024-07-02',1,'CV19'),
@@ -737,7 +737,7 @@ INSERT INTO balance (num_cuenta, nombre, saldo, fecha_procesado, id_user, id_emp
 
 
 //2025
-INSERT INTO portaleeff3.balance (num_cuenta, nombre, saldo, fecha_procesado, id_user, id_empresa) VALUES
+INSERT INTO portaleeff3.balance (num_cuenta, nombre, saldo, fecha_procesado, id_user, id_mapping) VALUES
 ('1101010020','Banco Sant./Stgo. Cuenta Principal',3564608,'2025-07-02',1,'CV19'),
 ('1101010021','Banco Santander/Stgo. Cuenta Entradas (Dep.)',0,'2025-07-02',1,'CV19'),
 ('1101010022','Banco Santander/Stgo. Cuenta Salidas (Cheques)',0,'2025-07-02',1,'CV19'),
@@ -753,7 +753,7 @@ INSERT INTO portaleeff3.balance (num_cuenta, nombre, saldo, fecha_procesado, id_
 ('1106000000','DEUDORES VARIOS 1',0,'2025-07-02',1,'CV19'),
 ('1107000000','DOCUMENTOS Y CUENTAS POR COBRAR',36517714923,'2025-07-02',1,'CV19'),
 ('1110000100','Anticipo a Proveedores',87250,'2025-07-02',1,'CV19'),
-('1301000000','Inversiones en empresas relacionadas',51710372208,'2025-07-02',1,'CV19'),
+('1301000000','Inversiones en mappings relacionadas',51710372208,'2025-07-02',1,'CV19'),
 ('1302500000','Inversiones en otras sociedades',313922865,'2025-07-02',1,'CV19'),
 ('2104000000','Dividendos por pagar',0,'2025-07-02',1,'CV19'),
 ('2105000001','Doctos y cuentas por pagar Emp. Relacionadas C/P',-8622666946,'2025-07-02',1,'CV19'),
@@ -786,7 +786,7 @@ INSERT INTO portaleeff3.balance (num_cuenta, nombre, saldo, fecha_procesado, id_
 ('4240000032','Reajustes',-3674410955,'2025-07-02',1,'CV19');
 
 
-INSERT INTO balance (num_cuenta, nombre, saldo, fecha_procesado, id_user, id_empresa) VALUES
+INSERT INTO balance (num_cuenta, nombre, saldo, fecha_procesado, id_user, id_mapping) VALUES
 ('5101010020','Banco Sant./Stgo. Cuenta Principal',3564608,'2024-07-02',1,'CV19');
 
 
@@ -807,7 +807,7 @@ CREATE TABLE fsa_increment_tracker (
 INSERT INTO fsa_increment_tracker (last_number) VALUES (1);
 
 
-insert into empresa (id_empresa, descripcion) values
+insert into mapping (id_mapping, descripcion) values
 	("CV19","Inversiones Nevada S.A" );
 
 

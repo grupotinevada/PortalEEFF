@@ -49,8 +49,10 @@ getAllFsa() {
     ejercicio?: number;
     fechaInicio?: string;
     fechaFin?: string;
-    idEmpresa?: string;
+    idMapping?: string;
     idEstado?: number;
+    idEmpresa?: string;
+    empresaDesc: string;
     limit?: number;
     offset?: number;
   }): Observable<BalanceResumenResponse> {

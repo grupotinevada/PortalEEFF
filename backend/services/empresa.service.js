@@ -22,14 +22,14 @@ class EmpresaService {
         return { success: false, message: 'La descripción es obligatoria' };
       }
 
-      const nuevaEmpresa = await EmpresaModel.create(id_empresa.trim(), descripcion.trim());
+      const nuevaempresa = await EmpresaModel.create(id_empresa.trim(), descripcion.trim());
       
       Logger.userAction(userId, 'CREAR_EMPRESA', `ID: ${id_empresa.trim()}, Desc: ${descripcion.trim()}`);
 
-      return { success: true, message: 'Empresa creada', empresa: nuevaEmpresa };
+      return { success: true, message: 'empresa creada', empresa: nuevaempresa };
 
     } catch (error) {
-      Logger.error(`Error en EmpresaService.create: ${error.message}`);
+      Logger.error(`Error en empresaService.create: ${error.message}`);
 
       if (error.message.includes('ya existe')) {
         return { success: false, message: 'Ya existe una empresa con ese ID' };
@@ -49,7 +49,7 @@ class EmpresaService {
       return { success: true, data: empresas };
 
     } catch (error) {
-      Logger.error(`Error en EmpresaService.getAll: ${error.message}`);
+      Logger.error(`Error en empresaService.getAll: ${error.message}`);
       return { success: false, message: 'Error al obtener las empresas' };
     }
   }
@@ -74,15 +74,15 @@ class EmpresaService {
       const updated = await EmpresaModel.update(id_empresa.trim(), descripcion.trim());
       
       if (!updated) {
-        return { success: false, message: 'Empresa no encontrada o sin cambios' };
+        return { success: false, message: 'empresa no encontrada o sin cambios' };
       }
 
       Logger.userAction(userId, 'ACTUALIZAR_EMPRESA', `ID: ${id_empresa.trim()}, Desc: ${descripcion.trim()}`);
       
-      return { success: true, message: 'Empresa actualizada' };
+      return { success: true, message: 'empresa actualizada' };
 
     } catch (error) {
-      Logger.error(`Error en EmpresaService.update: ${error.message}`);
+      Logger.error(`Error en empresaService.update: ${error.message}`);
       return { success: false, message: 'Error al actualizar la empresa' };
     }
   }
@@ -102,15 +102,15 @@ class EmpresaService {
       const deleted = await EmpresaModel.delete(id_empresa.trim());
       
       if (!deleted) {
-        return { success: false, message: 'Empresa no encontrada' };
+        return { success: false, message: 'empresa no encontrada' };
       }
 
       Logger.userAction(userId, 'ELIMINAR_EMPRESA', `ID: ${id_empresa.trim()}`);
       
-      return { success: true, message: 'Empresa eliminada' };
+      return { success: true, message: 'empresa eliminada' };
 
     } catch (error) {
-      Logger.error(`Error en EmpresaService.delete: ${error.message}`);
+      Logger.error(`Error en empresaService.delete: ${error.message}`);
       return { success: false, message: 'Error al eliminar la empresa' };
     }
   }

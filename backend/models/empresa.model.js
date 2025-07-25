@@ -26,7 +26,7 @@ class EmpresaModel {
       };
     } catch (error) {
       if (error.code === 'ER_DUP_ENTRY') {
-        throw new Error(`Empresa con ID ${id_empresa} ya existe`);
+        throw new Error(`empresa con ID ${id_empresa} ya existe`);
       }
       throw new Error(`Error al crear empresa: ${error.message}`);
     }

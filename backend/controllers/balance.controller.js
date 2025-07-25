@@ -47,7 +47,7 @@ static async createBulk(req, res) {
         fecha_inicio,
         fecha_fin,
         id_user,
-        id_empresa,
+        id_mapping,
         id_fsa,
       } = req.body;
 
@@ -63,7 +63,7 @@ static async createBulk(req, res) {
           fecha_inicio,
           fecha_fin,
           id_user,
-          id_empresa,
+          id_mapping,
           id_fsa,
         },
         userId

@@ -10,7 +10,7 @@ const { authenticateToken } = require('../middlewares/auth.middleware');
  * @property {Function} empresaValidation - Middleware para validar datos de empresa.
  * @property {Function} validate - Middleware genérico para validar solicitudes.
  */
-const { empresaValidation, validate } = require('../middlewares/empresa.middlewares');
+const { empresaValidation, validate } = require('../middlewares/empresa.middleware');
 
 // Rutas protegidas con validación
 router.post('/', authenticateToken, empresaValidation, validate, EmpresaController.create);

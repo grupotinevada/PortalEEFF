@@ -4,7 +4,7 @@ export interface IBalance {   //solo lo usa el balance.service.createBulk
   saldo: number;
   fecha_procesado: string;
   id_user?: number;
-  id_empresa: string;
+  id_mapping: string;
   id_fsa?: string;
 }
 
@@ -19,14 +19,16 @@ export interface IBalanceGet{ // solo lo usa el balance.service.getBalanceById, 
   saldo: number;
   fecha_procesado: string;
   id_user?: number;
-  id_empresa: string;
+  id_mapping: string;
   id_fsa?: string;
+  id_empresa?: string;
+  empresaDesc?: string;
 }
 
 export interface IDefaultMapping {
   num_cuenta: string;
   id_fsa: string;
-  id_empresa: string;
+  id_mapping: string;
 }
 
 
@@ -115,15 +117,16 @@ export interface BalanceResumen {
   ejercicio: number;
   fecha_inicio: string;
   fecha_fin: string;
-  id_empresa: string;
+  id_mapping: string;
   id_estado: number;
   id_user: string;
-  empresa_desc: string;
+  mapping_desc: string;
   estado_desc: string;
   estado_color: string;
   username: string;
   email: string
-
+  id_empresa?: string;
+  empresaDesc?: string;
 }
 
 export interface BalanceResumenResponse {

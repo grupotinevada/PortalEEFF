@@ -1,8 +1,8 @@
 import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Empresa } from '../../models/empresa.model';
-import { EmpresaService } from '../../services/empresa.service';
+import { mapping } from '../../models/mapping.model';
+import { MappingService } from '../../services/mapping.service';
 import { BalanceService } from '../../services/balance.service';
 import Swal from 'sweetalert2';
 
@@ -14,6 +14,8 @@ import { Spinner } from '../spinner/spinner';
 import { PreviewFileService } from '../../services/preview-fie';
 import { Navbar } from '../navbar/navbar';
 import { Console } from 'console';
+import { EmpresaService } from '../../services/empresa.service';
+import { IEmpresa } from '../../models/empresa.model';
 
 @Component({
   selector: 'app-preview',
@@ -35,10 +37,10 @@ export class Preview implements OnInit {
   fechaSeleccionada: string = ''; // este será el formato 'YYYY-01-01'
   listaAnios: number[] = [];
   msgError: string = '';
-  empresas: Empresa[] = [];
-  selectedEmpresa: string = '';
+  mappings: mapping[] = [];
+  selectedMapping: string = '';
   showSpinner: boolean = false;
-  mappings: IDefaultMapping[] = [];
+  defaultMappings: IDefaultMapping[] = [];
 
   cuentasNoMapeadas: string[] = [];
   msgWarning: string = '';
@@ -58,20 +60,25 @@ export class Preview implements OnInit {
 
   id_estado: string = '1'; 
 
+  empresas: IEmpresa[] = [];
+  selectedEmpresa: string = '';
   constructor(
-    private empresaService: EmpresaService,
+    private mappingService: MappingService,
     private balanceService: BalanceService,
     private authService: AuthService,
-    private mappingService: DefaultMappingService,
+    private DefaultMappingService: DefaultMappingService,
     private router: Router,
-    private previewFileService: PreviewFileService
+    private previewFileService: PreviewFileService,
+    private empresaService: EmpresaService
   ) { }
 
   ngOnInit(): void {
 
-    this.selectedEmpresa = '';
+    this.selectedMapping = '';
+    this.cargarSelectMappings();
     this.cargarEmpresas();
-    this.cargarMapping();
+    this.cargarTodosLosMapping();
+    console.log('empresas', this.empresas);
     const currentYear = new Date().getFullYear();
     this.listaAnios = Array.from({ length: 10 }, (_, i) => currentYear - i);
 
@@ -88,19 +95,20 @@ export class Preview implements OnInit {
   }
 
 
-  private cargarMapping() {
+  private cargarTodosLosMapping() {
     this.authService.checkAuth().subscribe({
       next: (isAuthenticated) => {
         if (isAuthenticated) {
-          this.mappingService.getAll().subscribe({
+          this.DefaultMappingService.getAll().subscribe({
             next: (res) => {
               // ✅ Corregido: acceder al array real en "res.data"
-              this.mappings = res.data ?? [];
-              console.log('Mappings cargados:', this.mappings);
+              this.defaultMappings = res.data ?? [];
+              console.log('[DEBUG]funcion cargarMapping - Mappings cargados:', this.defaultMappings);
+
             },
             error: (err) => {
-              console.error('Error al obtener mappings:', err);
-              this.mappings = [];
+              console.error('Error al obtener defaultMappings:', err);
+              this.defaultMappings = [];
             },
           });
         } else {
@@ -123,6 +131,34 @@ export class Preview implements OnInit {
                 this.empresas = res.data;
               } else {
                 console.warn('Error al obtener empresas');
+              }
+            },
+            error: (err) => console.error('Error de API', err),
+          });
+        } else {
+          this.msgError = 'Usuario no autenticado';
+        }
+      },
+      error: () => {
+        this.msgError = 'Error al verificar autenticación';
+      },
+    });
+  }
+
+
+
+
+  private cargarSelectMappings() {
+    this.authService.checkAuth().subscribe({
+      next: (isAuthenticated) => {
+        if (isAuthenticated) {
+          this.mappingService.getMappings().subscribe({
+            next: (res) => {
+              if (res.success) {
+                this.mappings = res.data;
+                console.log('[DEBUG]funcion cargarMappings - Mappings cargados:', this.mappings);
+              } else {
+                console.warn('Error al obtener mappings');
               }
             },
             error: (err) => console.error('Error de API', err),
@@ -336,10 +372,12 @@ private readHtmlFile(file: File): void {
     rawRows: any[],
     headers: string[],
     fecha: number | string,
-    idEmpresa: string,
+    idMapping: string,
     nombreBalance: string,
     fechaInicio: string,
-    fechaFin: string
+    fechaFin: string,
+    id_empresa: string
+    
   ): {
     filasProcesadas: any[];
     headersFiltrados: string[];
@@ -366,11 +404,11 @@ private readHtmlFile(file: File): void {
       return nombre.includes('total') || nombre.includes('saldo');
     };
 
-    // Filtro mappings por empresa actual y CV-XX
-    const mappingsEmpresa = this.mappings.filter(
-      (m) => m.id_empresa === idEmpresa
+    // Filtro defaultMappings por mapping actual y CV-XX
+    const mappingsMapping = this.defaultMappings.filter(
+      (m) => m.id_mapping === idMapping
     );
-    const mappingsCVXX = this.mappings.filter((m) => m.id_empresa === 'CV-XX');
+    const mappingsCVXX = this.defaultMappings.filter((m) => m.id_mapping === 'NO-MAPPING');
 
     let totalDeudor = 0;
     let totalAcreedor = 0;
@@ -391,8 +429,8 @@ private readHtmlFile(file: File): void {
         totalDeudor += deudor;
         totalAcreedor += acreedor;
 
-        // 1. Buscar mapping por empresa actual
-        let mapping = mappingsEmpresa.find((m) => m.num_cuenta === num_cuenta);
+        // 1. Buscar mapping por mapping actual
+        let mapping = mappingsMapping.find((m) => m.num_cuenta === num_cuenta);
 
         // 2. Si no existe, buscar en CV-XX
         if (!mapping) {
@@ -414,11 +452,12 @@ private readHtmlFile(file: File): void {
           nombre,
           saldo,
           ejercicio: fecha,
-          id_empresa: idEmpresa,
+          id_mapping: idMapping,
           id_fsa,
           nombre_balance: nombreBalance ?? '',
           fecha_inicio: fechaInicio ?? '',
           fecha_fin: fechaFin ?? '',
+          id_empresa: id_empresa ?? ''
         };
       });
 
@@ -434,6 +473,7 @@ private readHtmlFile(file: File): void {
         'Nombre Balance',
         'Fecha Inicio',
         'Fecha Fin',
+        'Empresa',
       ],
 
       totalDeudor,
@@ -444,13 +484,14 @@ private readHtmlFile(file: File): void {
 
   visualizarProcesado(): void {
 
+    const mappingSeleccionada = this.selectedMapping;
     const empresaSeleccionada = this.selectedEmpresa;
 
     console.log("ejercicio: ", this.anioSeleccionado)
 
     this.msgError = '';
-    if (!this.anioSeleccionado || !empresaSeleccionada) {
-      this.msgError = 'Debe seleccionar una empresa y una fecha';
+    if (!this.anioSeleccionado || !mappingSeleccionada || !empresaSeleccionada) {
+      this.msgError = 'Debe seleccionar una mapping y una fecha';
       return;
     }
 
@@ -470,10 +511,11 @@ private readHtmlFile(file: File): void {
         this.originalTableData,
         this.originalHeaders,
         this.anioSeleccionado,
-        this.selectedEmpresa,
+        this.selectedMapping,
         this.nombreBalance,
         this.fechaInicio,
-        this.fechaFin
+        this.fechaFin,
+        this.selectedEmpresa
       );
 
       this.totalDeudor = totalDeudor;
@@ -490,11 +532,12 @@ private readHtmlFile(file: File): void {
         [headersFiltrados[1]]: b.nombre,
         [headersFiltrados[2]]: b.saldo,
         [headersFiltrados[3]]: b.ejercicio,
-        [headersFiltrados[4]]: b.id_empresa,
+        [headersFiltrados[4]]: b.id_mapping,
         [headersFiltrados[5]]: b.id_fsa,
         [headersFiltrados[6]]: b.nombre_balance,
         [headersFiltrados[7]]: b.fecha_inicio,
         [headersFiltrados[8]]: b.fecha_fin,
+        [headersFiltrados[9]]: b.id_empresa
       }));
 
       this.processed = true;
@@ -520,11 +563,11 @@ procesarInformacion(): void {
     return;
   }
 
-  const empresaSeleccionada = this.selectedEmpresa;
+  const mappingSeleccionada = this.selectedMapping;
 
-  if (!this.anioSeleccionado || !empresaSeleccionada) {
+  if (!this.anioSeleccionado || !mappingSeleccionada) {
     this.showSpinner = false;
-    this.msgError = 'Debe seleccionar una empresa y una fecha';
+    this.msgError = 'Debe seleccionar una mapping y una fecha';
     
     return;
   }
@@ -639,10 +682,11 @@ private continuarProcesamiento(): void {
         this.originalTableData,
         this.originalHeaders,
         this.anioSeleccionado!,
-        this.selectedEmpresa,
+        this.selectedMapping,
         this.nombreBalance,
         this.fechaInicio,
         this.fechaFin,
+        this.selectedEmpresa
 
       );
 

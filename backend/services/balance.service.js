@@ -6,8 +6,8 @@ const crypto = require('crypto');
  * Servicio para gestionar balances
  */
 
-function generarIdBalance({ num_cuenta, id_empresa, ejercicio, fecha_inicio, fecha_fin }) {
-  const raw = `${num_cuenta}|${id_empresa}|${ejercicio}|${fecha_inicio}|${fecha_fin}`;
+function generarIdBalance({ num_cuenta, id_mapping, ejercicio, fecha_inicio, fecha_fin }) {
+  const raw = `${num_cuenta}|${id_mapping}|${ejercicio}|${fecha_inicio}|${fecha_fin}`;
   return crypto.createHash('md5').update(raw).digest('hex');
 }
 
@@ -15,7 +15,7 @@ function generarIdBalance({ num_cuenta, id_empresa, ejercicio, fecha_inicio, fec
 class BalanceService {
  /**
    * Crea un array de balances
-   * @param {string} balances - Array del balance (num_cuenta, nombre, saldo, fecha_procesado, id_user, id_empresa)
+   * @param {string} balances - Array del balance (num_cuenta, nombre, saldo, fecha_procesado, id_user, id_mapping)
    * @param {string} userId - Id del usaurio que realiza la acción (para logging)
    * @returns {Object} Resultado de la operación
    */
@@ -28,7 +28,7 @@ class BalanceService {
       }
 
       const primerBalance = balances[0];
-      const claves = ['num_cuenta', 'nombre_balance' , 'id_empresa', 'ejercicio', 'fecha_inicio', 'fecha_fin'];
+      const claves = ['num_cuenta', 'nombre_balance' , 'id_mapping', 'ejercicio', 'fecha_inicio', 'fecha_fin', 'id_empresa'];
 
       // Validación general de campos mínimos en el primer balance
       for (const campo of claves) {
@@ -37,7 +37,7 @@ class BalanceService {
         }
       }
 
-      const { id_empresa, nombre_balance, ejercicio, fecha_inicio, fecha_fin } = primerBalance;
+      const { id_mapping, nombre_balance, ejercicio, fecha_inicio, fecha_fin, id_empresa } = primerBalance;
       console.log("Datos del primer balance:", primerBalance);
       // Validar consistencia en todo el lote
       const cuentasVistas = new Set();
@@ -46,14 +46,15 @@ class BalanceService {
         // 1. Que todos tengan los mismos datos clave
         if (
           b.nombre_balance !== nombre_balance ||
-          b.id_empresa !== id_empresa ||
+          b.id_mapping !== id_mapping ||
           b.ejercicio !== ejercicio ||
           b.fecha_inicio !== fecha_inicio ||
-          b.fecha_fin !== fecha_fin
+          b.fecha_fin !== fecha_fin ||
+          b.id_empresa !== id_empresa
         ) {
           return {
             success: false,
-            message: 'Todos los balances deben compartir la misma empresa, ejercicio y rango de fechas.',
+            message: 'Todos los balances deben compartir la misma mapping, ejercicio y rango de fechas.',
           };
         }
 
@@ -186,9 +187,11 @@ static async getById(id_blce) {
         ejercicio,
         fechaInicio,
         fechaFin,
-        idEmpresa,
+        idMapping,
         idEstado,
         idUser,
+        idEmpresa,
+        empresaDesc,
         limit = 10,
         offset = 0
       } = query;
@@ -205,9 +208,11 @@ static async getById(id_blce) {
         ejercicio,
         fechaInicio,
         fechaFin,
-        idEmpresa,
+        idMapping,
         idEstado,
         idUser,
+        idEmpresa,
+        empresaDesc,
         limit,
         offset
       };

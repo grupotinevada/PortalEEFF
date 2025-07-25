@@ -55,52 +55,52 @@
 [ACTION] 2025-07-11T17:33:41.820Z - User undefined - CREAR_BALANCE_BULK - Insertados: 57
 [ACTION] 2025-07-14T16:30:22.460Z - User undefined - LOGIN - Usuario admin@inevada.cl inició sesión
 [ACTION] 2025-07-14T16:30:56.287Z - User undefined - LOGIN - Usuario admin@inevada.cl inició sesión
-[ACTION] 2025-07-14T20:29:56.569Z - User desconocido - Consulta balance por periodo - Empresa: CV19
-[INFO] 2025-07-14T20:29:56.571Z - Consultando balances por rango: Empresa CV19, Desde 2024-01-01 hasta 2024-12-31
-[ACTION] 2025-07-14T20:47:47.525Z - User desconocido - Consulta balance por periodo - Empresa: CV19
-[INFO] 2025-07-14T20:47:47.526Z - Consultando balances por rango: Empresa CV19, Desde 2024-01-01 hasta 2024-12-31
-[ACTION] 2025-07-14T20:47:47.533Z - User desconocido - Consulta balance por periodo - Empresa: CV19
-[INFO] 2025-07-14T20:47:47.533Z - Consultando balances por rango: Empresa CV19, Desde 2023-01-01 hasta 2023-12-31
-[ACTION] 2025-07-14T20:52:35.378Z - User desconocido - Consulta balance por periodo - Empresa: CV19
-[INFO] 2025-07-14T20:52:35.380Z - Consultando balances por rango: Empresa CV19, Desde 2023-01-01 hasta 2023-12-31
-[ACTION] 2025-07-14T20:52:35.382Z - User desconocido - Consulta balance por periodo - Empresa: CV19
-[INFO] 2025-07-14T20:52:35.382Z - Consultando balances por rango: Empresa CV19, Desde 2024-01-01 hasta 2024-12-31
-[ACTION] 2025-07-14T20:55:06.859Z - User desconocido - Consulta balance por periodo - Empresa: CV19
-[INFO] 2025-07-14T20:55:06.860Z - Consultando balances por rango: Empresa CV19, Desde 2023-01-01 hasta 2023-12-31
-[ACTION] 2025-07-14T20:55:06.863Z - User desconocido - Consulta balance por periodo - Empresa: CV19
-[INFO] 2025-07-14T20:55:06.864Z - Consultando balances por rango: Empresa CV19, Desde 2024-01-01 hasta 2024-12-31
-[ACTION] 2025-07-14T21:04:22.187Z - User desconocido - Consulta balance por periodo - Empresa: CV19
-[INFO] 2025-07-14T21:04:22.188Z - Consultando balances por rango: Empresa CV19, Desde 2024-01-01 hasta 2024-01-01
-[ACTION] 2025-07-14T21:04:22.192Z - User desconocido - Consulta balance por periodo - Empresa: CV19
-[INFO] 2025-07-14T21:04:22.192Z - Consultando balances por rango: Empresa CV19, Desde 2023-01-01 hasta 2023-12-31
-[ACTION] 2025-07-14T21:09:10.362Z - User desconocido - Consulta balance por periodo - Empresa: CV19
-[INFO] 2025-07-14T21:09:10.366Z - Consultando balances por rango: Empresa CV19, Desde 2023-01-01 hasta 2023-01-31
-[ACTION] 2025-07-14T21:09:10.369Z - User desconocido - Consulta balance por periodo - Empresa: CV19
-[INFO] 2025-07-14T21:09:10.369Z - Consultando balances por rango: Empresa CV19, Desde 2024-01-01 hasta 2024-01-31
-[ACTION] 2025-07-14T21:09:19.348Z - User desconocido - Consulta balance por periodo - Empresa: CV19
-[INFO] 2025-07-14T21:09:19.349Z - Consultando balances por rango: Empresa CV19, Desde 2023-01-01 hasta 2023-01-31
-[ACTION] 2025-07-14T21:09:19.352Z - User desconocido - Consulta balance por periodo - Empresa: CV19
-[INFO] 2025-07-14T21:09:19.353Z - Consultando balances por rango: Empresa CV19, Desde 2024-01-01 hasta 2024-01-31
-[ACTION] 2025-07-14T21:09:20.290Z - User desconocido - Consulta balance por periodo - Empresa: CV19
-[INFO] 2025-07-14T21:09:20.291Z - Consultando balances por rango: Empresa CV19, Desde 2023-01-01 hasta 2023-01-31
-[ACTION] 2025-07-14T21:09:20.294Z - User desconocido - Consulta balance por periodo - Empresa: CV19
-[INFO] 2025-07-14T21:09:20.294Z - Consultando balances por rango: Empresa CV19, Desde 2024-01-01 hasta 2024-01-31
-[ACTION] 2025-07-14T21:10:32.592Z - User desconocido - Consulta balance por periodo - Empresa: CV19
-[INFO] 2025-07-14T21:10:32.593Z - Consultando balances por rango: Empresa CV19, Desde 2024-01-01 hasta 2024-12-31
-[ACTION] 2025-07-14T21:10:32.595Z - User desconocido - Consulta balance por periodo - Empresa: CV19
-[INFO] 2025-07-14T21:10:32.596Z - Consultando balances por rango: Empresa CV19, Desde 2023-01-01 hasta 2023-12-31
-[ACTION] 2025-07-14T21:19:01.473Z - User desconocido - Consulta balance por periodo - Empresa: CV19
-[INFO] 2025-07-14T21:19:01.474Z - Consultando balances por rango: Empresa CV19, Desde 2024-01-01 hasta 2024-12-31
-[ACTION] 2025-07-14T21:19:01.476Z - User desconocido - Consulta balance por periodo - Empresa: CV19
-[INFO] 2025-07-14T21:19:01.477Z - Consultando balances por rango: Empresa CV19, Desde 2023-01-01 hasta 2023-12-31
-[ACTION] 2025-07-14T21:23:40.907Z - User desconocido - Consulta balance por periodo - Empresa: CV19
-[INFO] 2025-07-14T21:23:40.908Z - Consultando balances por rango: Empresa CV19, Desde 2024-01-01 hasta 2024-12-31
-[ACTION] 2025-07-14T21:23:40.910Z - User desconocido - Consulta balance por periodo - Empresa: CV19
-[INFO] 2025-07-14T21:23:40.911Z - Consultando balances por rango: Empresa CV19, Desde 2023-01-01 hasta 2023-12-31
-[ACTION] 2025-07-15T14:06:26.112Z - User desconocido - Consulta balance por periodo - Empresa: CV19
-[INFO] 2025-07-15T14:06:26.116Z - Consultando balances por rango: Empresa CV19, Desde 2024-01-01 hasta 2024-12-31
-[ACTION] 2025-07-15T14:06:26.121Z - User desconocido - Consulta balance por periodo - Empresa: CV19
-[INFO] 2025-07-15T14:06:26.122Z - Consultando balances por rango: Empresa CV19, Desde 2023-01-01 hasta 2023-12-31
+[ACTION] 2025-07-14T20:29:56.569Z - User desconocido - Consulta balance por periodo - mapping: CV19
+[INFO] 2025-07-14T20:29:56.571Z - Consultando balances por rango: mapping CV19, Desde 2024-01-01 hasta 2024-12-31
+[ACTION] 2025-07-14T20:47:47.525Z - User desconocido - Consulta balance por periodo - mapping: CV19
+[INFO] 2025-07-14T20:47:47.526Z - Consultando balances por rango: mapping CV19, Desde 2024-01-01 hasta 2024-12-31
+[ACTION] 2025-07-14T20:47:47.533Z - User desconocido - Consulta balance por periodo - mapping: CV19
+[INFO] 2025-07-14T20:47:47.533Z - Consultando balances por rango: mapping CV19, Desde 2023-01-01 hasta 2023-12-31
+[ACTION] 2025-07-14T20:52:35.378Z - User desconocido - Consulta balance por periodo - mapping: CV19
+[INFO] 2025-07-14T20:52:35.380Z - Consultando balances por rango: mapping CV19, Desde 2023-01-01 hasta 2023-12-31
+[ACTION] 2025-07-14T20:52:35.382Z - User desconocido - Consulta balance por periodo - mapping: CV19
+[INFO] 2025-07-14T20:52:35.382Z - Consultando balances por rango: mapping CV19, Desde 2024-01-01 hasta 2024-12-31
+[ACTION] 2025-07-14T20:55:06.859Z - User desconocido - Consulta balance por periodo - mapping: CV19
+[INFO] 2025-07-14T20:55:06.860Z - Consultando balances por rango: mapping CV19, Desde 2023-01-01 hasta 2023-12-31
+[ACTION] 2025-07-14T20:55:06.863Z - User desconocido - Consulta balance por periodo - mapping: CV19
+[INFO] 2025-07-14T20:55:06.864Z - Consultando balances por rango: mapping CV19, Desde 2024-01-01 hasta 2024-12-31
+[ACTION] 2025-07-14T21:04:22.187Z - User desconocido - Consulta balance por periodo - mapping: CV19
+[INFO] 2025-07-14T21:04:22.188Z - Consultando balances por rango: mapping CV19, Desde 2024-01-01 hasta 2024-01-01
+[ACTION] 2025-07-14T21:04:22.192Z - User desconocido - Consulta balance por periodo - mapping: CV19
+[INFO] 2025-07-14T21:04:22.192Z - Consultando balances por rango: mapping CV19, Desde 2023-01-01 hasta 2023-12-31
+[ACTION] 2025-07-14T21:09:10.362Z - User desconocido - Consulta balance por periodo - mapping: CV19
+[INFO] 2025-07-14T21:09:10.366Z - Consultando balances por rango: mapping CV19, Desde 2023-01-01 hasta 2023-01-31
+[ACTION] 2025-07-14T21:09:10.369Z - User desconocido - Consulta balance por periodo - mapping: CV19
+[INFO] 2025-07-14T21:09:10.369Z - Consultando balances por rango: mapping CV19, Desde 2024-01-01 hasta 2024-01-31
+[ACTION] 2025-07-14T21:09:19.348Z - User desconocido - Consulta balance por periodo - mapping: CV19
+[INFO] 2025-07-14T21:09:19.349Z - Consultando balances por rango: mapping CV19, Desde 2023-01-01 hasta 2023-01-31
+[ACTION] 2025-07-14T21:09:19.352Z - User desconocido - Consulta balance por periodo - mapping: CV19
+[INFO] 2025-07-14T21:09:19.353Z - Consultando balances por rango: mapping CV19, Desde 2024-01-01 hasta 2024-01-31
+[ACTION] 2025-07-14T21:09:20.290Z - User desconocido - Consulta balance por periodo - mapping: CV19
+[INFO] 2025-07-14T21:09:20.291Z - Consultando balances por rango: mapping CV19, Desde 2023-01-01 hasta 2023-01-31
+[ACTION] 2025-07-14T21:09:20.294Z - User desconocido - Consulta balance por periodo - mapping: CV19
+[INFO] 2025-07-14T21:09:20.294Z - Consultando balances por rango: mapping CV19, Desde 2024-01-01 hasta 2024-01-31
+[ACTION] 2025-07-14T21:10:32.592Z - User desconocido - Consulta balance por periodo - mapping: CV19
+[INFO] 2025-07-14T21:10:32.593Z - Consultando balances por rango: mapping CV19, Desde 2024-01-01 hasta 2024-12-31
+[ACTION] 2025-07-14T21:10:32.595Z - User desconocido - Consulta balance por periodo - mapping: CV19
+[INFO] 2025-07-14T21:10:32.596Z - Consultando balances por rango: mapping CV19, Desde 2023-01-01 hasta 2023-12-31
+[ACTION] 2025-07-14T21:19:01.473Z - User desconocido - Consulta balance por periodo - mapping: CV19
+[INFO] 2025-07-14T21:19:01.474Z - Consultando balances por rango: mapping CV19, Desde 2024-01-01 hasta 2024-12-31
+[ACTION] 2025-07-14T21:19:01.476Z - User desconocido - Consulta balance por periodo - mapping: CV19
+[INFO] 2025-07-14T21:19:01.477Z - Consultando balances por rango: mapping CV19, Desde 2023-01-01 hasta 2023-12-31
+[ACTION] 2025-07-14T21:23:40.907Z - User desconocido - Consulta balance por periodo - mapping: CV19
+[INFO] 2025-07-14T21:23:40.908Z - Consultando balances por rango: mapping CV19, Desde 2024-01-01 hasta 2024-12-31
+[ACTION] 2025-07-14T21:23:40.910Z - User desconocido - Consulta balance por periodo - mapping: CV19
+[INFO] 2025-07-14T21:23:40.911Z - Consultando balances por rango: mapping CV19, Desde 2023-01-01 hasta 2023-12-31
+[ACTION] 2025-07-15T14:06:26.112Z - User desconocido - Consulta balance por periodo - mapping: CV19
+[INFO] 2025-07-15T14:06:26.116Z - Consultando balances por rango: mapping CV19, Desde 2024-01-01 hasta 2024-12-31
+[ACTION] 2025-07-15T14:06:26.121Z - User desconocido - Consulta balance por periodo - mapping: CV19
+[INFO] 2025-07-15T14:06:26.122Z - Consultando balances por rango: mapping CV19, Desde 2023-01-01 hasta 2023-12-31
 [ACTION] 2025-07-15T15:43:20.546Z - User undefined - LOGIN - Usuario admin@inevada.cl inició sesión
 [ACTION] 2025-07-15T16:14:55.147Z - User undefined - LOGIN - Usuario admin@inevada.cl inició sesión
 [ACTION] 2025-07-17T15:34:26.116Z - User undefined - LOGIN - Usuario admin@inevada.cl inició sesión
@@ -527,3 +527,17 @@
 [INFO] 2025-07-23T21:42:47.529Z - Iniciando búsqueda de balance con ID: d225674fc970644ee933433d839fc493
 [INFO] 2025-07-23T21:42:47.531Z - Balance encontrado con ID: d225674fc970644ee933433d839fc493
 [ACTION] 2025-07-23T21:46:36.389Z - User 1 - CREAR_BALANCE_BULK - Insertados: 48 con id_blce: e9b27545411ef3b2b4d22f778c20ed91
+[ACTION] 2025-07-24T19:11:58.349Z - User undefined - LOGIN - Usuario admin@inevada.cl inició sesión
+[ACTION] 2025-07-24T19:42:34.266Z - User 1 - CREAR_BALANCE_BULK - Insertados: 57 con id_blce: 5a827002222d518e4cc95e52d31a5445
+[ACTION] 2025-07-24T21:24:05.853Z - User 1 - CREAR_BALANCE_BULK - Insertados: 48 con id_blce: 1f35f36f7e8b7630181d0761686a959d
+[INFO] 2025-07-24T21:34:21.956Z - Usuario Administrador (1) solicitó balance con ID: 1f35f36f7e8b7630181d0761686a959d
+[INFO] 2025-07-24T21:34:21.958Z - Iniciando búsqueda de balance con ID: 1f35f36f7e8b7630181d0761686a959d
+[INFO] 2025-07-24T21:34:21.965Z - Balance encontrado con ID: 1f35f36f7e8b7630181d0761686a959d
+[ACTION] 2025-07-24T21:35:05.768Z - User 1 - CREAR_BALANCE_BULK - Insertados: 48 con id_blce: 6ddd92d391bd0748da7fbcf1a93ac260
+[INFO] 2025-07-24T21:35:24.003Z - Usuario Administrador (1) solicitó balance con ID: 6ddd92d391bd0748da7fbcf1a93ac260
+[INFO] 2025-07-24T21:35:24.004Z - Iniciando búsqueda de balance con ID: 6ddd92d391bd0748da7fbcf1a93ac260
+[INFO] 2025-07-24T21:35:24.006Z - Balance encontrado con ID: 6ddd92d391bd0748da7fbcf1a93ac260
+[ACTION] 2025-07-25T15:23:05.503Z - User 1 - CREAR_BALANCE_BULK - Insertados: 48 con id_blce: 6ddd92d391bd0748da7fbcf1a93ac260
+[INFO] 2025-07-25T15:23:13.112Z - Usuario Administrador (1) solicitó balance con ID: 6ddd92d391bd0748da7fbcf1a93ac260
+[INFO] 2025-07-25T15:23:13.113Z - Iniciando búsqueda de balance con ID: 6ddd92d391bd0748da7fbcf1a93ac260
+[INFO] 2025-07-25T15:23:13.119Z - Balance encontrado con ID: 6ddd92d391bd0748da7fbcf1a93ac260

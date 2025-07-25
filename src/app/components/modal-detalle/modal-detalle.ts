@@ -6,7 +6,7 @@ import { NgbAccordionModule,
          NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
          
 import { BalanceService } from '../../services/balance.service';
-import { Empresa } from '../../models/empresa.model';
+import { mapping } from '../../models/mapping.model';
 import { IFsa } from '../../models/fsa.model';
 import { IBalanceGet } from '../../models/balance.model';
 import { Spinner } from '../spinner/spinner';
@@ -25,7 +25,7 @@ import { CommonModule } from '@angular/common';
 
 export class ModalDetalle implements OnInit {
   @Input() id!: number;
-  @Input() empresas: Empresa[] = []
+  @Input() mappings: mapping[] = []
   @Input() fsas: IFsa[] = [];
   showSpinner = false;
   msgError = '';
@@ -37,7 +37,7 @@ export class ModalDetalle implements OnInit {
 
   ngOnInit(): void {
     console.log('ID recibido en el modal:', this.id);
-    console.log('Empresas recibidas en el modal:', this.empresas);
+    console.log('Mappings recibidas en el modal:', this.mappings);
     console.log('FSAs recibidas en el modal:', this.fsas);
 
     this.getBalance(this.id.toString());

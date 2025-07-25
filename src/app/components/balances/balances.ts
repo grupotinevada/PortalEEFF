@@ -7,8 +7,8 @@ import { AuthService } from '../../services/auth.service';
 import { DefaultMappingService } from '../../services/default-mapping.service';
 import { IEstados, IFsa } from '../../models/fsa.model';
 import { Navbar } from '../navbar/navbar';
-import { EmpresaService } from '../../services/empresa.service';
-import { Empresa } from '../../models/empresa.model';
+import { MappingService } from '../../services/mapping.service';
+import { mapping } from '../../models/mapping.model';
 import { Spinner } from '../spinner/spinner';
 import { ModalDetalle } from '../modal-detalle/modal-detalle';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
@@ -31,8 +31,8 @@ export class Balances implements OnInit {
   estados: IEstados[] = []
   filtroForm: any;
   
-  empresas: Empresa[] = [];
-  empresas2: Empresa[] = [];
+  mappings: mapping[] = [];
+
 
   fsas: IFsa[] = [];
   fsas2: IFsa[] = [];
@@ -42,7 +42,7 @@ export class Balances implements OnInit {
     private fb: FormBuilder,
     private authService: AuthService,
     private defaultMappingService: DefaultMappingService,
-    private empresaService: EmpresaService,
+    private mappingService: MappingService,
     private modalService: NgbModal,
     
   ) { }
@@ -53,14 +53,15 @@ export class Balances implements OnInit {
       ejercicio: [''],
       fechaInicio: [''],
       fechaFin: [''],
-      idEmpresa: [''],
+      idMapping: [''],
       idEstado: [''],
       idUser: ['']
     });
 
     this.loadBalances();
+
     this.getEstados();
-    this.cargarEmpresas();
+    this.cargarMappings();
     this.getFsaData();
   }
 
@@ -99,18 +100,18 @@ export class Balances implements OnInit {
     });
   }
 
-  private cargarEmpresas() {
+  private cargarMappings() {
     this.loading = true;
     this.authService.checkAuth().subscribe({
       next: (isAuthenticated) => {
         if (isAuthenticated) {
-          this.empresaService.getEmpresas().subscribe({
+          this.mappingService.getMappings().subscribe({
             next: (res) => {
               if (res.success) {
-                this.empresas = res.data;
+                this.mappings = res.data;
               } else {
                 this.loading = false;
-                console.warn('Error al obtener empresas');
+                console.warn('Error al obtener mappings');
               }
             },
 
@@ -130,6 +131,7 @@ export class Balances implements OnInit {
       },
     });
   }
+
   loadBalances(): void {
     this.loading = true;
 
@@ -176,7 +178,7 @@ export class Balances implements OnInit {
       ejercicio: [''],
       fechaInicio: [''],
       fechaFin: [''],
-      idEmpresa: [''],
+      idMapping: [''],
       idEstado: [''],
       idUser: ['']
     });
@@ -193,7 +195,7 @@ export class Balances implements OnInit {
 
     });
     // Pasa los datos al modal
-    modalRef.componentInstance.empresas = this.empresas;
+    modalRef.componentInstance.mappings = this.mappings;
     modalRef.componentInstance.fsas = this.fsas;
     modalRef.componentInstance.id = id;
 

@@ -32,13 +32,14 @@ class BalanceModel {
       b.fecha_inicio,
       b.fecha_fin,
       b.id_user,
-      b.id_empresa,
+      b.id_mapping,
       b.id_fsa,
       b.id_estado,
+      b.id_empresa
     ]);
     const [result] = await pool.query(
       `INSERT INTO balance 
-    (id_blce, num_cuenta, nombre_conjunto, nombre, saldo, ejercicio, fecha_inicio, fecha_fin, id_user, id_empresa, id_fsa, id_estado)
+    (id_blce, num_cuenta, nombre_conjunto, nombre, saldo, ejercicio, fecha_inicio, fecha_fin, id_user, id_mapping, id_fsa, id_estado,id_empresa)
      VALUES ?`,
       [values]
     );
@@ -55,12 +56,13 @@ class BalanceModel {
     fecha_inicio,
     fecha_fin,
     id_user,
-    id_empresa,
+    id_mapping,
     id_fsa,
+    id_empresa
   }) {
     const [result] = await pool.query(
       `INSERT INTO balance 
-    (num_cuenta, nombre_conjunto, nombre, saldo, ejercicio, fecha_inicio, fecha_fin, id_user, id_empresa, id_fsa)
+    (num_cuenta, nombre_conjunto, nombre, saldo, ejercicio, fecha_inicio, fecha_fin, id_user, id_mapping, id_fsa, id_empresa)
      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       [
         num_cuenta,
@@ -71,8 +73,9 @@ class BalanceModel {
         fecha_inicio,
         fecha_fin,
         id_user,
-        id_empresa,
+        id_mapping,
         id_fsa,
+        id_empresa
       ]
     );
     return { id: result.insertId };
@@ -91,17 +94,20 @@ class BalanceModel {
     b.ejercicio,
     b.fecha_inicio,
     b.fecha_fin,
-    b.id_empresa,
-    e.descripcion AS empresa_desc,
+    b.id_mapping,
+    e.descripcion AS mapping_desc,
     b.id_estado,
+    em.id_empresa,
+    em.descripcion AS empresa_desc,
     es.desc AS estado_desc,
     es.color AS estado_color,
     u.username,
     u.email
   FROM balance b
-  JOIN empresa e ON b.id_empresa = e.id_empresa
+  JOIN mapping e ON b.id_mapping = e.id_mapping
   JOIN estado es ON b.id_estado = es.id_estado
   JOIN usuario u ON b.id_user = u.id_user
+  JOIN empresa em ON b.id_empresa = em.id_empresa
   ${whereClause}
   ORDER BY b.fecha_fin DESC
   LIMIT ? OFFSET ?
@@ -134,9 +140,10 @@ class BalanceModel {
     ejercicio,
     fechaInicio,
     fechaFin,
-    idEmpresa,
+    idMapping,
     idEstado,
     iduser,
+    id_empresa
   }) {
     const params = [];
     let whereClause = "WHERE 1 = 1";
@@ -157,9 +164,9 @@ class BalanceModel {
       whereClause += " AND fecha_fin <= ?";
       params.push(fechaFin);
     }
-    if (idEmpresa) {
-      whereClause += " AND id_empresa = ?";
-      params.push(idEmpresa);
+    if (idMapping) {
+      whereClause += " AND id_mapping = ?";
+      params.push(idMapping);
     }
     if (idEstado) {
       whereClause += " AND id_estado = ?";
@@ -168,6 +175,10 @@ class BalanceModel {
     if (iduser) {
       whereClause += " AND id_user = ?";
       params.push(iduser);
+    }
+        if (id_empresa) {
+      whereClause += " AND id_empresa = ?";
+      params.push(id_empresa);
     }
 
     return { whereClause, params };

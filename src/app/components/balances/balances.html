@@ -42,14 +42,14 @@
             />
           </div>
           <div class="col">
-            <label class="form-label">Empresa</label>
+            <label class="form-label">Mapping</label>
             <select
               class="form-select form-select-sm"
-              formControlName="idEmpresa"
+              formControlName="idMapping"
             >
               <option value="">Todas</option>
-              <option *ngFor="let e of empresas" [value]="e.id_empresa">
-                {{ e.id_empresa }} - {{e.descripcion}}
+              <option *ngFor="let e of mappings" [value]="e.id_mapping">
+                {{ e.id_mapping }} - {{e.descripcion}}
               </option>
             </select>
           </div>
@@ -95,6 +95,7 @@
               <th>#</th>
               <th>Nombre</th>
               <th>Ejercicio</th>
+              <th>Empresa</th>
               <th>Inicio</th>
               <th>Fin</th>
               <th>Mapping</th>
@@ -110,10 +111,11 @@
                 <div class="fw-semibold">{{ b.nombre_conjunto }}</div>
               </td>
               <td>{{ b.ejercicio }}</td>
+              <td>{{ b.id_empresa }}</td>
               <td>{{ b.fecha_inicio | date: 'dd-MM-yyyy'}}</td>
               <td>{{ b.fecha_fin | date: 'dd-MM-yyyy'}}</td>
               <td>
-                <span class="badge bg-light text-dark">{{ b.id_empresa }} - {{b.empresa_desc}}</span>
+                <span class="badge bg-light text-dark">{{ b.id_mapping }} - {{b.mapping_desc}}</span>
               </td>
               <td>
                 <span

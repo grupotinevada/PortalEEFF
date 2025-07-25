@@ -8,22 +8,22 @@ class DefaultMappingModel {
   }
 
   static async create(mapping) {
-    const { num_cuenta, id_fsa, id_empresa } = mapping;
+    const { num_cuenta, id_fsa, id_mapping } = mapping;
     const [result] = await pool.query(
-      `INSERT INTO default_cta_fsa_mapping (num_cuenta, id_fsa, id_empresa)
+      `INSERT INTO default_cta_fsa_mapping (num_cuenta, id_fsa, id_mapping)
        VALUES (?, ?, ?)`,
-      [num_cuenta, id_fsa, id_empresa]
+      [num_cuenta, id_fsa, id_mapping]
     );
     return result;
   }
 
   static async update(mapping) {
-    const { num_cuenta, id_fsa, id_empresa } = mapping;
+    const { num_cuenta, id_fsa, id_mapping } = mapping;
     const [result] = await pool.query(
       `UPDATE default_cta_fsa_mapping
        SET id_fsa = ?
-       WHERE num_cuenta = ? AND id_empresa = ?`,
-      [id_fsa, num_cuenta, id_empresa]
+       WHERE num_cuenta = ? AND id_mapping = ?`,
+      [id_fsa, num_cuenta, id_mapping]
     );
     return result;
   }

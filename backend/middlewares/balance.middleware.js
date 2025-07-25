@@ -9,7 +9,7 @@ const balanceValidation = [
   body('fecha_inicio').isISO8601().withMessage('fecha_inicio debe ser una fecha válida'),
   body('fecha_fin').isISO8601().withMessage('fecha_fin debe ser una fecha válida'),
   body('id_user').optional().isInt().withMessage('id_user debe ser un número entero'),
-  body('id_empresa').notEmpty().withMessage('id_empresa es obligatorio'),
+  body('id_mapping').notEmpty().withMessage('id_mapping es obligatorio'),
   body('id_fsa').optional().isString().isLength({ min: 6, max: 6 }).withMessage('id_fsa debe tener 6 caracteres')
 ];
 
@@ -24,7 +24,7 @@ const bulkBalanceValidation = [
   body('*.fecha_inicio').isISO8601().withMessage('fecha_inicio debe ser una fecha válida'),
   body('*.fecha_fin').isISO8601().withMessage('fecha_fin debe ser una fecha válida'),
   body('*.id_user').optional().isInt().withMessage('id_user debe ser un número entero'),
-  body('*.id_empresa').notEmpty().withMessage('id_empresa es obligatorio'),
+  body('*.id_mapping').notEmpty().withMessage('id_mapping es obligatorio'),
   body('*.id_fsa').optional().isString().isLength({ min: 6, max: 6 }).withMessage('id_fsa debe tener 6 caracteres')
 ];
 
