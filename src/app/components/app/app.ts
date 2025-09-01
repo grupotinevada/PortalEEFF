@@ -1,5 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
+import { SwUpdate } from '@angular/service-worker';
 
 
 @Component({
@@ -8,6 +9,30 @@ import { RouterOutlet } from '@angular/router';
   templateUrl: './app.html',
   styleUrl: './app.css',
 })
-export class App {
+export class App implements OnInit{
 
+  constructor(private swUpdate: SwUpdate) { }
+
+ngOnInit() {
+    if (this.swUpdate.isEnabled) {
+      this.swUpdate.versionUpdates.subscribe(evt => {
+        switch (evt.type) {
+          case 'VERSION_DETECTED':
+            console.log(`Downloading new app version: ${evt.version.hash}`);
+            break;
+          case 'VERSION_READY':
+            console.log(`Current app version: ${evt.currentVersion.hash}`);
+            console.log(`New app version ready for use: ${evt.latestVersion.hash}`);
+            // Preguntar al usuario si quiere recargar la página
+            if (confirm('Hay una nueva versión disponible. ¿Deseas cargarla ahora?')) {
+              window.location.reload();
+            }
+            break;
+          case 'VERSION_INSTALLATION_FAILED':
+            console.error(`Failed to install app version '${evt.version.hash}': ${evt.error}`);
+            break;
+        }
+      });
+    }
+  }
 }

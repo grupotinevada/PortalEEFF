@@ -5,3 +5,8 @@
 .modal-content {
   height: 80vh; /* Ajusta según necesites */
 }
+
+.accordion-button:not(.collapsed) {
+  /* 👇 Esta es la variable para el color de fondo */
+  --bs-accordion-active-bg: #e3f8ea; /* Cambia #dcfce7 por el color que desees */
+}

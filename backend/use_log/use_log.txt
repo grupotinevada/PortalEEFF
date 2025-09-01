@@ -541,3 +541,42 @@
 [INFO] 2025-07-25T15:23:13.112Z - Usuario Administrador (1) solicitó balance con ID: 6ddd92d391bd0748da7fbcf1a93ac260
 [INFO] 2025-07-25T15:23:13.113Z - Iniciando búsqueda de balance con ID: 6ddd92d391bd0748da7fbcf1a93ac260
 [INFO] 2025-07-25T15:23:13.119Z - Balance encontrado con ID: 6ddd92d391bd0748da7fbcf1a93ac260
+[INFO] 2025-09-01T16:08:47.290Z - Usuario Administrador (1) solicitó balance con ID: 6ddd92d391bd0748da7fbcf1a93ac260
+[INFO] 2025-09-01T16:08:47.291Z - Iniciando búsqueda de balance con ID: 6ddd92d391bd0748da7fbcf1a93ac260
+[INFO] 2025-09-01T16:08:47.296Z - Balance encontrado con ID: 6ddd92d391bd0748da7fbcf1a93ac260
+[INFO] 2025-09-01T16:13:16.429Z - Usuario Administrador (1) solicitó balance con ID: 6ddd92d391bd0748da7fbcf1a93ac260
+[INFO] 2025-09-01T16:13:16.429Z - Iniciando búsqueda de balance con ID: 6ddd92d391bd0748da7fbcf1a93ac260
+[INFO] 2025-09-01T16:13:16.433Z - Balance encontrado con ID: 6ddd92d391bd0748da7fbcf1a93ac260
+[INFO] 2025-09-01T16:32:04.291Z - Usuario Administrador (1) solicitó balance con ID: 6ddd92d391bd0748da7fbcf1a93ac260
+[INFO] 2025-09-01T16:32:04.292Z - Iniciando búsqueda de balance con ID: 6ddd92d391bd0748da7fbcf1a93ac260
+[INFO] 2025-09-01T16:32:04.295Z - Balance encontrado con ID: 6ddd92d391bd0748da7fbcf1a93ac260
+[INFO] 2025-09-01T16:40:51.848Z - Usuario Administrador (1) solicitó balance con ID: 6ddd92d391bd0748da7fbcf1a93ac260
+[INFO] 2025-09-01T16:40:51.849Z - Iniciando búsqueda de balance con ID: 6ddd92d391bd0748da7fbcf1a93ac260
+[INFO] 2025-09-01T16:40:51.853Z - Balance encontrado con ID: 6ddd92d391bd0748da7fbcf1a93ac260
+[INFO] 2025-09-01T16:41:18.985Z - Usuario Administrador (1) solicitó balance con ID: 6ddd92d391bd0748da7fbcf1a93ac260
+[INFO] 2025-09-01T16:41:18.986Z - Iniciando búsqueda de balance con ID: 6ddd92d391bd0748da7fbcf1a93ac260
+[INFO] 2025-09-01T16:41:18.988Z - Balance encontrado con ID: 6ddd92d391bd0748da7fbcf1a93ac260
+[INFO] 2025-09-01T16:46:11.313Z - Usuario Administrador (1) solicitó balance con ID: 6ddd92d391bd0748da7fbcf1a93ac260
+[INFO] 2025-09-01T16:46:11.314Z - Iniciando búsqueda de balance con ID: 6ddd92d391bd0748da7fbcf1a93ac260
+[INFO] 2025-09-01T16:46:11.317Z - Balance encontrado con ID: 6ddd92d391bd0748da7fbcf1a93ac260
+[INFO] 2025-09-01T16:48:14.462Z - Usuario Administrador (1) solicitó balance con ID: 6ddd92d391bd0748da7fbcf1a93ac260
+[INFO] 2025-09-01T16:48:14.463Z - Iniciando búsqueda de balance con ID: 6ddd92d391bd0748da7fbcf1a93ac260
+[INFO] 2025-09-01T16:48:14.465Z - Balance encontrado con ID: 6ddd92d391bd0748da7fbcf1a93ac260
+[INFO] 2025-09-01T16:59:10.263Z - Usuario Administrador (1) solicitó balance con ID: 6ddd92d391bd0748da7fbcf1a93ac260
+[INFO] 2025-09-01T16:59:10.264Z - Iniciando búsqueda de balance con ID: 6ddd92d391bd0748da7fbcf1a93ac260
+[INFO] 2025-09-01T16:59:10.266Z - Balance encontrado con ID: 6ddd92d391bd0748da7fbcf1a93ac260
+[INFO] 2025-09-01T17:07:10.697Z - Usuario Administrador (1) solicitó balance con ID: 6ddd92d391bd0748da7fbcf1a93ac260
+[INFO] 2025-09-01T17:07:10.698Z - Iniciando búsqueda de balance con ID: 6ddd92d391bd0748da7fbcf1a93ac260
+[INFO] 2025-09-01T17:07:10.700Z - Balance encontrado con ID: 6ddd92d391bd0748da7fbcf1a93ac260
+[INFO] 2025-09-01T17:09:01.312Z - Usuario Administrador (1) solicitó balance con ID: 6ddd92d391bd0748da7fbcf1a93ac260
+[INFO] 2025-09-01T17:09:01.313Z - Iniciando búsqueda de balance con ID: 6ddd92d391bd0748da7fbcf1a93ac260
+[INFO] 2025-09-01T17:09:01.315Z - Balance encontrado con ID: 6ddd92d391bd0748da7fbcf1a93ac260
+[INFO] 2025-09-01T17:09:42.191Z - Usuario Administrador (1) solicitó balance con ID: 6ddd92d391bd0748da7fbcf1a93ac260
+[INFO] 2025-09-01T17:09:42.192Z - Iniciando búsqueda de balance con ID: 6ddd92d391bd0748da7fbcf1a93ac260
+[INFO] 2025-09-01T17:09:42.194Z - Balance encontrado con ID: 6ddd92d391bd0748da7fbcf1a93ac260
+[INFO] 2025-09-01T17:13:33.977Z - Usuario Administrador (1) solicitó balance con ID: 6ddd92d391bd0748da7fbcf1a93ac260
+[INFO] 2025-09-01T17:13:33.978Z - Iniciando búsqueda de balance con ID: 6ddd92d391bd0748da7fbcf1a93ac260
+[INFO] 2025-09-01T17:13:33.980Z - Balance encontrado con ID: 6ddd92d391bd0748da7fbcf1a93ac260
+[INFO] 2025-09-01T19:12:01.507Z - Usuario Administrador (1) solicitó balance con ID: 6ddd92d391bd0748da7fbcf1a93ac260
+[INFO] 2025-09-01T19:12:01.508Z - Iniciando búsqueda de balance con ID: 6ddd92d391bd0748da7fbcf1a93ac260
+[INFO] 2025-09-01T19:12:01.510Z - Balance encontrado con ID: 6ddd92d391bd0748da7fbcf1a93ac260

@@ -31,10 +31,14 @@ export interface IDefaultMapping {
   id_mapping: string;
 }
 
-
-//Nueva comparativa:
+export interface IMacroCategoria {
+  nombre: string;
+  saldo: number;
+  categorias: IVistaEEFF[]; // Contendrá 'Activo Corriente', 'Activo No Corriente'.
+}
 export interface IVistaEEFF {
   categoria: string;
+  id_cate?: number;
   saldo: number;
   subcategorias: {
     id_fsa: string;
