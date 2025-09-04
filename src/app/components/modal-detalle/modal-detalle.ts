@@ -1,48 +1,55 @@
-import { Component, 
-         Input, 
-         OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 
-import { NgbAccordionModule, 
-         NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
-         
+import { NgbAccordionModule, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+
 import { BalanceService } from '../../services/balance.service';
 import { mapping } from '../../models/mapping.model';
 import { IFsa } from '../../models/fsa.model';
 import { IBalanceGet, IMacroCategoria } from '../../models/balance.model';
 import { Spinner } from '../spinner/spinner';
 
-import { IVistaEEFF } from '../../models/balance.model';
 import { EEFFService } from '../../services/eeff.service';
 import { CommonModule } from '@angular/common';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-modal-detalle',
   standalone: true,
   imports: [Spinner, CommonModule, NgbAccordionModule],
   templateUrl: './modal-detalle.html',
-  styleUrl: './modal-detalle.css'
+  styleUrl: './modal-detalle.css',
 })
-
 export class ModalDetalle implements OnInit {
   @Input() id!: number;
-  @Input() mappings: mapping[] = []
+  @Input() mappings: mapping[] = [];
   @Input() fsas: IFsa[] = [];
   showSpinner = false;
   msgError = '';
   balance: IBalanceGet[] = [];
+  negativos = false;
+
+  macros: IMacroCategoria[] = [];
 
   vistaAgrupada: IMacroCategoria[] = [];
+  vistaParaMostrar: IMacroCategoria[] = [];
 
-  constructor(public activeModal: NgbActiveModal, private balanceService: BalanceService, private eeffService: EEFFService) { }
+  constructor(
+    public activeModal: NgbActiveModal,
+    private balanceService: BalanceService,
+    private eeffService: EEFFService
+  ) {}
 
   ngOnInit(): void {
     console.log('ID recibido en el modal:', this.id);
     console.log('Mappings recibidas en el modal:', this.mappings);
     console.log('FSAs recibidas en el modal:', this.fsas);
 
+    
     this.getBalance(this.id.toString());
-  }
 
+
+  }
+  
   getBalance(id: string): void {
     if (!id || id.trim().length === 0) {
       this.msgError = 'ID no proporcionado';
@@ -61,7 +68,7 @@ export class ModalDetalle implements OnInit {
         console.error('Error al obtener balance:', err);
         this.msgError = 'Error al obtener el balance';
         this.showSpinner = false;
-      }
+      },
     });
   }
 
@@ -70,20 +77,111 @@ export class ModalDetalle implements OnInit {
       console.error('No hay datos disponibles para agrupar.');
       return;
     }
-    this.vistaAgrupada = this.eeffService.generarVistaAgrupada(this.balance, this.fsas);
-    console.log('Vista Agrupada Final:', this.vistaAgrupada);
+
+    this.vistaAgrupada = this.eeffService.generarVistaAgrupada(
+      this.balance,
+      this.fsas
+    );
+
+    this.macros = this.vistaAgrupada; // Guardar la vista agrupada en la propiedad macros
+    console.log('Vista Agrupada Final:', this.vistaAgrupada);    //VISTA AGRUPADA CON SALDOS ORIGINALES EN NEGATIVO
+    
+    this.vistaParaMostrar = this.eeffService.positivizarSaldosParaPreview(this.vistaAgrupada);  //PARA MOSTRAR CON SIGNO BASTA CON USAR VISTA AGRUPARA Y NO VISTAPARAMOSTRAR EN EL HTML
+    
+    // --- Validaciones ---
+    const validaciones = this.eeffService.validarEEFF(this.vistaParaMostrar);
+    console.log('Validaciones EEFF:', validaciones);
+    if (!validaciones.balanceCuadrado) {       
+      Swal.fire({
+        icon: 'warning',
+        title: 'Advertencia de cuadratura',
+        text: `El balance no cuadra: diferencia de ${validaciones.diferenciaBalance.toLocaleString()}`,
+        confirmButtonText: 'Entendido'
+      });
+    }
+
+    if (validaciones.estadoResultadosSaldo === 0) {
+      Swal.fire({
+        icon: 'info',
+        title: 'Estado de Resultados',
+        text: 'El Estado de Resultados está en 0, revise si es correcto.',
+        confirmButtonText: 'OK'
+      });
+    }
   }
 
-imprimirEEFF(): void {
-  // 1. Extraer información para el encabezado (sin cambios)
-  const nombreConjunto = this.balance[0]?.nombre_conjunto || 'Balance';
-  const ejercicio = this.balance[0]?.ejercicio || '';
-  const fechaInicio = new Date(this.balance[0]?.fecha_inicio).toLocaleDateString('es-CL');
-  const fechaFin = new Date(this.balance[0]?.fecha_fin).toLocaleDateString('es-CL');
-  const fechaImpresion = new Date().toLocaleString('es-CL');
+  mostrarNegativos(): void {
+    this.vistaParaMostrar = this.vistaAgrupada;
+    this.regenerarVista();
+  }
 
-  // 2. Definir los estilos CSS para la impresión (REFINADOS)
-  const styles = `
+  get saldosCero(): boolean {
+    //trae el estado inicial desde el servicio
+    console.log('Estado mostrarSaldosCero desde el servicio:', this.eeffService.mostrarSaldosCero);
+    return this.eeffService.mostrarSaldosCero;
+  }
+
+  mostrarSaldosCero() {
+    this.eeffService.MostrarSaldosCero();
+    // Vuelves a generar la vista para que se apliquen los cambios
+    this.regenerarVista();
+  }
+  get noMapeados(): boolean {
+    console.log
+    return this.eeffService.mostrarNoMapeados;
+  }
+  mostrarNoMapeados() {
+    this.eeffService.MostrarNoMapeados();
+    this.regenerarVista();
+  }
+
+  regenerarVista(): void {
+    // 1. Activa el spinner
+    this.showSpinner = true;
+
+    // Usamos un setTimeout para asegurar que la UI se actualice y muestre el spinner
+    // antes de iniciar el cálculo, que puede ser pesado.
+    setTimeout(() => {
+      try {
+        if (!this.balance || !this.fsas) {
+          console.error('No hay datos disponibles para reagrupar.');
+          return; // Salimos si no hay datos
+        }
+
+        // 2. Ejecuta la misma lógica que tu función de carga inicial
+        this.vistaAgrupada = this.eeffService.generarVistaAgrupada(
+          this.balance,
+          this.fsas
+        );
+        console.log('Vista Regenerada:', this.vistaAgrupada);
+
+        // --- Validaciones ---
+        const validaciones = this.eeffService.validarEEFF(this.vistaAgrupada);
+        console.log('Validaciones EEFF tras regenerar:', validaciones);
+      } catch (error) {
+        console.error('Ocurrió un error al regenerar la vista:', error);
+        // Aquí podrías mostrar una notificación de error al usuario
+      } finally {
+        // 3. Desactiva el spinner, incluso si ocurrió un error.
+        this.showSpinner = false;
+      }
+    }, 0); // Un delay de 0 es suficiente para que el navegador actualice la UI
+  }
+
+  imprimirEEFF(): void {
+    // 1. Extraer información para el encabezado (sin cambios)
+    const nombreConjunto = this.balance[0]?.nombre_conjunto || 'Balance';
+    const ejercicio = this.balance[0]?.ejercicio || '';
+    const fechaInicio = new Date(
+      this.balance[0]?.fecha_inicio
+    ).toLocaleDateString('es-CL');
+    const fechaFin = new Date(this.balance[0]?.fecha_fin).toLocaleDateString(
+      'es-CL'
+    );
+    const fechaImpresion = new Date().toLocaleString('es-CL');
+
+    // 2. Definir los estilos CSS para la impresión (REFINADOS)
+    const styles = `
     <style>
       body {
         margin: 20px;
@@ -152,45 +250,51 @@ imprimirEEFF(): void {
     </style>
   `;
 
-  // 3. Construir el cuerpo de la tabla (con .toUpperCase() para coherencia)
-  let tableBody = '';
-  this.vistaAgrupada.forEach(macro => {
-    // Fila de encabezado para la macro categoría
-    tableBody += `
+    // 3. Construir el cuerpo de la tabla (con .toUpperCase() para coherencia)
+    let tableBody = '';
+    this.vistaAgrupada.forEach((macro) => {
+      // Fila de encabezado para la macro categoría
+      tableBody += `
       <tr class="row-macro-header">
         <td colspan="2">${macro.nombre.toUpperCase()}</td>
       </tr>
     `;
 
-    // Filas de categorías y subcategorías
-    macro.categorias.forEach(grupo => {
-      tableBody += `
+      // Filas de categorías y subcategorías
+      macro.categorias.forEach((grupo) => {
+        tableBody += `
         <tr class="row-categoria">
           <td class="indent-1">${grupo.categoria}</td>
-          <td class="text-end">${new Intl.NumberFormat('es-CL').format(grupo.saldo)}</td>
+          <td class="text-end">${new Intl.NumberFormat('es-CL').format(
+            grupo.saldo
+          )}</td>
         </tr>
       `;
-      grupo.subcategorias.forEach(sub => {
-        tableBody += `
+        grupo.subcategorias.forEach((sub) => {
+          tableBody += `
           <tr class="row-subcategoria">
             <td class="indent-2">${sub.id_fsa} - ${sub.descripcion}</td>
-            <td class="text-end">${new Intl.NumberFormat('es-CL').format(sub.saldo)}</td>
+            <td class="text-end">${new Intl.NumberFormat('es-CL').format(
+              sub.saldo
+            )}</td>
           </tr>
         `;
+        });
       });
-    });
 
-    // Fila del total al final de la sección
-    tableBody += `
+      // Fila del total al final de la sección
+      tableBody += `
       <tr class="row-macro-total">
         <td>TOTAL ${macro.nombre.toUpperCase()}</td>
-        <td class="text-end">${new Intl.NumberFormat('es-CL').format(macro.saldo)}</td>
+        <td class="text-end">${new Intl.NumberFormat('es-CL').format(
+          macro.saldo
+        )}</td>
       </tr>
     `;
-  });
+    });
 
-  // 4. Ensamblar el HTML completo (sin cambios)
-  const printHtml = `
+    // 4. Ensamblar el HTML completo (sin cambios)
+    const printHtml = `
     <html>
       <head>
         <title>Reporte - ${nombreConjunto}</title>
@@ -220,15 +324,23 @@ imprimirEEFF(): void {
     </html>
   `;
 
-  // 5. Abrir la ventana de impresión (sin cambios)
-  const printWindow = window.open('', '_blank');
-  if (printWindow) {
-    printWindow.document.write(printHtml);
-    printWindow.document.close();
-    printWindow.focus();
-    printWindow.print();
-  } else {
-    alert('Por favor, permite las ventanas emergentes para imprimir el reporte.');
+    // 5. Abrir la ventana de impresión (sin cambios)
+    const printWindow = window.open('', '_blank');
+    if (printWindow) {
+      printWindow.document.write(printHtml);
+      printWindow.document.close();
+      printWindow.focus();
+      printWindow.print();
+    } else {
+      alert(
+        'Por favor, permite las ventanas emergentes para imprimir el reporte.'
+      );
+    }
   }
-}
+
+
+    exportarCSV(): void {
+    this.eeffService.exportarCSV(this.macros);
+  }
+
 }

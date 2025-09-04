@@ -1,12 +1,16 @@
-.modal-dialog {
-  max-height: 90vh;
+
+:host ::ng-deep .accordion-button {
+  font-size: 1em;
+  padding: 0.5rem 1.25rem;
 }
 
-.modal-content {
-  height: 80vh; /* Ajusta según necesites */
+.modal-balance-detalle .accordion-button {
+  font-size: 0.8rem; /* Aquí usamos 'rem' porque estamos en el contexto global */
 }
+
 
 .accordion-button:not(.collapsed) {
   /* 👇 Esta es la variable para el color de fondo */
-  --bs-accordion-active-bg: #e3f8ea; /* Cambia #dcfce7 por el color que desees */
+  --bs-accordion-active-bg: #e3f8ea;
+  /* Cambia #dcfce7 por el color que desees */
 }

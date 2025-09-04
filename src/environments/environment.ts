@@ -1,4 +1,4 @@
 export const environment = {
   production: true,
-  apiUrl: 'https://api.tudominio.com/api', // Ejemplo de variable
+  apiUrl: 'http://localhost:3000/api', // Ejemplo de variable
 };

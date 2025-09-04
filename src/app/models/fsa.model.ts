@@ -1,6 +1,6 @@
 export interface IFsa {
     id_fsa: string;
-    id_cate: string;
+    id_cate: number;
     desc: string;
     categoria: string;
 

@@ -6,9 +6,9 @@ const crypto = require('crypto');
  * Servicio para gestionar balances
  */
 
-function generarIdBalance({ num_cuenta, id_mapping, ejercicio, fecha_inicio, fecha_fin }) {
-  const raw = `${num_cuenta}|${id_mapping}|${ejercicio}|${fecha_inicio}|${fecha_fin}`;
-  return crypto.createHash('md5').update(raw).digest('hex');
+function generarIdBalance() {
+  // Genera un UUID v4 y elimina los guiones
+  return crypto.randomUUID().replace(/-/g, '');
 }
 
 
@@ -91,7 +91,7 @@ class BalanceService {
       }
 
       // Generar un único id_blce para el grupo
-      const id_blce = generarIdBalance(primerBalance);
+      const id_blce = generarIdBalance();
 
       // Validar existencia previa
       const exists = await BalanceModel.existsByIdBlce(id_blce);

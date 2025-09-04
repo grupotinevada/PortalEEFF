@@ -9,6 +9,8 @@ const { balanceValidation, bulkBalanceValidation, validate } = require('../middl
 router.post('/', authenticateToken, balanceValidation, validate, BalanceController.create);
 
 router.get('/resumen', BalanceController.getResumen);
+
+
 router.post('/bulk', authenticateToken, bulkBalanceValidation, BalanceController.createBulk);
 
 router.get('/balance/:id_blce', authenticateToken, BalanceController.getById);

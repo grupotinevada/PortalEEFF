@@ -12,7 +12,7 @@ class AuthController {
       }
       res.cookie('token', result.token, {
         httpOnly: true,
-        secure: false,  
+        secure: process.env.NODE_ENV === 'production',  
         sameSite: 'Lax', // O 'Strict'
         maxAge: 24 * 60 * 60 * 1000 // 1 día
       });
@@ -36,11 +36,9 @@ class AuthController {
     if (!result.success) {
       return res.status(409).json(result);
     }
-
-    // ✅ Establece cookie con el token
     res.cookie('token', result.token, {
       httpOnly: true,
-      secure: true, // solo si estás en HTTPS
+      secure:  process.env.NODE_ENV === 'production', // solo si estás en HTTPS
       sameSite: 'Lax',
       maxAge: 24 * 60 * 60 * 1000
     });
@@ -92,9 +90,13 @@ static async verifyToken(req, res) {
 static async isLoggedIn(req, res) {
   console.log('Verificando si el usuario está logueado');
   return res.json({
-    success: true,
-    user: req.user
-  });
+      success: true,
+      user: { // Enviamos solo los datos necesarios
+        id: req.user.id,
+        email: req.user.email,
+        username: req.user.username
+      }
+    });
 }
 
 

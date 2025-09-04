@@ -16,6 +16,7 @@ import { Navbar } from '../navbar/navbar';
 import { Console } from 'console';
 import { EmpresaService } from '../../services/empresa.service';
 import { IEmpresa } from '../../models/empresa.model';
+import { map, switchMap, take, throwError } from 'rxjs';
 
 @Component({
   selector: 'app-preview',
@@ -95,83 +96,106 @@ export class Preview implements OnInit {
   }
 
 
-  private cargarTodosLosMapping() {
-    this.authService.checkAuth().subscribe({
-      next: (isAuthenticated) => {
-        if (isAuthenticated) {
-          this.DefaultMappingService.getAll().subscribe({
-            next: (res) => {
-              // ✅ Corregido: acceder al array real en "res.data"
-              this.defaultMappings = res.data ?? [];
-              console.log('[DEBUG]funcion cargarMapping - Mappings cargados:', this.defaultMappings);
+private cargarTodosLosMapping() {
+  this.msgError = ''; // Limpiar errores previos
 
-            },
-            error: (err) => {
-              console.error('Error al obtener defaultMappings:', err);
-              this.defaultMappings = [];
-            },
-          });
-        } else {
-          this.msgError = 'Usuario no autenticado';
-        }
-      },
-      error: () => {
-        this.msgError = 'Error al verificar autenticación';
-      },
-    });
-  }
+  this.authService.isAuthenticated().pipe(
+    take(1), // Toma el estado de autenticación actual y se desuscribe.
+    switchMap(isAuthenticated => {
+      if (!isAuthenticated) {
+        // Si no está autenticado, detiene el flujo y emite un error.
+        return throwError(() => new Error('Usuario no autenticado'));
+      }
+      // Si está autenticado, procede a llamar al servicio.
+      return this.DefaultMappingService.getAll();
+    }),
+    map(res => {
+      // Usamos el operador "nullish coalescing" (??) para asegurarnos
+      // de que siempre devolvemos un array, incluso si res.data es null o undefined.
+      return res.data ?? [];
+    })
+  ).subscribe({
+    next: (mappings) => {
+      this.defaultMappings = mappings;
+      console.log('[DEBUG] Mappings por defecto cargados:', this.defaultMappings);
+    },
+    error: (error) => {
+      console.error('Error al obtener defaultMappings:', error);
+      this.msgError = error.message || 'Ocurrió un error inesperado';
+      this.defaultMappings = [];
+    }
+  });
+}
 
   private cargarEmpresas() {
-    this.authService.checkAuth().subscribe({
-      next: (isAuthenticated) => {
-        if (isAuthenticated) {
-          this.empresaService.getEmpresas().subscribe({
-            next: (res) => {
-              if (res.success) {
-                this.empresas = res.data;
-              } else {
-                console.warn('Error al obtener empresas');
-              }
-            },
-            error: (err) => console.error('Error de API', err),
-          });
-        } else {
-          this.msgError = 'Usuario no autenticado';
-        }
-      },
-      error: () => {
-        this.msgError = 'Error al verificar autenticación';
-      },
-    });
-  }
+  this.msgError = ''; // Limpiar errores previos
+
+  this.authService.isAuthenticated().pipe(
+    take(1),
+    switchMap(isAuthenticated => {
+      if (!isAuthenticated) {
+        return throwError(() => new Error('Usuario no autenticado'));
+      }
+      return this.empresaService.getEmpresas();
+    }),
+    map(res => {
+      if (res.success) {
+        return res.data;
+      }
+      // Si la API devuelve success: false, lo convertimos en un error.
+      throw new Error('Error al obtener empresas desde la API');
+    })
+  ).subscribe({
+    next: (empresasData) => {
+      this.empresas = empresasData;
+    },
+    error: (error) => {
+      console.error('Error de API al cargar empresas:', error);
+      this.msgError = error.message || 'Ocurrió un error inesperado';
+    }
+  });
+}
 
 
 
 
-  private cargarSelectMappings() {
-    this.authService.checkAuth().subscribe({
-      next: (isAuthenticated) => {
-        if (isAuthenticated) {
-          this.mappingService.getMappings().subscribe({
-            next: (res) => {
-              if (res.success) {
-                this.mappings = res.data;
-                console.log('[DEBUG]funcion cargarMappings - Mappings cargados:', this.mappings);
-              } else {
-                console.warn('Error al obtener mappings');
-              }
-            },
-            error: (err) => console.error('Error de API', err),
-          });
-        } else {
-          this.msgError = 'Usuario no autenticado';
-        }
-      },
-      error: () => {
-        this.msgError = 'Error al verificar autenticación';
-      },
-    });
-  }
+private cargarSelectMappings(): void {
+  this.msgError = ''; // Limpiar errores previos
+
+  this.authService.isAuthenticated().pipe(
+    // toma solo el estado de autenticación actual y luego finaliza.
+    take(1),
+
+    // encadena la llamada a la API si el usuario está autenticado.
+    switchMap(isAuthenticated => {
+      if (!isAuthenticated) {
+        // detiene el flujo y lanza un error si no está autenticado.
+        return throwError(() => new Error('Usuario no autenticado'));
+      }
+      // continúa con la llamada para obtener los mappings.
+      return this.mappingService.getMappings();
+    }),
+
+    // transforma la respuesta exitosa.
+    map(res => {
+      if (res.success) {
+        return res.data;
+      }
+      // lanza un error si la respuesta no es exitosa.
+      throw new Error('Error al obtener mappings');
+    })
+
+  ).subscribe({
+    next: (mappingsData) => {
+      this.mappings = mappingsData;
+      console.log('[DEBUG] Mappings cargados:', this.mappings);
+    },
+    error: (error) => {
+      this.msgError = error.message || 'Ocurrió un error inesperado';
+      console.error('Error de API:', error);
+    }
+  });
+}
 
 
 
@@ -424,7 +448,31 @@ private readHtmlFile(file: File): void {
         const acreedor =
           parseInt((row[acreedorKey] ?? '0').toString().replace(/\./g, '')) ||
           0;
-        const saldo = deudor - acreedor;
+
+          const saldo = deudor - acreedor;
+        // let saldo = 0
+
+        // // Verificar si ambos valores son mayores a 0
+        // if (deudor > 0 && acreedor > 0) {
+        //   Swal.fire({
+        //     title: 'Cuenta con Deudor y Acreedor > 0',
+        //     html: `
+        //       <p>La cuenta <b>${num_cuenta}</b> tiene valores mayores a 0 tanto en Deudor (<b>${deudor}</b>) como en Acreedor (<b>${acreedor}</b>).</p>
+        //       <p>¿Deseas sumar ambos saldos?</p>
+        //     `,
+        //     icon: 'warning',
+        //     showCancelButton: true,
+        //     confirmButtonText: 'Sí, sumar',
+        //     cancelButtonText: 'No, continuar normal'
+        //   }).then((result) => {
+        //     if (result.isConfirmed) {
+        //       saldo = deudor + acreedor;
+        //     }
+        //     // Si cancela, deja el saldo como deudor - acreedor
+        //   });
+        // }else{
+        //     saldo = deudor + acreedor;
+        // }
 
         totalDeudor += deudor;
         totalAcreedor += acreedor;

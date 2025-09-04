@@ -12,6 +12,7 @@ import { mapping } from '../../models/mapping.model';
 import { Spinner } from '../spinner/spinner';
 import { ModalDetalle } from '../modal-detalle/modal-detalle';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { tap, switchMap, take, finalize, catchError, EMPTY, of, throwError, map } from 'rxjs';
 
 @Component({
   selector: 'app-balances',
@@ -65,72 +66,80 @@ export class Balances implements OnInit {
     this.getFsaData();
   }
 
-  private getEstados(): void {
-    this.loading = true;
-    this.authService.checkAuth().subscribe({
-      next: (isAuthenticated) => {
-        if (isAuthenticated) {
-          this.defaultMappingService.getAllEstados().subscribe({
-            next: (res) => {
-              if (res.success && Array.isArray(res.data)) {
-                this.estados = res.data.filter(
-                  (f) => f.id_estado && f.desc && f.color);
-                console.log('estados data cargada:', this.estados);
-              } else {
-                console.warn('Respuesta inválida del servicio FSA');
-                this.estados = [];
-              }
-              this.loading = false;
-            },
-            error: (error) => {
-              console.error('Error al obtener FSA:', error);
-              this.loading = false;
-              this.estados = [];
-            },
-          });
-        } else {
-          this.loading = false;
-          this.msgError = 'Usuario no autenticado';
-        }
-      },
-      error: () => {
-        this.loading = false;
-        this.msgError = 'Error al verificar autenticación';
-      },
-    });
-  }
+private getEstados(): void {
+  this.loading = true;
+  this.msgError = ''; // Limpiar errores previos
 
-  private cargarMappings() {
-    this.loading = true;
-    this.authService.checkAuth().subscribe({
-      next: (isAuthenticated) => {
-        if (isAuthenticated) {
-          this.mappingService.getMappings().subscribe({
-            next: (res) => {
-              if (res.success) {
-                this.mappings = res.data;
-              } else {
-                this.loading = false;
-                console.warn('Error al obtener mappings');
-              }
-            },
+  this.authService.isAuthenticated().pipe(
+    // take(1) asegura que solo tomemos el estado de autenticación actual y luego nos desuscribimos.
+    take(1), 
 
-            error: (err) => {
-              this.loading = false;
-              console.error('Error de API', err)
-            }
-          });
-        } else {
-          this.loading = false;
-          this.msgError = 'Usuario no autenticado';
-        }
-      },
-      error: () => {
-        this.loading = false;
-        this.msgError = 'Error al verificar autenticación';
-      },
-    });
-  }
+    // switchMap encadena el siguiente observable solo si el anterior tiene éxito.
+    switchMap(isAuthenticated => {
+      if (!isAuthenticated) {
+        // Si no está autenticado, detenemos el flujo y lanzamos un error.
+        return throwError(() => new Error('Usuario no autenticado'));
+      }
+      // Si está autenticado, continuamos con la llamada al servicio de datos.
+      return this.defaultMappingService.getAllEstados();
+    }),
+
+    // map transforma los datos recibidos.
+    map(res => {
+      if (res.success && Array.isArray(res.data)) {
+        // Filtramos los datos y devolvemos el resultado deseado.
+        return res.data.filter(f => f.id_estado && f.desc && f.color);
+      }
+      // Si la respuesta no es la esperada, lanzamos un error.
+      throw new Error('Respuesta inválida del servicio FSA');
+    }),
+
+    // finalize se ejecuta siempre al final, ya sea por éxito o error.
+    finalize(() => this.loading = false)
+
+  ).subscribe({
+    next: (estadosFiltrados) => {
+      this.estados = estadosFiltrados;
+      console.log('estados data cargada:', this.estados);
+    },
+    error: (error) => {
+      console.error('Error al obtener FSA:', error);
+      this.msgError = error.message || 'Ocurrió un error inesperado';
+      this.estados = [];
+    }
+  });
+}
+
+private cargarMappings() {
+  this.loading = true;
+  this.msgError = '';
+
+  this.authService.isAuthenticated().pipe(
+    take(1),
+    switchMap(isAuthenticated => {
+      if (!isAuthenticated) {
+        return throwError(() => new Error('Usuario no autenticado'));
+      }
+      return this.mappingService.getMappings();
+    }),
+    map(res => {
+      if (res.success) {
+        return res.data;
+      }
+      throw new Error('La respuesta del servicio de mappings no fue exitosa');
+    }),
+    finalize(() => this.loading = false)
+
+  ).subscribe({
+    next: (mappingsData) => {
+      this.mappings = mappingsData;
+    },
+    error: (error) => {
+      console.error('Error de API al cargar mappings:', error);
+      this.msgError = error.message || 'Ocurrió un error inesperado';
+    }
+  });
+}
 
   loadBalances(): void {
     this.loading = true;
@@ -205,39 +214,49 @@ export class Balances implements OnInit {
 
   
   
- private getFsaData(): void {
+private getFsaData(): void {
   this.loading = true;
-  this.authService.checkAuth().subscribe({
-    next: (isAuthenticated) => {
-      if (isAuthenticated) {
-        this.balanceService.getAllFsa().subscribe({
-          next: (res) => {
-            if (res.success && Array.isArray(res.data)) {
-              this.fsas = res.data.filter(
-                (f) => f.id_fsa && f.desc && f.id_cate && f.categoria
-              );
-              console.log('FSA data cargada:', this.fsas);
-            } else {
-              console.warn('Respuesta inválida del servicio FSA');
-              this.fsas = [];
-            }
-            this.loading = false;
-          },
-          error: (error) => {
-            console.error('Error al obtener FSA:', error);
-            this.loading = false;
-            this.fsas = [];
-          },
-        });
-      } else {
-        this.loading = false;
-        this.msgError = 'Usuario no autenticado';
+  this.msgError = ''; // Limpiar errores previos
+
+  this.authService.isAuthenticated().pipe(
+    // toma solo el estado de autenticación actual y luego finaliza.
+    take(1), 
+
+    // encadena la llamada a la API si el usuario está autenticado.
+    switchMap(isAuthenticated => {
+      if (!isAuthenticated) {
+        // detiene el flujo y lanza un error si no está autenticado.
+        return throwError(() => new Error('Usuario no autenticado'));
       }
+      // continúa con la llamada para obtener los datos FSA.
+      return this.balanceService.getAllFsa();
+    }),
+
+    // transforma la respuesta exitosa.
+    map(res => {
+      if (res.success && Array.isArray(res.data)) {
+        // devuelve los datos filtrados.
+        return res.data.filter(
+          f => f.id_fsa && f.desc && f.id_cate && f.categoria
+        );
+      }
+      // lanza un error si la respuesta no es válida.
+      throw new Error('Respuesta inválida del servicio FSA');
+    }),
+
+    // se ejecuta siempre al final para ocultar el spinner.
+    finalize(() => this.loading = false)
+
+  ).subscribe({
+    next: (fsaData) => {
+      this.fsas = fsaData;
+      console.log('FSA data cargada:', this.fsas);
     },
-    error: () => {
-      this.loading = false;
-      this.msgError = 'Error al verificar autenticación';
-    },
+    error: (error) => {
+      console.error('Error al obtener FSA:', error);
+      this.msgError = error.message || 'Ocurrió un error inesperado';
+      this.fsas = [];
+    }
   });
 }
 }

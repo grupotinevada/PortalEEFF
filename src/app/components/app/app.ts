@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { SwUpdate } from '@angular/service-worker';
+import { AuthService } from '../../services/auth.service';
 
 
 @Component({
@@ -11,7 +12,8 @@ import { SwUpdate } from '@angular/service-worker';
 })
 export class App implements OnInit{
 
-  constructor(private swUpdate: SwUpdate) { }
+  constructor(private swUpdate: SwUpdate,
+    private authService: AuthService) { }
 
 ngOnInit() {
     if (this.swUpdate.isEnabled) {

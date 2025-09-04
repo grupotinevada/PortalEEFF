@@ -1,45 +1,59 @@
 <div class="container d-flex justify-content-center align-items-center min-vh-100">
-  <div class="card shadow-lg" style="width: 400px;">
-    <div class="card-header bg-success text-white">
-      <h4 class="mb-0 text-center">Acceso Corporativo</h4>
-    </div>
-    <div class="card-body p-4">
+
+  <div class="card shadow-lg border-0" style="width: 25rem;">
+    <div class="card-body p-4 p-md-5">
+
+      <div class="text-center mb-4">
+        <img src="/logo.png" alt="Logo Corporativo" class="img-fluid">
+      </div>
+      <p class="card-text text-center text-muted mb-4">Ingresa tus credenciales para acceder.</p>
+
       <form [formGroup]="form" (ngSubmit)="onSubmit()">
-        <div class="mb-3">
-          <label for="email" class="form-label fw-bold">Correo electrónico</label>
+
+        <div class="input-group mb-3">
+          <span class="input-group-text bg-light border-end-0">
+            <i class="bi bi-envelope-fill"></i>
+          </span>
           <input 
             type="email" 
-            class="form-control form-control-lg" 
+            class="form-control form-control-lg bg-light border-start-0" 
             id="email" 
             formControlName="email"
-            placeholder="usuario@mapping.com"
+            placeholder="Correo electrónico"
+            aria-label="Correo electrónico"
           >
         </div>
         
-        <div class="mb-4">
-          <label for="password" class="form-label fw-bold">Contraseña</label>
+        <div class="input-group mb-4">
+          <span class="input-group-text bg-light border-end-0">
+            <i class="bi bi-shield-lock-fill"></i>
+          </span>
           <input 
             type="password" 
-            class="form-control form-control-lg" 
+            class="form-control form-control-lg bg-light border-start-0" 
             id="password" 
             formControlName="password"
-            placeholder="••••••••"
+            placeholder="Contraseña"
+            aria-label="Contraseña"
           >
         </div>
         
-        <button type="submit" class="btn btn-success btn-lg w-100 mb-3">
+        <button type="submit" class="btn btn-outline-success btn-lg w-100 mb-3 shadow">
           Iniciar sesión
         </button>
+
         @if(errorMsg){
-                    <div class="alert alert-danger mt-3 mb-0">
-          {{ errorMsg }}
-        </div>
+          <div class="alert alert-danger mt-3 mb-0 text-center">
+            {{ errorMsg }}
+          </div>
         }
 
       </form>
-    </div>
-    <div class="card-footer bg-light text-center">
-      <small class="text-muted">© 20235 Holding Nevada. Todos los derechos reservados.</small>
+
+      <div class="text-center mt-4">
+        <small class="text-muted">© 2025 Holding Nevada.</small>
+      </div>
+
     </div>
   </div>
 </div>

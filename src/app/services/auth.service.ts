@@ -1,59 +1,81 @@
+// auth.service.ts
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { BehaviorSubject, Observable, tap, catchError, of, map, finalize } from 'rxjs';
+import { environment } from '../../environments/environment';
 import { UsuarioLogin } from '../models/usuario-login';
-import { tap } from 'rxjs/operators';
-import { environment } from '../../environments/environment.development';
+import { AuthResponse } from '../models/api-response.model';
+
+// Puedes crear una interfaz para el usuario
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
-    private apiUrl = `${environment.apiUrl}/auth`;
-  public isAuthenticated = false;
+  private apiUrl = `${environment.apiUrl}/auth`;
+  private currentUserSubject = new BehaviorSubject<UsuarioLogin | null>(null);
+  public currentUser$ = this.currentUserSubject.asObservable();
 
-  constructor(private http: HttpClient) { }
+  // 1. Nuevo "semáforo" para saber cuándo terminó la verificación inicial
+  private initialAuthCheckDone = new BehaviorSubject<boolean>(false);
+  public isInitialAuthCheckComplete$ = this.initialAuthCheckDone.asObservable();
 
-  login(email: string, password: string) {
-    return this.http.post<{ success: boolean }>(
+  constructor(private http: HttpClient) {
+    // 2. Se llama a la verificación de sesión en cuanto el servicio se construye
+    this.checkAuthOnLoad();
+  }
+
+  public get currentUserValue(): UsuarioLogin | null {
+    return this.currentUserSubject.value;
+  }
+  
+  public isAuthenticated(): Observable<boolean> {
+    return this.currentUser$.pipe(map(user => !!user));
+  }
+
+  login(email: string, password: string): Observable<AuthResponse> {
+    return this.http.post<AuthResponse>(
       `${this.apiUrl}/login`,
       { email, password },
       { withCredentials: true }
     ).pipe(
-      tap(res => {
-        if (res.success) {
-          this.isAuthenticated = true;
+      tap(response => {
+        if (response.success && response.user) {
+          this.currentUserSubject.next(response.user);
         }
       })
     );
   }
 
-  logout() {
-    return this.http.post<{ success: boolean }>(
-      `${this.apiUrl}/logout`,
-      {},
-      { withCredentials: true }
-    ).pipe(
-      tap(res => {
-        if (res.success) {
-          this.isAuthenticated = false;
-        }
-      })
-    );
-    
+  logout(): Observable<{ success: boolean }> {
+    return this.http.post<{ success: boolean }>(`${this.apiUrl}/logout`, {}, { withCredentials: true })
+      .pipe(
+        tap(() => this.currentUserSubject.next(null)),
+        catchError(() => {
+          this.currentUserSubject.next(null);
+          return of({ success: true });
+        })
+      );
   }
 
-  checkAuth() {
-    return this.http.get<{ success: boolean; user: any }>(
+  checkAuthOnLoad(): void {
+    this.http.get<AuthResponse>(
       `${this.apiUrl}/isLoggedIn`,
       { withCredentials: true }
     ).pipe(
-      tap(res => {
-        this.isAuthenticated = res.success;
+      tap(response => {
+        if (response.success && response.user) {
+          this.currentUserSubject.next(response.user);
+        }
+      }),
+      catchError(() => {
+        this.currentUserSubject.next(null);
+        return of(null);
+      }),
+      // 3. Al finalizar (con éxito o error), se pone el semáforo en 'true'
+      finalize(() => {
+        this.initialAuthCheckDone.next(true);
       })
-    );
-  }
-
-  isLoggedIn(): boolean {
-    return this.isAuthenticated;
+    ).subscribe(); // Se necesita .subscribe() para que la petición se ejecute
   }
 }

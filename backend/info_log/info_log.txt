@@ -28,3 +28,10 @@
 [WARN] 2025-07-21T17:43:43.522Z - Acceso no autorizado a getById
 [WARN] 2025-07-21T17:44:57.432Z - ID de balance no cumple con el formato UUID: d5f00d380cbd2a6233a988872428ae50
 [WARN] 2025-07-21T17:45:19.741Z - ID de balance no cumple con el formato UUID: d5f00d380cbd2a6233a988872428ae50
+[ERROR] 2025-09-02T19:47:07.237Z - Error en BalanceService.createBulk: The "options" argument must be of type object. Received type number (4)
+[WARN] 2025-09-02T21:40:08.225Z - ID de balance no cumple con el formato MD5 esperado: bb8b7950-cd3f-4700-9e8b-a91c9be3f5d1
+[WARN] 2025-09-02T21:40:43.021Z - ID de balance no cumple con el formato MD5 esperado: bb8b7950-cd3f-4700-9e8b-a91c9be3f5d1
+[WARN] 2025-09-02T21:41:55.666Z - ID de balance no cumple con el formato MD5 esperado: bb8b7950-cd3f-4700-9e8b-a91c9be3f5d1
+[WARN] 2025-09-02T21:42:23.727Z - ID de balance no cumple con el formato MD5 esperado: bb8b7950-cd3f-4700-9e8b-a91c9be3f5d1
+[WARN] 2025-09-02T21:42:34.647Z - ID de balance no cumple con el formato MD5 esperado: bb8b7950-cd3f-4700-9e8b-a91c9be3f5d1
+[WARN] 2025-09-02T21:42:54.459Z - ID de balance no cumple con el formato MD5 esperado: bb8b7950cd3f47009e8b-a91c9be3f5d1

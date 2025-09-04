@@ -1,44 +1,79 @@
-<div class="modal-content d-flex flex-column" style="height: 100vh; min-height: 500px">
-  <div class="modal-header flex-column align-items-start bg-success text-white flex-shrink-0">
+<div class="modal d-flex flex-column modal-balance-detalle fs-custom" style="height: 100vh; min-height: 500px">
+  
+  <div class="modal-header flex-column align-items-start bg-success text-white flex-shrink-0 shadow-sm">
+    
     <div class="w-100 d-flex justify-content-between align-items-center">
       <h5 class="modal-title mb-0">
-        Detalle del {{ balance[0]!.nombre_conjunto }}
+        Detalle del {{ balance[0].nombre_conjunto || "No se pudo recuperar" }} - {{ balance[0]!.id_empresa }}
       </h5>
-      <button type-="button" class="btn-close btn-close-white px-5" aria-label="Close"
-        (click)="activeModal.dismiss()"></button>
+      <button type="button" class="btn-close btn-close-white" aria-label="Close" (click)="activeModal.dismiss()"></button>
     </div>
-    <div class="mt-2 d-flex flex-wrap gap-4 w-100">
-      <div><strong>Ejercicio:</strong> {{ balance[0]!.ejercicio }}</div>
-      <div>
-        <strong>Desde:</strong> {{ balance[0]!.fecha_inicio | date: 'yyyy-MM-dd'
-        }}
-      </div>
-      <div>
-        <strong>Hasta:</strong> {{ balance[0]!.fecha_fin | date: 'yyyy-MM-dd' }}
-      </div>
-      <div><strong>Mapping:</strong> {{ balance[0]!.id_mapping }}</div>
-      <div class="flex-grow-1"></div>
-      <div class="text-sm text-muted align-self-end">
-        ID: {{ balance[0]!.id_blce }}
-      </div>
+    
+    <div class="row gx-4 gy-2 mt-2 w-100 small">
+      <div class="col-auto"><strong>Ejercicio:</strong> {{ balance[0]!.ejercicio }}</div>
+      <div class="col-auto"><strong>Desde:</strong> {{ balance[0]!.fecha_inicio | date: 'dd-MM-yyyy' }}</div>
+      <div class="col-auto"><strong>Hasta:</strong> {{ balance[0]!.fecha_fin | date: 'dd-MM-yyyy' }}</div>
+      <div class="col-auto"><strong>Mapping:</strong> {{ balance[0]!.id_mapping }}</div>
+      <div class="col-auto ms-auto text-white-50">ID: {{ balance[0]!.id_blce }}</div>
     </div>
   </div>
 
+  <div class="d-flex justify-content-center align-items-center gap-5 p-2 bg-light border-bottom">
+    <div class="form-check form-switch">
+      <input 
+        class="form-check-input  focus-ring focus-ring-success "
+        type="checkbox" 
+        role="switch" 
+        id="switchSaldosCero"
+        [checked]="saldosCero"
+        (change)="mostrarSaldosCero()">
+      <label class="form-check-label " for="switchSaldosCero">
+        Mostrar cuentas en 0
+      </label>
+    </div>
+    <div class="form-check form-switch focus-ring focus-ring-success">
+      <input 
+        class="form-check-input" 
+        type="checkbox" 
+        role="switch" 
+        id="switchSinMapping"
+        [checked]="noMapeados"
+        (change)="mostrarNoMapeados()">
+      <label class="form-check-label" for="switchSinMapping">
+        Mostrar cuentas sin Mappings
+      </label>
+    </div>
+        <!-- <div class="form-check form-switch focus-ring focus-ring-success">
+      <input 
+        class="form-check-input" 
+        type="checkbox" 
+        role="switch" 
+        id="switchSinMapping"
+        [checked]="this.negativos"
+        (change)="mostrarNegativos()">
+      <label class="form-check-label" for="switchSinMapping">
+        Mostrar negativos
+      </label>
+    </div> -->
+  </div>
+  
   <app-spinner [showSpinner]="showSpinner"></app-spinner>
 
-  @if (vistaAgrupada.length > 0) {
-  <div class="px-4 pt-3 border-bottom small text-muted flex-shrink-0">
-  </div>
+  @if (vistaParaMostrar.length > 0) {
+  
 
   <div class="modal-body flex-grow-1 overflow-auto" style="max-height: 80vh">
     <div ngbAccordion class="">
-      @for (macro of vistaAgrupada; track macro.nombre) {
+      @for (macro of vistaParaMostrar; track macro.nombre) {
       <div ngbAccordionItem [collapsed]="false">
         <h2 ngbAccordionHeader>
-          <button ngbAccordionButton class="w-100 text-start fs-5 focus-ring focus-ring-success ">
+          <button ngbAccordionButton class="w-100 text-start focus-ring focus-ring-success">
             <div class="d-flex justify-content-between align-items-center w-100">
               <span class="text-uppercase text-dark fw-bold">{{ macro.nombre }}</span>
-              <span class="text-dark fw-bold px-4">$ {{ macro.saldo | number }}</span>
+              
+              <span *ngIf="macro.nombre !== 'ESTADO DE RESULTADOS'" class="text-dark fw-bold px-4">
+                $ {{ macro.saldo | number }}
+              </span>
             </div>
           </button>
         </h2>
@@ -79,19 +114,26 @@
                                   <table class="table table-sm table-hover table-striped table-bordered">
                                     <thead>
                                       <tr class="table-dark">
-                                        <th class="col-2">ID</th>
+                                        <th class="col-2">FSA</th>
                                         <th class="col-2">N° Cuenta</th>
                                         <th class="col-6">Nombre</th>
                                         <th class="col-2 text-end">Saldo</th>
                                       </tr>
                                     </thead>
                                     <tbody>
-                                      @for (cuenta of sub.cuentas; track cuenta.num_cuenta) {
+                                      @for (cuenta of sub.cuentas; track
+                                      cuenta.num_cuenta) {
                                       <tr>
-                                        <td class="text-nowrap">{{ cuenta.id_fsa }}</td>
-                                        <td class="text-nowrap"><strong>{{ cuenta.num_cuenta }}</strong></td>
+                                        <td class="text-nowrap">
+                                          {{ cuenta.id_fsa }}
+                                        </td>
+                                        <td class="text-nowrap">
+                                          <strong>{{ cuenta.num_cuenta }}</strong>
+                                        </td>
                                         <td>{{ cuenta.nombre }}</td>
-                                        <td class="text-end text-nowrap">$ {{ cuenta.saldo | number }}</td>
+                                        <td class="text-end text-nowrap">
+                                          $ {{ cuenta.saldo | number }}
+                                        </td>
                                       </tr>
                                       }
                                     </tbody>
@@ -122,11 +164,8 @@
   }
 
   <div class="modal-footer flex-shrink-0">
-    <button class="btn btn-warning" (click)="imprimirEEFF()">
-      Imprimir
-    </button>
-    <button class="btn btn-danger" (click)="activeModal.close()">
-      Cerrar
-    </button>
+    <button class="btn btn-warning" (click)="imprimirEEFF()">Imprimir</button>
+    <button class="btn btn-success" (click)="exportarCSV()">Exportar CSV</button>
+    <button class="btn btn-danger" (click)="activeModal.close()">Cerrar</button>
   </div>
 </div>

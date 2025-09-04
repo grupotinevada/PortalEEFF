@@ -35,14 +35,17 @@ export interface IMacroCategoria {
   nombre: string;
   saldo: number;
   categorias: IVistaEEFF[]; // Contendrá 'Activo Corriente', 'Activo No Corriente'.
+  orden?: number;
 }
 export interface IVistaEEFF {
   categoria: string;
   id_cate?: number;
   saldo: number;
+  orden?: number;
   subcategorias: {
     id_fsa: string;
     descripcion: string;
+    orden?: number;
     saldo: number;
     cuentas: {
       num_cuenta: string;
@@ -53,7 +56,11 @@ export interface IVistaEEFF {
   }[];
 }
 
-
+export interface IValidacionesEEFF {
+  balanceCuadrado: boolean;
+  diferenciaBalance: number;
+  estadoResultadosSaldo: number;
+}
 
 
 
