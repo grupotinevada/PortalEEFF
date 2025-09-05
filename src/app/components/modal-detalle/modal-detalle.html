@@ -19,28 +19,16 @@
   </div>
 
   <div class="d-flex justify-content-center align-items-center gap-5 p-2 bg-light border-bottom">
-    <div class="form-check form-switch">
-      <input 
-        class="form-check-input  focus-ring focus-ring-success "
-        type="checkbox" 
-        role="switch" 
-        id="switchSaldosCero"
-        [checked]="saldosCero"
-        (change)="mostrarSaldosCero()">
-      <label class="form-check-label " for="switchSaldosCero">
-        Mostrar cuentas en 0
-      </label>
-    </div>
     <div class="form-check form-switch focus-ring focus-ring-success">
       <input 
         class="form-check-input" 
         type="checkbox" 
         role="switch" 
         id="switchSinMapping"
-        [checked]="noMapeados"
-        (change)="mostrarNoMapeados()">
+        [checked]="this.filtrosActivos"
+        (change)="toggleFiltro()">
       <label class="form-check-label" for="switchSinMapping">
-        Mostrar cuentas sin Mappings
+        Mostrar Detalles
       </label>
     </div>
         <!-- <div class="form-check form-switch focus-ring focus-ring-success">

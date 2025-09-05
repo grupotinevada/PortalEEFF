@@ -115,58 +115,56 @@ export class ModalDetalle implements OnInit {
     this.regenerarVista();
   }
 
-  get saldosCero(): boolean {
-    //trae el estado inicial desde el servicio
-    console.log('Estado mostrarSaldosCero desde el servicio:', this.eeffService.mostrarSaldosCero);
-    return this.eeffService.mostrarSaldosCero;
-  }
 
-  mostrarSaldosCero() {
-    this.eeffService.MostrarSaldosCero();
-    // Vuelves a generar la vista para que se apliquen los cambios
-    this.regenerarVista();
-  }
-  get noMapeados(): boolean {
-    console.log
-    return this.eeffService.mostrarNoMapeados;
-  }
-  mostrarNoMapeados() {
-    this.eeffService.MostrarNoMapeados();
-    this.regenerarVista();
-  }
+// 🔹 Estado combinado (getter)
+get filtrosActivos(): boolean {
+  return this.eeffService.mostrarDetalles;
+}
 
-  regenerarVista(): void {
-    // 1. Activa el spinner
-    this.showSpinner = true;
+// 🔹 Función única para alternar filtros
+toggleFiltro() {
+  console.log(`[FUNCTION COMPONENT] Tocaste toggleFiltro()`);
+  this.eeffService.toggleDetalles();
+  this.regenerarVista();
+}
 
-    // Usamos un setTimeout para asegurar que la UI se actualice y muestre el spinner
-    // antes de iniciar el cálculo, que puede ser pesado.
-    setTimeout(() => {
-      try {
-        if (!this.balance || !this.fsas) {
-          console.error('No hay datos disponibles para reagrupar.');
-          return; // Salimos si no hay datos
-        }
+regenerarVista(): void {
+  this.showSpinner = true;
 
-        // 2. Ejecuta la misma lógica que tu función de carga inicial
-        this.vistaAgrupada = this.eeffService.generarVistaAgrupada(
-          this.balance,
-          this.fsas
-        );
-        console.log('Vista Regenerada:', this.vistaAgrupada);
-
-        // --- Validaciones ---
-        const validaciones = this.eeffService.validarEEFF(this.vistaAgrupada);
-        console.log('Validaciones EEFF tras regenerar:', validaciones);
-      } catch (error) {
-        console.error('Ocurrió un error al regenerar la vista:', error);
-        // Aquí podrías mostrar una notificación de error al usuario
-      } finally {
-        // 3. Desactiva el spinner, incluso si ocurrió un error.
-        this.showSpinner = false;
+  setTimeout(() => {
+    try {
+      if (!this.balance || !this.fsas) {
+        console.error('No hay datos disponibles para reagrupar.');
+        return;
       }
-    }, 0); // Un delay de 0 es suficiente para que el navegador actualice la UI
-  }
+
+      // 1. Recalcular vista agrupada
+      this.vistaAgrupada = this.eeffService.generarVistaAgrupada(
+        this.balance,
+        this.fsas
+      );
+      console.log('Vista Regenerada:', this.vistaAgrupada);
+
+      // 2. Actualizar macros (igual que en agruparVista)
+      this.macros = this.vistaAgrupada;
+
+      // 3. Construir vista para mostrar (con saldos positivizados si corresponde)
+      this.vistaParaMostrar = this.eeffService.positivizarSaldosParaPreview(
+        this.vistaAgrupada
+      );
+
+      // 4. Validaciones sobre la vista "para mostrar"
+      const validaciones = this.eeffService.validarEEFF(this.vistaParaMostrar);
+      console.log('Validaciones EEFF tras regenerar:', validaciones);
+
+    } catch (error) {
+      console.error('Ocurrió un error al regenerar la vista:', error);
+    } finally {
+      this.showSpinner = false;
+    }
+  }, 0);
+}
+
 
   imprimirEEFF(): void {
     // 1. Extraer información para el encabezado (sin cambios)
