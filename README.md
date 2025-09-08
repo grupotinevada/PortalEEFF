@@ -1,59 +1,92 @@
-# PortalEEFF
+Portal EEFF
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 20.0.3.
+Aplicación Angular para la gestión del portal financiero (Portal EEFF).  
+Este proyecto está configurado para correr en un servidor con Node.js y exponerse mediante Apache/Nginx con Cloudflare Tunnel.
 
-## Development server
+---
 
-To start a local development server, run:
+Requisitos previos
 
-```bash
-ng serve
-```
+- Node.js 18+  
+- Angular CLI  
+- Servidor web (Apache o Nginx) configurado como proxy inverso  
+- Acceso a Cloudflare (para crear el túnel hacia el servidor)  
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+---
 
-## Code scaffolding
+Configuración del entorno
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+La aplicación depende del archivo environment.ts.  
+Debe configurarse la URL de la API según el ambiente:
 
-```bash
-ng generate component component-name
-```
+- Desarrollo  
+  apiUrl: "https://portalfinanzasapitest.inevada.cl/api"
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+- Producción  
+  apiUrl: "https://portalfinanzasapi.inevada.cl/api"
 
-```bash
-ng generate --help
-```
+---
 
-## Building
+Build del proyecto
 
-To build the project run:
+En la raíz del proyecto ejecutar:
 
-```bash
 ng build
-```
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
+Esto generará una carpeta dist/ en la raíz.  
+Dentro de ella aparecerá un directorio llamado portaleeff (o similar).
 
-## Running unit tests
+---
 
-To execute unit tests with the [Karma](https://karma-runner.github.io) test runner, use the following command:
+Despliegue en el servidor
 
-```bash
-ng test
-```
+1. Copiar la carpeta portaleeff (generada en el build) a:  
 
-## Running end-to-end tests
+   /var/www/
 
-For end-to-end (e2e) testing, run:
+2. Entrar en la carpeta:
 
-```bash
-ng e2e
-```
+   cd /var/www/portaleeff/server
 
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
+   Aquí se encuentran varios archivos, entre ellos el importante: server.mjs.
 
-## Additional Resources
+---
 
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+Ejecución del servidor
+
+Ejecutar:
+
+node server.mjs
+
+Si todo está correcto, aparecerá el mensaje:
+
+Node Express server listening on http://localhost:4003
+
+Con esto, el servidor Angular ya está listo y escuchando peticiones en el puerto 4003.
+
+---
+
+Configuración de Proxy Inverso
+
+El servidor Apache o Nginx debe configurarse como proxy inverso, apuntando a:  
+
+http://{{IP_DEL_SERVIDOR}}:4003
+
+De esta manera, el tráfico externo se redirige hacia la aplicación Angular en Node.
+
+---
+
+Integración con Cloudflare
+
+1. Crear un túnel en Cloudflare.  
+2. Configurar el túnel para que apunte a:  
+
+   {{IP_DEL_SERVIDOR}}:4003
+
+Con esto, la aplicación quedará expuesta bajo el dominio configurado en Cloudflare.
+
+---
+
+Resultado esperado
+
+Una vez configurado todo el flujo (Node.js + Proxy inverso + Cloudflare Tunnel), podrás acceder al Portal EEFF desde tu dominio público.

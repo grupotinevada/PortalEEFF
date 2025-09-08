@@ -1,0 +1,26 @@
+portal eeff 
+
+aplicacion angular usa el server.ts en el puerto 4003 -> configuracion de cloudflare
+
+luego se revisa el enviroment debe apuntar a "https://portalfinanzasapitest.inevada.cl/api" en desarrollo y en produccion debe salir por "https://portalfinanzasapi.inevada.cl/api"
+
+luego hacer en la raiz, un ng build
+
+el resultado es un dist en la raiz, entrar a esa carpeta y se verá un  "portaleeff" o similar, copiar esa carpeta a /var/www/ 
+
+luego se viaja a esa carpeta, se entra a portaleff -> server, alli verá archivos varios y el importante es el server.mjs 
+
+escriba el comando node server.mjs 
+
+verá un mensaje como este:
+Node Express server listening on http://localhost:4003
+
+con eso ya se levanta el servidor de angular y la app ya sesta lista para escuchar las peticiones
+
+
+aqui se configura el apache o el nginx como proxy inverso apuntando a la {{ip del equipo}}:4003
+
+luego en cloudflare se crea el tunel y que apunte directamente a la {{ip del equipo}}:4003
+
+con eso ya deberian poder ver la aplicación 
+
