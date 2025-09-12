@@ -95,7 +95,7 @@ class BalanceModel {
       JOIN estado es ON b.id_estado = es.id_estado
       JOIN usuario u ON b.id_user = u.id_user
       JOIN empresa em ON b.id_empresa = em.id_empresa
-      LEFT JOIN cta_fsa_mapeo cta ON b.id_mapping = cta.id_mapping
+      LEFT JOIN cta_fsa_mapeo cta ON f.id_fsa = cta.id_fsa
     `;
 
     return { joinClause, whereClause, params };
