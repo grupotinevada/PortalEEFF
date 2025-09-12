@@ -12,10 +12,12 @@
           <h6 class="mb-1 text-success fw-semibold">
             <i class="bi bi-check-circle me-2"></i>Procesamiento de Archivo SAP
           </h6>
-          <small class="text-muted">Nombre: {{ file.name }} | Tipo: {{ file.type }}</small>
+          <small class="text-muted">Nombre: {{ file.name }} | Tipo: {{ file.type }} | Size: {{ file.size | number:'1.0-0' }} bytes</small>
         </div>
         <div>
-          <small class="text-dark fw-semibold">{{ file.size | number:'1.0-0' }} bytes</small>
+          <button type="button" class="btn btn-success" disabled>
+            <i class="bi bi-plus-circle-dotted"></i> Crear FSA
+          </button>
         </div>
       </header>
 
