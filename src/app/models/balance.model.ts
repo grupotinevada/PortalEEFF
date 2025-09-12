@@ -24,6 +24,23 @@ export interface IBalanceGet{ // solo lo usa el balance.service.getBalanceById, 
   id_empresa?: string;
   empresaDesc?: string;
 }
+export interface BalanceResumen {
+  id_blce: string;
+  nombre_conjunto: string;
+  ejercicio: number;
+  fecha_inicio: string;
+  fecha_fin: string;
+  fecha_creacion: string;   // agregado porque tu consulta lo devuelve
+  id_mapping: string;
+  mapping_desc: string;     // ahora viene de cta_fsa_mapeo
+  id_empresa: string;
+  empresa_desc: string;
+  estado_desc: string;
+  estado_color: string;
+  username: string;
+  email: string;
+}
+
 
 export interface IDefaultMapping {
   num_cuenta: string;
@@ -122,23 +139,6 @@ export interface ComparativoCategoria {
   grupos: ComparativoFsa[];
 }
 
-export interface BalanceResumen {
-  id_blce: string;
-  nombre_conjunto: string;
-  ejercicio: number;
-  fecha_inicio: string;
-  fecha_fin: string;
-  id_mapping: string;
-  id_estado: number;
-  id_user: string;
-  mapping_desc: string;
-  estado_desc: string;
-  estado_color: string;
-  username: string;
-  email: string
-  id_empresa?: string;
-  empresaDesc?: string;
-}
 
 export interface BalanceResumenResponse {
   success: boolean;

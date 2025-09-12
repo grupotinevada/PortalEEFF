@@ -1,5 +1,11 @@
-export interface mapping {
+export interface Imapping {
   id_mapping: string;
   descripcion: string;
-  url: string;
+  num_cuenta: string;
+  id_fsa: string;
+}
+
+export interface ImappingSelect{
+  id_mapping:string;
+  descripcion: string
 }

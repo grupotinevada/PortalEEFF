@@ -120,9 +120,9 @@ export class EEFFService {
         // tomamos la primera subcategoría y agregamos la cuenta especial
         categoria7.subcategorias[0].cuentas.push({
           num_cuenta: '---',
-          nombre: 'Resultado acumulado de categoría 6',
+          nombre: 'Total Ganancia Bruta',
           saldo: saldoCat6,
-          id_fsa: 'cat6_total',
+          id_fsa: 'GB',
         });
 
         // actualizar saldos de cat7 y del macro

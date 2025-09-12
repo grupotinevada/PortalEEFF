@@ -82,52 +82,78 @@ class BalanceModel {
   }
 
 
-  //CARGA DE BALANCES.
-
-  static async findDistinctBalances(filters) {
+  /**
+   * Método privado para construir las partes comunes (JOINs y WHERE) de la consulta.
+   * Esto evita la duplicación de código y asegura consistencia.
+   */
+  static _buildCommonQueryParts(filters) {
     const { whereClause, params } = BalanceModel.buildFilters(filters);
 
-    const sql = `
-  SELECT DISTINCT 
-    b.id_blce,
-    b.nombre_conjunto,
-    b.ejercicio,
-    b.fecha_inicio,
-    b.fecha_fin,
-    b.id_mapping,
-    e.descripcion AS mapping_desc,
-    b.id_estado,
-    em.id_empresa,
-    em.descripcion AS empresa_desc,
-    es.desc AS estado_desc,
-    es.color AS estado_color,
-    u.username,
-    u.email
-  FROM balance b
-  JOIN mapping e ON b.id_mapping = e.id_mapping
-  JOIN estado es ON b.id_estado = es.id_estado
-  JOIN usuario u ON b.id_user = u.id_user
-  JOIN empresa em ON b.id_empresa = em.id_empresa
-  ${whereClause}
-  ORDER BY b.fecha_fin DESC
-  LIMIT ? OFFSET ?
-`;
+    const joinClause = `
+      FROM balance b
+      LEFT JOIN fsa f ON b.id_fsa = f.id_fsa
+      JOIN estado es ON b.id_estado = es.id_estado
+      JOIN usuario u ON b.id_user = u.id_user
+      JOIN empresa em ON b.id_empresa = em.id_empresa
+      LEFT JOIN cta_fsa_mapeo cta ON b.id_mapping = cta.id_mapping
+    `;
 
-    return (
-      await pool.query(sql, [
-        ...params,
-        parseInt(filters.limit),
-        parseInt(filters.offset),
-      ])
-    )[0];
+    return { joinClause, whereClause, params };
   }
 
-  static async countDistinctBalances(filters) {
-    const { whereClause, params } = BalanceModel.buildFilters(filters);
+  /**
+   * Busca balances con paginación y filtros.
+   */
+  static async findDistinctBalances(filters) {
+    const { joinClause, whereClause, params } =
+      BalanceModel._buildCommonQueryParts(filters);
 
     const sql = `
-      SELECT COUNT(DISTINCT id_blce) as total
-      FROM balance
+    SELECT 
+        b.id_blce,
+        MAX(b.nombre_conjunto) AS nombre_conjunto,
+        MAX(b.ejercicio) AS ejercicio,
+        MIN(b.fecha_inicio) AS fecha_inicio,
+        MAX(b.fecha_fin) AS fecha_fin,
+        MAX(b.fecha_creacion) AS fecha_creacion,
+        MAX(b.id_mapping) as id_mapping,
+        MIN(cta.descripcion) AS mapping_desc, 
+        MAX(em.id_empresa) AS id_empresa,
+        MAX(em.descripcion) AS empresa_desc,
+        MAX(es.desc) AS estado_desc,
+        MAX(es.color) AS estado_color,
+        MAX(u.id_user) AS id_user,
+        MAX(u.username) AS username,
+        MAX(u.email) AS email
+      ${joinClause}
+      ${whereClause}
+      GROUP BY b.id_blce
+      ORDER BY MAX(b.fecha_creacion) DESC
+      LIMIT ? OFFSET ?;
+    `;
+
+    // Añadimos los parámetros de paginación al final
+    const queryParams = [
+      ...params,
+      parseInt(filters.limit, 10) || 10,   // Valor por defecto para limit
+      parseInt(filters.offset, 10) || 0, // Valor por defecto para offset
+    ];
+
+    const [rows] = await pool.query(sql, queryParams);
+    return rows;
+  }
+
+  /**
+   * Cuenta el total de balances distintos que coinciden con los filtros.
+   * AHORA USA LOS MISMOS JOINS Y FILTROS que findDistinctBalances.
+   */
+  static async countDistinctBalances(filters) {
+    const { joinClause, whereClause, params } =
+      BalanceModel._buildCommonQueryParts(filters);
+
+    const sql = `
+      SELECT COUNT(DISTINCT b.id_blce) as total
+      ${joinClause}
       ${whereClause}
     `;
 
@@ -135,54 +161,70 @@ class BalanceModel {
     return rows[0].total;
   }
 
+  /**
+   * Construye la cláusula WHERE y los parámetros de forma segura.
+   * (Esta función ya estaba bien, no necesita cambios).
+   */
   static buildFilters({
     nombre,
     ejercicio,
     fechaInicio,
     fechaFin,
     idMapping,
+    idFsa,
     idEstado,
     iduser,
-    id_empresa
+    id_empresa,
+    empresaDesc
   }) {
     const params = [];
     let whereClause = "WHERE 1 = 1";
 
     if (nombre) {
-      whereClause += " AND nombre_conjunto LIKE ?";
+      whereClause += " AND b.nombre_conjunto LIKE ?"; // Buena práctica: usar alias de tabla (b)
       params.push(`%${nombre}%`);
     }
     if (ejercicio) {
-      whereClause += " AND ejercicio = ?";
+      whereClause += " AND b.ejercicio = ?";
       params.push(ejercicio);
     }
     if (fechaInicio) {
-      whereClause += " AND fecha_inicio >= ?";
+      whereClause += " AND b.fecha_inicio >= ?";
       params.push(fechaInicio);
     }
     if (fechaFin) {
-      whereClause += " AND fecha_fin <= ?";
+      whereClause += " AND b.fecha_fin <= ?";
       params.push(fechaFin);
     }
     if (idMapping) {
-      whereClause += " AND id_mapping = ?";
+      whereClause += " AND b.id_mapping = ?";
       params.push(idMapping);
     }
+    if (idFsa) {
+      whereClause += " AND b.id_fsa = ?";
+      params.push(idFsa);
+    }
     if (idEstado) {
-      whereClause += " AND id_estado = ?";
+      whereClause += " AND b.id_estado = ?";
       params.push(idEstado);
     }
     if (iduser) {
-      whereClause += " AND id_user = ?";
+      whereClause += " AND b.id_user = ?";
       params.push(iduser);
     }
-        if (id_empresa) {
-      whereClause += " AND id_empresa = ?";
+    if (id_empresa) {
+      whereClause += " AND b.id_empresa = ?";
       params.push(id_empresa);
+    }
+    if (empresaDesc) {
+      // Usamos el alias 'em' de la tabla empresa definido en el JOIN
+      whereClause += " AND em.descripcion LIKE ?"; 
+      params.push(`%${empresaDesc}%`);
     }
 
     return { whereClause, params };
   }
+
 
 
 static async findById(id_blce) {

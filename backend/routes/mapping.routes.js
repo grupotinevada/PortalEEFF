@@ -13,9 +13,8 @@ const { authenticateToken } = require('../middlewares/auth.middleware');
 const { mappingValidation, validate } = require('../middlewares/mapping.middlewares');
 
 // Rutas protegidas con validación
-router.post('/', authenticateToken, mappingValidation, validate, MappingController.create);
-router.get('/', authenticateToken, MappingController.getAll);
-router.put('/:id_mapping', authenticateToken, mappingValidation, validate, MappingController.update);
-router.delete('/:id_mapping', authenticateToken, MappingController.delete);
+router.get('/', authenticateToken, MappingController.findAvailableMappings);
+router.get('/:id_mapping', authenticateToken, MappingController.getMappingById);
+
 
 module.exports = router;

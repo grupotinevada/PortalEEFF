@@ -180,59 +180,66 @@ static async getById(id_blce) {
 }
   
 
-  static async getDistinctBalances(query) {
-    try {
-      const {
-        nombre,
-        ejercicio,
-        fechaInicio,
-        fechaFin,
-        idMapping,
-        idEstado,
-        idUser,
-        idEmpresa,
-        empresaDesc,
-        limit = 10,
-        offset = 0
-      } = query;
+static async getDistinctBalances(query) {
+  try {
+    // 1. Destructuramos los parámetros de la query
+    const {
+      nombre,
+      ejercicio,
+      fechaInicio,
+      fechaFin,
+      fechaCreacion,
+      idMapping,
+      mappingDesc,
+      idEstado,
+      idUser,
+      idEmpresa,
+      empresaDesc,
+      limit = 10,
+      offset = 0,
+    } = query;
 
-      if (fechaInicio && fechaFin && new Date(fechaInicio) > new Date(fechaFin)) {
-        return {
-          success: false,
-          message: 'La fecha de inicio no puede ser posterior a la fecha de fin.'
-        };
-      }
-
-      const filters = {
-        nombre,
-        ejercicio,
-        fechaInicio,
-        fechaFin,
-        idMapping,
-        idEstado,
-        idUser,
-        idEmpresa,
-        empresaDesc,
-        limit,
-        offset
-      };
-
-      const [data, total] = await Promise.all([
-        BalanceModel.findDistinctBalances(filters),
-        BalanceModel.countDistinctBalances(filters)
-      ]);
-
+    // 2. Validación de lógica de negocio
+    if (fechaInicio && fechaFin && new Date(fechaInicio) > new Date(fechaFin)) {
       return {
-        success: true,
-        data,
-        total
+        success: false,
+        message: "La fecha de inicio no puede ser posterior a la fecha de fin.",
       };
-
-    } catch (error) {
-      Logger.error(`Error en BalanceService.getDistinctBalances: ${error.message}`);
-      return { success: false, message: 'Error al obtener balances.' };
     }
+
+    // 3. Creamos el objeto de filtros, traduciendo nombres y convirtiendo tipos
+    const filters = {
+      limit, // limit y offset ya se convierten a número en el modelo
+      offset,
+      nombre,
+      fechaInicio,
+      fechaFin,
+      fechaCreacion,
+      empresaDesc,
+      mappingDesc,
+      ejercicio: ejercicio ? parseInt(ejercicio, 10) : undefined,
+      idMapping: idMapping || undefined,       // ahora string, no parseInt
+      idEstado: idEstado ? parseInt(idEstado, 10) : undefined,
+      iduser: idUser ? parseInt(idUser, 10) : undefined, // 'idUser' -> 'iduser'
+      id_empresa: idEmpresa || undefined,      // string (char(5)), no parseInt
+    };
+
+    // 4. Llamamos al modelo con los filtros limpios
+    const [data, total] = await Promise.all([
+      BalanceModel.findDistinctBalances(filters),
+      BalanceModel.countDistinctBalances(filters),
+    ]);
+
+    return {
+      success: true,
+      data,
+      total,
+    };
+  } catch (error) {
+    Logger.error(`Error en BalanceService.getDistinctBalances: ${error.message}`);
+    return { success: false, message: "Error al obtener balances." };
   }
+}
 
   static async getFsaCategoria() {
     try {

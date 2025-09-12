@@ -86,11 +86,17 @@ static async createBulk(req, res) {
 //CARGA BALANCES
 
   static async getResumen(req, res) {
-    const response = await BalanceService.getDistinctBalances(req.query);
-    if (!response.success) {
-      return res.status(400).json(response);
+    try {
+      const response = await BalanceService.getDistinctBalances(req.query);
+
+      if (!response.success) {
+        return res.status(400).json({ message: response.message });
+      }
+      res.json(response);
+    } catch (error) {
+      console.error(`Error en BalanceController.getResumen: ${error.message}`); // O usar tu Logger     
+      res.status(500).json({ message: "Ocurrió un error interno en el servidor." });
     }
-    res.json(response);
   }
 
 

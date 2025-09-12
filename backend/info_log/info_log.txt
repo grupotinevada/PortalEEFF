@@ -35,3 +35,21 @@
 [WARN] 2025-09-02T21:42:23.727Z - ID de balance no cumple con el formato MD5 esperado: bb8b7950-cd3f-4700-9e8b-a91c9be3f5d1
 [WARN] 2025-09-02T21:42:34.647Z - ID de balance no cumple con el formato MD5 esperado: bb8b7950-cd3f-4700-9e8b-a91c9be3f5d1
 [WARN] 2025-09-02T21:42:54.459Z - ID de balance no cumple con el formato MD5 esperado: bb8b7950cd3f47009e8b-a91c9be3f5d1
+[ERROR] 2025-09-10T14:34:38.716Z - Error en BalanceService.createBulk: Data too long for column 'id_fsa' at row 21
+[ERROR] 2025-09-10T14:35:40.666Z - Error en BalanceService.createBulk: Data too long for column 'id_fsa' at row 21
+[ERROR] 2025-09-10T14:35:55.586Z - Error en BalanceService.createBulk: Data too long for column 'id_fsa' at row 21
+[ERROR] 2025-09-10T19:13:30.475Z - Error en BalanceService.getDistinctBalances: Table 'portaleeff3.mapping' doesn't exist
+[ERROR] 2025-09-10T19:15:29.661Z - Error en BalanceService.getDistinctBalances: Table 'portaleeff3.mapping' doesn't exist
+[ERROR] 2025-09-10T19:21:45.796Z - Error en BalanceService.getDistinctBalances: Table 'portaleeff3.mapping' doesn't exist
+[ERROR] 2025-09-10T19:22:05.368Z - Error en BalanceService.getDistinctBalances: Table 'portaleeff3.mapping' doesn't exist
+[ERROR] 2025-09-10T19:24:56.234Z - Error en BalanceService.getDistinctBalances: Table 'portaleeff3.mapping' doesn't exist
+[ERROR] 2025-09-10T19:26:21.361Z - Error en BalanceService.getDistinctBalances: Table 'portaleeff3.mapping' doesn't exist
+[ERROR] 2025-09-10T20:19:03.004Z - Error en BalanceService.getDistinctBalances: Table 'portaleeff3.mapping' doesn't exist
+[ERROR] 2025-09-10T20:19:14.003Z - Error en BalanceService.getDistinctBalances: Table 'portaleeff3.mapping' doesn't exist
+[ERROR] 2025-09-11T12:48:21.766Z - Error en BalanceService.createBulk: Duplicate entry '162599e027fd40d09aceb6c60b3e691c' for key 'balance.balance_id_blce_IDX'
+[ERROR] 2025-09-11T12:51:54.864Z - Error en BalanceService.createBulk: Cannot add or update a child row: a foreign key constraint fails (`portaleeff3`.`balance`, CONSTRAINT `balance_cta_fsa_mapeo_FK` FOREIGN KEY (`num_cuenta`, `id_mapping`) REFERENCES `cta_fsa_mapeo` (`num_cuenta`, `id_mapping`))
+[ERROR] 2025-09-11T12:52:45.773Z - Error en BalanceService.createBulk: Cannot add or update a child row: a foreign key constraint fails (`portaleeff3`.`balance`, CONSTRAINT `balance_cta_fsa_mapeo_FK` FOREIGN KEY (`num_cuenta`, `id_mapping`) REFERENCES `cta_fsa_mapeo` (`num_cuenta`, `id_mapping`))
+[ERROR] 2025-09-11T13:02:39.649Z - Error en BalanceService.getDistinctBalances: Table 'portaleeff3.mapping' doesn't exist
+[ERROR] 2025-09-11T13:02:41.149Z - Error en BalanceService.getDistinctBalances: Table 'portaleeff3.mapping' doesn't exist
+[ERROR] 2025-09-11T13:02:44.118Z - Error en BalanceService.getDistinctBalances: Table 'portaleeff3.mapping' doesn't exist
+[ERROR] 2025-09-11T13:09:30.419Z - Error en BalanceService.getDistinctBalances: Table 'portaleeff3.mapping' doesn't exist

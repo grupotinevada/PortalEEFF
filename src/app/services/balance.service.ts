@@ -44,7 +44,7 @@ getAllFsa() {
   );
 }
 
- getResumen(params: {
+  getResumen(params: {
     nombre?: string;
     ejercicio?: number;
     fechaInicio?: string;
@@ -52,19 +52,23 @@ getAllFsa() {
     idMapping?: string;
     idEstado?: number;
     idEmpresa?: string;
-    empresaDesc: string;
+    empresaDesc?: string; 
+    idUser?: number;      
     limit?: number;
     offset?: number;
   }): Observable<BalanceResumenResponse> {
+    
     let httpParams = new HttpParams();
-
     Object.entries(params).forEach(([key, value]) => {
       if (value !== undefined && value !== null && value !== '') {
         httpParams = httpParams.set(key, value.toString());
       }
     });
 
-    return this.http.get<BalanceResumenResponse>(`${this.apiUrl}/resumen`, { params: httpParams });
+    return this.http.get<BalanceResumenResponse>(`${this.apiUrl}/resumen`, {
+      params: httpParams,
+      withCredentials: true,
+    });
   }
 
 

@@ -3,7 +3,7 @@ import { Component, Input, OnInit } from '@angular/core';
 import { NgbAccordionModule, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
 import { BalanceService } from '../../services/balance.service';
-import { mapping } from '../../models/mapping.model';
+import { Imapping } from '../../models/mapping.model';
 import { IFsa } from '../../models/fsa.model';
 import { IBalanceGet, IMacroCategoria } from '../../models/balance.model';
 import { Spinner } from '../spinner/spinner';
@@ -21,7 +21,7 @@ import Swal from 'sweetalert2';
 })
 export class ModalDetalle implements OnInit {
   @Input() id!: number;
-  @Input() mappings: mapping[] = [];
+  @Input() mappings: Imapping[] = [];
   @Input() fsas: IFsa[] = [];
   showSpinner = false;
   msgError = '';

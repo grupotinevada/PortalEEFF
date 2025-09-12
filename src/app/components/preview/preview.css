@@ -33,3 +33,8 @@ td, th {
   display: flex;
   gap: 1rem;
 }
+
+.ng-dropdown-panel {
+  white-space: normal;
+  height: fit-content;
+}

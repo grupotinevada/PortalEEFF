@@ -5,7 +5,7 @@ const cookieParser = require('cookie-parser');
 const authRoutes = require('./routes/auth.routes');
 const balanceRoutes = require('./routes/balance.routes');
 const mappingRoutes = require('./routes/mapping.routes');
-const defaultMappingRoutes = require('./routes/defaultMapping.routes');
+const estadoRoutes = require('./routes/estado.routes');
 const empresaRoutes = require('./routes/empresas.routes');
 const app = express();
 
@@ -36,7 +36,7 @@ app.use('/api/mapping', mappingRoutes);
 app.use('/api/empresa', empresaRoutes);
 
 // Default Mapping Routes
-app.use('/api/default-mapping', defaultMappingRoutes);
+app.use('/api/estado', estadoRoutes);
 
 
 

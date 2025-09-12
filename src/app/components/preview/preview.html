@@ -3,45 +3,30 @@
 <app-spinner [showSpinner]="showSpinner"></app-spinner>
 
 <!-- Padding superior para evitar que el navbar tape contenido -->
-<main
-  *ngIf="file"
-  class="container-fluid px-3 px-md-5 bg-light min-vh-100"
-  style="padding-top: 80px"
->
+<main *ngIf="file" class="container-fluid px-3 px-md-5  min-vh-100" style="padding-top: 20px; padding-bottom: 20px;">
   <div class="mx-auto" style="max-width: 1200px">
     <section class="bg-white rounded-3 border px-4 py-4 shadow-sm">
       <!-- CABECERA -->
-      <header
-        class="d-flex justify-content-between align-items-center border-bottom pb-2 mb-3"
-      >
+      <header class="d-flex justify-content-between align-items-center border-bottom pb-2 mb-3">
         <div>
           <h6 class="mb-1 text-success fw-semibold">
             <i class="bi bi-check-circle me-2"></i>Procesamiento de Archivo SAP
           </h6>
-          <small class="text-muted"
-            >Nombre: {{ file.name }} | Tipo: {{ file.type }}</small
-          >
+          <small class="text-muted">Nombre: {{ file.name }} | Tipo: {{ file.type }}</small>
         </div>
         <div>
-          <small class="text-dark fw-semibold"
-            >{{ file.size | number:'1.0-0' }} bytes</small
-          >
+          <small class="text-dark fw-semibold">{{ file.size | number:'1.0-0' }} bytes</small>
         </div>
       </header>
 
       <!-- TABLA -->
       <section *ngIf="tableData.length > 0;" class="mb-4 border rounded-2">
-        <div
-          class="table-responsive"
-          style="max-height: 35.5rem; overflow-y: auto"
-        >
+        <div class="table-responsive" style="max-height: 35.5rem; overflow-y: auto">
           <table class="table table-sm table-hover align-middle mb-0">
             <thead class="table-light sticky-top small">
               <tr>
-                <th
-                  *ngFor="let h of headers"
-                  class="text-secondary fw-semibold"
-                >
+                <th *ngFor="let h of headers" class="text-secondary fw-semibold"
+                  [ngStyle]="h === 'FSA' ? {'min-width.px': 300} : {}">
                   {{ h }}
                 </th>
               </tr>
@@ -49,156 +34,105 @@
             <tbody>
               <tr *ngFor="let row of tableData">
                 <td *ngFor="let h of headers" class="text-dark small">
-                  {{ row[h] }}
+                  <!-- Si la columna es FSA mostramos el ng-select -->
+                  <ng-container *ngIf="h === 'FSA'; else normalCell">
+                    <ng-select [items]="fsas" bindLabel="display" bindValue="id_fsa" [(ngModel)]="row['FSA']"
+                      [searchable]="true" [clearable]="true" [addTag]="false" placeholder="Buscar o crear FSA"
+                      (change)="onFsaChange(row, row['FSA'])" class="w-100">
+                    </ng-select>
+
+                  </ng-container>
+
+                  <!-- Celda normal -->
+                  <ng-template #normalCell>
+                    {{ row[h] }}
+                  </ng-template>
                 </td>
               </tr>
             </tbody>
+
           </table>
         </div>
       </section>
 
       <!-- DATOS DE SELECCIÓN Y METADATOS -->
       <section class="row gx-4 gy-3 mb-4">
-
-                <!-- Nombre del Balance -->
+        <!-- Nombre del Balance -->
         <div class="col-md-4">
-          <label for="nombreBalance" class="form-label fw-semibold small"
-            >Nombre del Balance</label
-          >
-          <input
-            id="nombreBalance"
-            type="text"
-            class="form-control form-control-sm"
-            [(ngModel)]="nombreBalance"
-            placeholder="Ej. Balance Anual 2025"
-          />
+          <label for="nombreBalance" class="form-label fw-semibold small">Nombre del Balance</label>
+          <input id="nombreBalance" type="text" class="form-control form-control-sm" [(ngModel)]="nombreBalance"
+            placeholder="Ej. Balance Anual 2025" />
         </div>
-        
+
         <!-- Ejercicio -->
         <div class="col-md-3">
-          <label for="anioInput" class="form-label fw-semibold small"
-            >Ejercicio <span class="text-danger">*</span></label
-          >
-          <select
-            id="anioInput"
-            class="form-select form-select-sm"
-            [(ngModel)]="anioSeleccionado"
-          >
+          <label for="anioInput" class="form-label fw-semibold small">Ejercicio <span
+              class="text-danger">*</span></label>
+          <select id="anioInput" class="form-select form-select-sm" [(ngModel)]="anioSeleccionado">
             <option value="" disabled selected>-- Selecciona --</option>
             <option *ngFor="let anio of listaAnios" [value]="anio">
               {{ anio }}
             </option>
           </select>
-          <small *ngIf="!anioSeleccionado" class="text-danger"
-            >Campo requerido</small
-          >
+          <small *ngIf="!anioSeleccionado" class="text-danger">Campo requerido</small>
         </div>
 
         <!-- mapping -->
         <div class="col-md-5">
-          <label for="mappingSelect" class="form-label fw-semibold small"
-            >Mapping <span class="text-danger">*</span></label
-          >
-          <select
-            id="mappingSelect"
-            class="form-select form-select-sm"
-            [(ngModel)]="selectedMapping"
-          >
-            <option value="" disabled selected>-- Selecciona --</option>
-            <option
-              *ngFor="let mapping of mappings"
-              [value]="mapping.id_mapping"
-              
+          <label for="mappingSelect" class="form-label fw-semibold small">Mapping <span
+              class="text-danger">*</span></label>
+          <select id="mappingSelect" class="form-select form-select-sm" [(ngModel)]="selectedMapping"
+            (change)="onMappingChange()">
             >
+            <option value="" disabled selected>-- Selecciona --</option>
+            <option *ngFor="let mapping of mappings" [value]="mapping.id_mapping">
               {{ mapping.id_mapping }} - {{ mapping.descripcion }}
             </option>
           </select>
-          <small *ngIf="!selectedMapping" class="text-danger"
-            >Campo requerido</small
-          >
+          <small *ngIf="!selectedMapping" class="text-danger">Campo requerido</small>
         </div>
 
         <!--EMPRESA-->
         <div class="col-md-5">
-          <label for="empresaSelect" class="form-label fw-semibold small"
-            >Empresa <span class="text-danger">*</span></label
-          >
-          <select
-            id="empresaSelect"
-            class="form-select form-select-sm"
-            [(ngModel)]="selectedEmpresa"
-          >
+          <label for="empresaSelect" class="form-label fw-semibold small">Empresa <span
+              class="text-danger">*</span></label>
+          <select id="empresaSelect" class="form-select form-select-sm" [(ngModel)]="selectedEmpresa">
             <option value="" disabled selected>-- Selecciona --</option>
-            <option
-              *ngFor="let empresa of empresas"
-              [value]="empresa.id_empresa"
-              
-            >
+            <option *ngFor="let empresa of empresas" [value]="empresa.id_empresa">
               {{ empresa.id_empresa }} - {{ empresa.descripcion }}
             </option>
           </select>
-          <small *ngIf="!selectedEmpresa" class="text-danger"
-            >Campo requerido</small
-          >
+          <small *ngIf="!selectedEmpresa" class="text-danger">Campo requerido</small>
         </div>
 
         <!-- Fecha inicio -->
         <div class="col-md-3">
-          <label for="fechaInicio" class="form-label fw-semibold small"
-            >Fecha de Inicio</label
-          >
-          <input
-            id="fechaInicio"
-            type="date"
-            class="form-control form-control-sm"
-            [(ngModel)]="fechaInicio"
-          />
+          <label for="fechaInicio" class="form-label fw-semibold small">Fecha de Inicio</label>
+          <input id="fechaInicio" type="date" class="form-control form-control-sm" [(ngModel)]="fechaInicio" />
         </div>
 
         <!-- Fecha fin -->
         <div class="col-md-3">
-          <label for="fechaFin" class="form-label fw-semibold small"
-            >Fecha de Fin</label
-          >
-          <input
-            id="fechaFin"
-            type="date"
-            class="form-control form-control-sm"
-            [(ngModel)]="fechaFin"
-          />
+          <label for="fechaFin" class="form-label fw-semibold small">Fecha de Fin</label>
+          <input id="fechaFin" type="date" class="form-control form-control-sm" [(ngModel)]="fechaFin" />
         </div>
 
         <!-- Botones -->
         <div class="col-12 d-flex flex-wrap gap-2 justify-content-end">
-          <button
-            *ngIf="processed"
-            class="btn btn-success btn-sm"
-            (click)="subirBalance()"
-          >
+          <button *ngIf="processed" class="btn btn-success btn-sm" (click)="subirBalance()">
             <i class="bi bi-upload me-1"></i> Confirmar subida
           </button>
 
-          <button
-            *ngIf="processed"
-            class="btn btn-outline-success btn-sm"
-            (click)="descargarProcesado()"
-          >
+          <button *ngIf="processed" class="btn btn-outline-success btn-sm" (click)="descargarProcesado()">
             <i class="bi bi-download me-1"></i> CSV procesado
           </button>
 
-          <button
-            *ngIf="!processed"
-            class="btn btn-outline-primary btn-sm"
-            [disabled]="!anioSeleccionado || !selectedMapping"
-            (click)="visualizarProcesado()"
-          >
+          <button *ngIf="!processed" class="btn btn-outline-primary btn-sm"
+            [disabled]="!anioSeleccionado || !selectedMapping" (click)="visualizarProcesado()">
             <i class="bi bi-eye me-1"></i> Visualizar CSV
           </button>
 
-          <button
-            class="btn btn-outline-secondary btn-sm"
-            (click)="descargarOriginal()"
-          >
+          <button class="btn btn-outline-secondary btn-sm" (click)="descargarOriginal()">
             <i class="bi bi-file-earmark-arrow-down me-1"></i> CSV original
           </button>
 
@@ -224,35 +158,23 @@
       </section>
 
       <!-- RESULTADO -->
-      <section
-        *ngIf="processed"
-        class="alert alert-secondary border-start border-4 border-success"
-      >
+      <section *ngIf="processed" class="alert alert-secondary border-start border-4 border-success">
         <p class="mb-1 small">
           <strong>Resultado:</strong> Acreedor
           <span class="text-primary">{{ totalAcreedor | number:'1.0-0' }}</span>
           - Deudor
           <span class="text-danger">{{ totalDeudor | number:'1.0-0' }}</span> =
-          <strong class="text-dark"
-            >{{ resultadoSaldo | number:'1.0-0' }}</strong
-          >
+          <strong class="text-dark">{{ resultadoSaldo | number:'1.0-0' }}</strong>
         </p>
-        <p
-          class="fw-semibold small"
-          [ngClass]="{
+        <p class="fw-semibold small" [ngClass]="{
             'text-success': resultadoSaldo === 0,
-            'text-danger': resultadoSaldo !== 0
-          }"
-        >
-          {{ resultadoSaldo === 0 ? '✔ El saldo cuadra correctamente.' : '✖ El saldo no cuadra, revise los datos.' }}
+            'text-danger': resultadoSaldo !== 0}">{{ resultadoSaldo === 0 ? '✔ El saldo cuadra correctamente.' : '✖  El saldo no cuadra, revise los datos.' }}
         </p>
       </section>
 
       <!-- MENSAJE SI NO ESTÁ PROCESADO -->
       <ng-template #noData>
-        <div
-          class="alert alert-light border-start border-3 border-warning small mt-3"
-        >
+        <div class="alert alert-light border-start border-3 border-warning small mt-3">
           Asegúrate de que el año y la mapping sean correctos. Luego, haz clic
           en <strong>"Visualizar CSV procesado"</strong>.
         </div>

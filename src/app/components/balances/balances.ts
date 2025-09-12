@@ -1,22 +1,23 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { BalanceService } from '../../services/balance.service';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { BalanceResumen } from '../../models/balance.model';
 import { AuthService } from '../../services/auth.service';
-import { DefaultMappingService } from '../../services/default-mapping.service';
+import { EstadoService } from '../../services/estado.service';
 import { IEstados, IFsa } from '../../models/fsa.model';
 import { Navbar } from '../navbar/navbar';
 import { MappingService } from '../../services/mapping.service';
-import { mapping } from '../../models/mapping.model';
+import { Imapping, ImappingSelect } from '../../models/mapping.model';
 import { Spinner } from '../spinner/spinner';
 import { ModalDetalle } from '../modal-detalle/modal-detalle';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { tap, switchMap, take, finalize, catchError, EMPTY, of, throwError, map } from 'rxjs';
+import { tap, switchMap, take, finalize, catchError, EMPTY, of, throwError, map, takeUntil, Subject } from 'rxjs';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-balances',
-  imports: [CommonModule, Navbar, Spinner],
+  imports: [CommonModule, Navbar, Spinner, ReactiveFormsModule],
   templateUrl: './balances.html',
   styleUrl: './balances.css'
 })
@@ -32,17 +33,18 @@ export class Balances implements OnInit {
   estados: IEstados[] = []
   filtroForm: any;
   
-  mappings: mapping[] = [];
+  mappings: ImappingSelect[] = [];
 
 
   fsas: IFsa[] = [];
-  fsas2: IFsa[] = [];
+
+  private destroy$ = new Subject<void>();
 
   constructor(
     private balanceService: BalanceService,
     private fb: FormBuilder,
     private authService: AuthService,
-    private defaultMappingService: DefaultMappingService,
+    private estadoService: EstadoService,
     private mappingService: MappingService,
     private modalService: NgbModal,
     
@@ -71,30 +73,19 @@ private getEstados(): void {
   this.msgError = ''; // Limpiar errores previos
 
   this.authService.isAuthenticated().pipe(
-    // take(1) asegura que solo tomemos el estado de autenticación actual y luego nos desuscribimos.
     take(1), 
-
-    // switchMap encadena el siguiente observable solo si el anterior tiene éxito.
     switchMap(isAuthenticated => {
       if (!isAuthenticated) {
-        // Si no está autenticado, detenemos el flujo y lanzamos un error.
         return throwError(() => new Error('Usuario no autenticado'));
       }
-      // Si está autenticado, continuamos con la llamada al servicio de datos.
-      return this.defaultMappingService.getAllEstados();
+      return this.estadoService.getAllEstados();
     }),
-
-    // map transforma los datos recibidos.
     map(res => {
       if (res.success && Array.isArray(res.data)) {
-        // Filtramos los datos y devolvemos el resultado deseado.
         return res.data.filter(f => f.id_estado && f.desc && f.color);
       }
-      // Si la respuesta no es la esperada, lanzamos un error.
       throw new Error('Respuesta inválida del servicio FSA');
     }),
-
-    // finalize se ejecuta siempre al final, ya sea por éxito o error.
     finalize(() => this.loading = false)
 
   ).subscribe({
@@ -141,57 +132,73 @@ private cargarMappings() {
   });
 }
 
-  loadBalances(): void {
+loadBalances(): void {
     this.loading = true;
-
     const offset = (this.page - 1) * this.limit;
     const filtros = { ...this.filtersForm.value, limit: this.limit, offset };
 
-    this.balanceService.getResumen(filtros).subscribe({
-      next: (res) => {
-        if (res.success) {
-          this.balances = res.data;
-          this.total = res.total;
+    this.balanceService.getResumen(filtros)
+      .pipe(
+        finalize(() => this.loading = false),
+        takeUntil(this.destroy$)
+      )
+      .subscribe({
+        next: (res) => {
+          if (res.success) {
+            this.balances = res.data;
+            this.total = res.total;
+          } else {
+            // 2. REEMPLAZO: Muestra un error de negocio con Swal
+            Swal.fire({
+              icon: 'warning',
+              title: 'Atención',
+              text: 'No se pudieron cargar los datos correctamente.',
+            });
+            this.balances = [];
+            this.total = 0;
+          }
+        },
+        error: (err) => {
+          // 3. REEMPLAZO: Muestra un error de conexión con Swal
+          Swal.fire({
+            icon: 'error',
+            title: 'Error de Conexión',
+            text: 'No se pudo comunicar con el servidor. Por favor, inténtelo de nuevo más tarde.',
+          });
         }
-        this.loading = false;
-      },
-      error: () => {
-        this.currentView = 'error';
-        this.loading = false;
-      }
-    });
+      });
   }
 
-  onApplyFilters(): void {
+ onApplyFilters(): void {
     this.page = 1;
     this.loadBalances();
   }
 
   onPageChange(newPage: number): void {
-    if (newPage < 1 || newPage > this.totalPages) return;
-    this.page = newPage;
-    this.loadBalances();
+    if (newPage >= 1 && newPage <= this.totalPages) {
+      this.page = newPage;
+      this.loadBalances();
+    }
   }
 
-  get totalPages(): number {
+get totalPages(): number {
+    if (this.total === 0 || this.limit === 0) return 0;
     return Math.ceil(this.total / this.limit);
   }
+  
 
   get pages(): number[] {
     return Array.from({ length: this.totalPages }, (_, i) => i + 1);
   }
 
-  onResetFilters() {
-    this.filtersForm = this.fb.group({
-      nombre: [''],
-      ejercicio: [''],
-      fechaInicio: [''],
-      fechaFin: [''],
-      idMapping: [''],
-      idEstado: [''],
-      idUser: ['']
-    });
-    this.filtersForm.reset
+ onResetFilters(): void {
+    this.filtersForm.reset(); 
+    this.onApplyFilters();    
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
 
@@ -199,11 +206,10 @@ private cargarMappings() {
     const modalRef = this.modalService.open(ModalDetalle, {
       fullscreen: true,
       backdrop: 'static',
-      centered: false, // no lo necesitamos centrado porque ocupa toda la pantalla
-      
+      centered: false, 
 
     });
-    // Pasa los datos al modal
+
     modalRef.componentInstance.mappings = this.mappings;
     modalRef.componentInstance.fsas = this.fsas;
     modalRef.componentInstance.id = id;
