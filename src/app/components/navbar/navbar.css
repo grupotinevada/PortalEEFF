@@ -27,6 +27,20 @@
   color: #198754; /* El color verde de 'bg-success' */
 }
 
+.dropdown-menu-success {
+  background-color: #198754; /* bg-success */
+  border: none;
+}
+
+.dropdown-menu-success .dropdown-item {
+  color: #fff;
+}
+
+.dropdown-menu-success .dropdown-item:hover:not(:disabled) {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+
 /* Ajustes para la vista Offcanvas (móvil) */
 @media (max-width: 991.98px) {
   .offcanvas-body .nav-link {
