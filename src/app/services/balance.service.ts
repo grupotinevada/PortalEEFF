@@ -2,8 +2,9 @@ import { Injectable } from '@angular/core';
 import { BalanceResumenResponse, IBalance, IBalanceGet } from '../models/balance.model';
 import { HttpClient, HttpErrorResponse, HttpHeaders, HttpParams } from '@angular/common/http';
 import { environment } from '../../environments/environment.development';
-import { catchError, map, Observable, throwError } from 'rxjs';
+import { catchError, map, Observable, of, throwError } from 'rxjs';
 import { IFsa } from '../models/fsa.model';
+import { INameAvailabilityResponse } from '../models/api-response.model';
 
 @Injectable({
   providedIn: 'root',
@@ -31,18 +32,6 @@ createBalanceBulk(balances: IBalance[]): Observable<any> {
   });
 }
 
-
-getAllFsa() {
-  return this.http.get<{ success: boolean; data: IFsa[] }>(
-    `${this.apiUrl}/fsa`,
-    {
-      withCredentials: true,
-      headers: new HttpHeaders({
-        'Content-Type': 'application/json'
-      })
-    }
-  );
-}
 
   getResumen(params: {
     nombre?: string;
@@ -94,6 +83,28 @@ getBalanceById(id: string): Observable<IBalanceGet[]> {
   );
 }
 
-
+ /**
+   * Verifica en el backend si un nombre de balance ya está en uso.
+   * @param nombre El nombre del balance a verificar.
+   * @returns Un Observable que emite la respuesta de la API.
+   */
+checkNameAvailability(nombre: string): Observable<INameAvailabilityResponse> {
+  const url = `${this.apiUrl}/check-name/${nombre.trim()}`;
+  
+  return this.http.get<INameAvailabilityResponse>(url, { withCredentials: true }).pipe(
+    catchError((error: HttpErrorResponse) => {
+      // Si el error es 409 (Conflict), lo atrapamos.
+      if (error.status === 409) {
+        // En lugar de dejar que sea un error, lo transformamos en una
+        // emisión normal del observable usando 'of()'.
+        // El componente lo recibirá en el bloque 'next' como si fuera un éxito.
+        return of(error.error as INameAvailabilityResponse);
+      }
+      
+      // Para cualquier otro error, lo dejamos pasar como un error real.
+      return throwError(() => new Error('Ocurrió un error en el servidor.'));
+    })
+  );
+}
 
 }

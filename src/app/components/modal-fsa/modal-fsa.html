@@ -1,0 +1,107 @@
+<div class="modal-header">
+    <h5 class="modal-title">{{ title }}</h5>
+    <button type="button" class="btn-close" aria-label="Cerrar" (click)="activeModal.dismiss()"></button>
+</div>
+
+<div class="modal-body">
+    <form [formGroup]="form" novalidate>
+        <!-- ID FSA -->
+        <div class="mb-3">
+            <label for="input1" class="form-label">ID FSA
+                    <a tabindex="0"
+                class="text-muted"
+                placement="right"
+                ngbPopover="El FSA es el codigo que identifica a cada cuenta"
+                popoverTitle="Información">
+                <i class="bi bi-info-circle"></i>
+                </a>
+            </label>
+            <input type="text" class="form-control" id="input1" formControlName="idFsa"
+                placeholder="Ingrese el código FSA, 11-010" />
+            <div *ngIf="form.get('idFsa')?.touched && form.get('idFsa')?.invalid" class="text-danger small">
+                El ID es obligatorio.
+            </div>
+        </div>
+
+        <!-- Descripción + Tooltip -->
+<div class="mb-3">
+  <label for="input2" class="form-label d-flex align-items-center gap-2">
+    Descripción
+    <a tabindex="0"
+       class="text-muted"
+       placement="right"
+       ngbPopover="La descripción refiere al nombre con el cual se agrupan las cuentas en el EEFF. 
+       Ejemplo: Efectivo y equivalentes de efectivo, Otros Activos Financieros Corrientes, etc."
+       popoverTitle="Información">
+      <i class="bi bi-info-circle"></i>
+    </a>
+  </label>
+
+  <input type="text" 
+         class="form-control" 
+         id="input2" 
+         formControlName="descripcion"
+         placeholder="Ej: Efectivo y equivalentes de efectivo" />
+
+  <div *ngIf="form.get('descripcion')?.touched && form.get('descripcion')?.invalid"
+       class="text-danger small mt-1">
+    La descripción es obligatoria (mínimo 3 caracteres).
+  </div>
+</div>
+
+
+        <!-- Orden -->
+        <div class="mb-3">
+            <label for="input3" class="form-label">Orden
+                    <a tabindex="0"
+                    class="text-muted"
+                    placement="right"
+                    ngbPopover="La el orden refiere a la ubicacion dentro del EEFF final, el orden debe ser un número entero positivo y no puede repetirse, para mantener la integridad el EEFF comienza con el 1 de arriba hacia abajo, Por ejemplo: Para que efectivo y equivalentes de efectivo sea el primer item del en el EEFF debe tener orden 1" 
+                    
+                    popoverTitle="Información">
+                    <i class="bi bi-info-circle"></i>
+                    </a>
+
+            </label>
+            <input type="text" class="form-control" id="input3" formControlName="orden"
+                placeholder="Ingrese un número" />
+            <div *ngIf="form.get('orden')?.touched && form.get('orden')?.invalid" class="text-danger small">
+                Debe ser un número válido.
+            </div>
+        </div>
+
+        <!-- Categoría -->
+<div class="mb-3">
+            <label for="selectCategoria" class="form-label">Categoría</label>
+
+            <select 
+                *ngIf="categoriaService.categorias$ | async as categorias"
+                class="form-select" 
+                id="selectCategoria" 
+                formControlName="categoria"
+                aria-placeholder="Seleccione una categoría">
+
+                <option [ngValue]="null" disabled>Seleccione una categoría</option>
+
+                <option *ngFor="let categoria of categorias" [value]="categoria.id_cate">
+                    {{ categoria.id_cate }} - {{ categoria.descripcion }}
+                </option>
+            </select>
+
+            <div *ngIf="form.get('categoria')?.touched && form.get('categoria')?.invalid" class="text-danger small">
+                <div *ngIf="form.get('categoria')?.errors?.['required']">
+                    La categoría es obligatoria.
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+<div class="modal-footer">
+    <button type="button" class="btn btn-secondary" (click)="activeModal.dismiss()">
+        Cerrar
+    </button>
+    <button type="button" class="btn btn-primary" (click)="guardar()">
+        Guardar
+    </button>
+</div>

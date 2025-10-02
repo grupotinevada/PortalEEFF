@@ -5,7 +5,8 @@ import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { BalanceResumen } from '../../models/balance.model';
 import { AuthService } from '../../services/auth.service';
 import { EstadoService } from '../../services/estado.service';
-import { IEstados, IFsa } from '../../models/fsa.model';
+import { IFsa } from '../../models/fsa.model';
+import { IEstados } from '../../models/estado.model';
 import { Navbar } from '../navbar/navbar';
 import { MappingService } from '../../services/mapping.service';
 import { Imapping, ImappingSelect } from '../../models/mapping.model';
@@ -14,6 +15,7 @@ import { ModalDetalle } from '../modal-detalle/modal-detalle';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { tap, switchMap, take, finalize, catchError, EMPTY, of, throwError, map, takeUntil, Subject } from 'rxjs';
 import Swal from 'sweetalert2';
+import { FsaService } from '../../services/fsa.service';
 
 @Component({
   selector: 'app-balances',
@@ -47,6 +49,7 @@ export class Balances implements OnInit {
     private estadoService: EstadoService,
     private mappingService: MappingService,
     private modalService: NgbModal,
+    private fsaService: FsaService
     
   ) { }
 
@@ -235,7 +238,7 @@ private getFsaData(): void {
         return throwError(() => new Error('Usuario no autenticado'));
       }
       // continúa con la llamada para obtener los datos FSA.
-      return this.balanceService.getAllFsa();
+      return this.fsaService.getAllFsa();
     }),
 
     // transforma la respuesta exitosa.

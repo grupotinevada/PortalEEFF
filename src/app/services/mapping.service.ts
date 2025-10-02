@@ -1,8 +1,9 @@
 import { Injectable } from '@angular/core';
-import { ImappingSelect, Imapping } from '../models/mapping.model';
+import { ImappingSelect, Imapping, IMappingPayload, CloneMappingPayload } from '../models/mapping.model';
 import { environment } from '../../environments/environment.development';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { IApiResponse } from '../models/api-response.model';
 @Injectable({
   providedIn: 'root'
 })
@@ -24,6 +25,32 @@ getMappingById(idMapping: string): Observable<Imapping[]> { //esta funcion trae 
     withCredentials: true
   });
 }
+  
+  crearOActualizarMapeo(payload: IMappingPayload): Observable<IApiResponse> {
+      const upsertUrl = `${this.apiUrl}/upsert`;
+      return this.http.post<IApiResponse>(upsertUrl, payload, {
+        withCredentials: true
+      });
+    }
+  
+     /**
+   * Clona un mapping existente
+   */
+  cloneMapping(payload: CloneMappingPayload): Observable<any> {
+    return this.http.post(`${this.apiUrl}/clone`, payload, {
+        withCredentials: true
+      });
+  }
+
+  /**
+   * Elimina un mapping completo
+   */
+  deleteMapping(idMapping: number|string): Observable<any> {
+    console.log("ID recibido en el servicio:", idMapping);
+    return this.http.delete(`${this.apiUrl}/dlt/${idMapping}`, {
+        withCredentials: true
+      });
+  }
 
 }
 

@@ -18,6 +18,26 @@ class BalanceModel {
     );
     return rows.length > 0;
   }
+
+/**
+ * Checks if a balance with the given name already exists in the database.
+ * @param {string} nombre The balance name to check.
+ * @returns {Promise<boolean>} A promise that resolves to true if the name is taken, false otherwise.
+ */
+static async checkName(nombre) {
+  // La validación inicial es buena para evitar consultas innecesarias.
+  if (!nombre || typeof nombre !== 'string') {
+    return false;
+  }
+
+  const query = 'SELECT EXISTS(SELECT 1 FROM balance WHERE nombre_conjunto = ?) AS nameExists;';
+  const [rows] = await pool.query(query, [nombre]);
+
+  // Usar Boolean() es un poco más explícito que `!!`
+  return Boolean(rows[0].nameExists);
+}
+
+  
   //=========================== FIN FUNCIONES AUXILIARES ===========//
 
   static async createBulk(balances) {

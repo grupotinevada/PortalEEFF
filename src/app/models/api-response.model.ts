@@ -5,3 +5,15 @@ export interface AuthResponse {
   success: boolean;
   user: UsuarioLogin;
 }
+
+export interface IApiResponse {
+  success: boolean;
+  message?: string;
+  data?: any;
+}
+
+export interface INameAvailabilityResponse {
+  success: boolean;
+  message: string;
+  isAvailable: boolean;
+}

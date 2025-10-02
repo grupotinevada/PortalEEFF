@@ -7,6 +7,8 @@ const balanceRoutes = require('./routes/balance.routes');
 const mappingRoutes = require('./routes/mapping.routes');
 const estadoRoutes = require('./routes/estado.routes');
 const empresaRoutes = require('./routes/empresas.routes');
+const categoriaRoutes = require('./routes/categoria.routes');
+const fsaRoutes = require('./routes/fsa.routes');
 const app = express();
 
 // Middleware
@@ -38,7 +40,11 @@ app.use('/api/empresa', empresaRoutes);
 // Default Mapping Routes
 app.use('/api/estado', estadoRoutes);
 
+// Categorias Routes
+app.use('/api/categoria', categoriaRoutes);
 
+// FSA Routes
+app.use('/api/fsa', fsaRoutes);
 
 // Agrega el router
 app.use('/api', balanceRoutes);

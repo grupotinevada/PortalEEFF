@@ -13,6 +13,25 @@ function generarIdBalance() {
 
 
 class BalanceService {
+
+ /**
+ * Verifica si el nombre de un balance está disponible.
+ * @param {string} nombre El nombre del balance a verificar.
+ * @returns {Promise<boolean>} Un booleano que indica si el nombre está disponible.
+ */
+static async isNameAvailable(nombre) {
+  Logger.info(`Verificando disponibilidad del nombre de balance: ${nombre}`);
+
+  // Llama al modelo para consultar la base de datos.
+  const nameExists = await BalanceModel.checkName(nombre);
+
+  Logger.info(`El nombre "${nombre}" ${nameExists ? 'ya existe' : 'está disponible'}.`);
+  
+  // Retorna true si el nombre NO existe (es decir, está disponible).
+  return !nameExists;
+}
+
+
  /**
    * Crea un array de balances
    * @param {string} balances - Array del balance (num_cuenta, nombre, saldo, fecha_procesado, id_user, id_mapping)

@@ -4,6 +4,7 @@ const Logger = require("../utils/logger.utils");
 
 class BalanceController {
 
+
 static async createBulk(req, res) {
   try {
     console.log("POST /bulk - Subiendo balances masivamente");
@@ -134,9 +135,6 @@ static async getById(req, res) {
     });
   }
 }
-
-
-
   static async obtenerFsasConCategoria(req, res) {
     try {
       console.log("GET /fsa - Obteniendo FSA con join a categoria");
@@ -147,6 +145,53 @@ static async getById(req, res) {
       res.status(500).json({ error: "Error al obtener FSA" });
     }
   }
+
+/**
+ * Controlador para verificar si un nombre de balance ya existe.
+ * @param {object} req - Objeto de solicitud de Express.
+ * @param {object} res - Objeto de respuesta de Express.
+ */
+static async checkName(req, res) {
+  const { nombre } = req.params;
+
+  if (!nombre) {
+    return res.status(400).json({
+      success: false,
+      message: 'El parámetro "nombre" es obligatorio.'
+    });
+  }
+
+  try {
+    const isAvailable = await BalanceService.isNameAvailable(nombre);
+
+    if (isAvailable) {
+      return res.status(200).json({
+        success: true,
+        message: `El nombre de balance '${nombre}' está disponible.`,
+        isAvailable: true
+      });
+    } else {
+      return res.status(409).json({ // 409 Conflict es ideal para esto.
+        success: false,
+        message: `El nombre de balance '${nombre}' ya está en uso.`,
+        isAvailable: false
+      });
+    }
+  } catch (error) {
+    // Si algo falla en el servicio o el modelo, se captura aquí.
+    Logger.error(`Error en el controlador al verificar el nombre '${nombre}':`, error);
+    
+    return res.status(500).json({
+      success: false,
+      message: 'Ocurrió un error inesperado en el servidor.'
+    });
+  }
+}
+
+
+
+//ME QUEDE AQUI
+
 }
 
 module.exports = BalanceController;

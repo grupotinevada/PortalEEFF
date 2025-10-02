@@ -130,3 +130,13 @@ Angular — Deliver web apps with confidence 🚀
 - [Keeping your projects up-to-date](https://angular.dev/update)
 - [Security](https://angular.dev/best-practices/security)
 - [Internationalization (i18n)](https://angular.dev/guide/i18n)
+
+
+
+
+
+
+   // Filtra saldos cero excepto para Estado de Resultados    ME GUSTARIA QUE FUERA UN CHECKBOX EN LA INTERFAZ PERO DE MOMENTO ASI
+    // if (item.saldo === 0 && !idsSinFiltro.includes(id_cate)) {
+    //   continue;
+    // }

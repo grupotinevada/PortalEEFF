@@ -3,6 +3,8 @@ import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { Navbar } from '../navbar/navbar';
 import { PreviewFileService } from '../../services/preview-fie';
+import { CloneMappingPayload } from '../../models/mapping.model';
+import { MappingService } from '../../services/mapping.service';
 
 @Component({
   selector: 'app-home',
@@ -14,7 +16,7 @@ export class Home {
   selectedFile: File | null = null;
   savedFileName: string | null = null;
 
-  constructor(private previewFileService: PreviewFileService, private router: Router) {}
+  constructor(private previewFileService: PreviewFileService, private router: Router, private mappingService: MappingService) {}
 
   onFileSelected(event: Event): void {
     const input = event.target as HTMLInputElement;
@@ -55,4 +57,41 @@ export class Home {
   shouldShowPreview(): boolean {
     return this.selectedFile !== null;
   }
+
+
+
+  clonar() {
+    const payload: CloneMappingPayload = {
+      idMappingOrigen: "MP-01",
+      idMappingNuevo: "MP-CLONADO",
+      descripcionNueva: 'Mapping clonado con cambios',
+      cambios: [
+        { num_cuenta: '1101010000', id_fsa: "11-020"}
+      ]
+    };
+
+    this.mappingService.cloneMapping(payload).subscribe({
+      next: (res) => console.log('Clonado:', res),
+      error: (err) => console.error('Error:', err)
+    });
+  }
+
+  eliminar() {
+    this.mappingService.deleteMapping("cv-19").subscribe({
+      next: (res) => console.log('Eliminado:', res),
+      error: (err) => console.error('Error:', err)
+    });
+  }
+
+
+
+
+
+
+
+
+
+
+
+
 }

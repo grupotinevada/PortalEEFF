@@ -3,7 +3,7 @@ import { IDefaultMapping } from '../models/balance.model';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment.development';
-import { IEstados } from '../models/fsa.model';
+import { IEstados } from '../models/estado.model';
 
 @Injectable({
   providedIn: 'root'
