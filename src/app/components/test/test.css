@@ -1,0 +1,9 @@
+.custom-context-menu {
+  position: absolute;
+  display: none;
+  z-index: 1000;
+  background: white;
+  border-radius: 6px;
+  min-width: 180px;
+  cursor: pointer;
+}

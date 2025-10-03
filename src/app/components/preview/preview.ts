@@ -1102,9 +1102,7 @@ procesarInformacion(): void {
             timer: 2000,
             showConfirmButton: false,
           }).then(() => {
-            // this.router.navigate(['balances']).then(() => {
-            //   window.location.reload();
-            // });
+            this.router.navigate(['balances'])
           });
         },
         error: async (err) => {

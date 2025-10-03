@@ -1,0 +1,26 @@
+<div class="container mt-4">
+  <table class="table table-bordered table-hover" id="miTabla">
+    <thead class="table-light">
+      <tr>
+        <th>Código</th>
+        <th>Nombre</th>
+        <th>Saldo</th>
+        <th>Ejercicio</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr (contextmenu)="abrirMenu($event, i)" *ngFor="let row of filas; let i = index">
+        <td>{{ row.codigo }}</td>
+        <td>{{ row.nombre }}</td>
+        <td>{{ row.saldo }}</td>
+        <td>{{ row.ejercicio }}</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- Menú contextual -->
+<ul id="contextMenu" class="custom-context-menu list-group shadow">
+  <li class="list-group-item list-group-item-action"
+      (click)="insertarFila()"><i class="bi bi-arrow-down-square"></i>Insertar fila debajo</li>
+</ul>
