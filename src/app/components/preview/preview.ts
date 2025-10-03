@@ -29,6 +29,7 @@ import { NgSelectComponent } from '@ng-select/ng-select';
 import { ModalFsa } from '../modal-fsa/modal-fsa';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { FsaService } from '../../services/fsa.service';
+import { ModalDistribucion } from '../modal-distribucion/modal-distribucion';
 
 @Component({
   selector: 'app-preview',
@@ -51,10 +52,13 @@ export class Preview implements OnInit {
   private nombreBalance$ = new Subject<string>();
   private subscriptions : Subscription = new Subscription;
 
+  // Variables para totales
+
   totalDeudor: number = 0;
   totalAcreedor: number = 0;
   resultadoSaldo: number = 0;
 
+  //variables ngModel
   fechaSeleccionada: string = '';
   listaAnios: number[] = [];
   msgError: string = '';
@@ -85,10 +89,11 @@ export class Preview implements OnInit {
   fsas: IFsa[] = [];
 
   mappingCompleto: Imapping[] = [];
-
-
   mappinngNuevo: ImappingSelect[] = [];
   private initialFsaMap = new Map<string, string>();
+
+  isDistributionMode = false; 
+  sourceAccount: any = null;
   constructor(
     private mappingService: MappingService,
     private balanceService: BalanceService,
@@ -195,6 +200,9 @@ this.subscriptions.add(
         },
       });
   }
+ngOnDestroy(): void {
+  this.subscriptions.unsubscribe();
+}
 
   onFsaChange(row: any, selectedId: string): void {
     const fsa = this.fsas.find((f) => f.id_fsa === selectedId);
@@ -1241,8 +1249,91 @@ procesarInformacion(): void {
     );
   }
 
-ngOnDestroy(): void {
-  this.subscriptions.unsubscribe();
-}
+
+  /**
+   * Inicia el modo de distribución desde una fila específica.
+   * @param row La fila de la cuenta origen.
+   */
+  startDistribution(row: any): void {
+    this.cancelDistribution(); // Resetea cualquier estado anterior
+    this.isDistributionMode = true;
+    this.sourceAccount = row;
+
+    this.tableData.forEach(r => {
+      r.isSelected = false;
+      r.isSelectionDisabled = (r === this.sourceAccount);
+    });
+  }
+
+  /**
+   * Cancela el modo de distribución y limpia la selección.
+   */
+  cancelDistribution(): void {
+    this.isDistributionMode = false;
+    this.sourceAccount = null;
+    this.tableData.forEach(r => {
+      delete r.isSelected;
+      delete r.isSelectionDisabled;
+    });
+  }
+
+  /**
+   * Abre el modal para realizar la distribución.
+   */
+  openDistributionModal(): void {
+    const selectedDestinations = this.tableData.filter(r => r.isSelected && !r.isSelectionDisabled);
+
+    if (selectedDestinations.length === 0) {
+      Swal.fire('Atención', 'Debes seleccionar al menos una cuenta de destino.', 'warning');
+      return;
+    }
+    
+    const modalRef = this.modalService.open(ModalDistribucion, {
+      size: 'lg',
+      backdrop: 'static',
+    });
+
+    modalRef.componentInstance.sourceAccount = this.sourceAccount;
+    modalRef.componentInstance.destinationAccounts = selectedDestinations;
+    modalRef.componentInstance.headers = this.headers;
+
+    modalRef.result.then((result) => {
+      if (result) {
+        this.applyDistribution(result);
+      }
+    }).catch(() => {
+      console.log('Distribución cancelada por el usuario.');
+    });
+  }
+
+  /**
+   * Aplica los cambios de la distribución a la tabla.
+   * @param distributionData Los datos calculados devueltos por el modal.
+   */
+  applyDistribution(distributionData: { updates: any[], totalDistributed: number }): void {
+    const codigoKey = this.headers[0];
+    const saldoKey = this.headers[2]; // 'Saldo Actual'
+
+    distributionData.updates.forEach(update => {
+      const accountToUpdate = this.tableData.find(row => row[codigoKey] === update.codigo);
+      if (accountToUpdate) {
+        // Los saldos pueden ser negativos, por eso es una suma simple.
+        accountToUpdate[saldoKey] += update.amountToAdd;
+      }
+    });
+
+    this.sourceAccount[saldoKey] -= distributionData.totalDistributed;
+
+    this.cancelDistribution();
+    
+    Swal.fire({
+        toast: true,
+        position: 'top-end',
+        icon: 'success',
+        title: 'Saldo distribuido correctamente',
+        showConfirmButton: false,
+        timer: 2500
+    });
+  }
 
 }

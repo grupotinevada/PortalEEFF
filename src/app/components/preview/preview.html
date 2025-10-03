@@ -1,211 +1,214 @@
-<!-- navbar fijo arriba -->
 <app-navbar></app-navbar>
 <app-spinner [showSpinner]="showSpinner"></app-spinner>
 
-<!-- Padding superior para evitar que el navbar tape contenido -->
-<main *ngIf="file" class="container-fluid min-vh-100 d-flex flex-column" style="padding-top: 20px; padding-bottom: 20px;">
-  <div class="mx-1" style="max-width: 100%">
-    <section class="bg-white rounded-0 border-0 shadow-sm flex-fill w-100 h-100 p-4">
-      <!-- CABECERA -->
-      <header class="d-flex justify-content-between align-items-center border-bottom pb-2 mb-3">
+<main *ngIf="file" class="container-fluid min-vh-100 d-flex flex-column py-4 bg-light">
+  <div class="container-fluid">
+    <section class="bg-white rounded-4 border-0 shadow-sm flex-fill w-100 h-100 p-4 p-md-5" 
+         style="transform: scale(0.95); transform-origin: top;">
+
+      <header class="d-flex flex-column flex-md-row justify-content-between align-items-md-center border-bottom pb-3 mb-4">
         <div>
-          <h6 class="mb-1 text-success fw-semibold">
-            <i class="bi bi-check-circle me-2"></i>Procesamiento de Archivo SAP
-          </h6>
-          <small class="text-muted">Nombre: {{ file.name }} | Tipo: {{ file.type }} | Size: {{ file.size | number:'1.0-0' }} bytes</small>
+          <h5 class="mb-1 text-dark fw-bold d-flex align-items-center">
+            <i class="bi bi-file-earmark-check-fill text-success me-2 fs-4"></i>
+            Procesamiento de Archivo SAP
+          </h5>
+          <small class="text-body-secondary">Nombre: {{ file.name }} | Tamaño: {{ file.size | number:'1.0-0' }} bytes</small>
         </div>
-        <div>
+        <div class="mt-3 mt-md-0">
           <button type="button" class="btn btn-success d-flex align-items-center" (click)="abrirModal()">
-            <i class="bi bi-plus-circle-dotted"></i>
-            <span class="d-none d-sm-inline ms-1">Crear FSA</span>
+            <i class="bi bi-plus-circle-dotted me-2"></i>
+            <span class="fw-semibold">Crear FSA</span>
           </button>
         </div>
       </header>
 
-      <!-- TABLA -->
-      <section *ngIf="tableData.length > 0;" class="mb-4 border rounded-2">
-        <div class="table-responsive" style="max-height: 35.5rem; overflow-y: auto">
-          <table class="table table-sm table-hover align-middle mb-0">
-            <thead class="table-light sticky-top small">
-              <tr>
-                <th *ngFor="let h of headers" class="text-secondary fw-semibold"
-                  [ngStyle]="h === 'FSA' ? {'min-width.px': 300} : {}">
-                  {{ h }}
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr *ngFor="let row of tableData">
-                <td *ngFor="let h of headers" class="text-dark small">
-                  <!-- Si la columna es FSA mostramos el ng-select -->
-                  <ng-container *ngIf="h === 'FSA'; else normalCell">
-                    <ng-select [items]="fsas" bindLabel="display" bindValue="id_fsa" [(ngModel)]="row['FSA']"
-                      [searchable]="true" [clearable]="true" [addTag]="false" placeholder="Buscar o crear FSA"
-                      (change)="onFsaChange(row, row['FSA'])" class="w-100">
-                    </ng-select>
-
-                  </ng-container>
-
-                  <!-- Celda normal -->
-                  <ng-template #normalCell>
-                    {{ row[h] }}
-                  </ng-template>
-                </td>
-              </tr>
-            </tbody>
-
-          </table>
-        </div>
-      </section>
-
-      <!-- DATOS DE SELECCIÓN Y METADATOS -->
-      <section class="row gx-4 gy-3 mb-4">
-        <!-- Nombre del Balance -->
-        <div class="col-md-4">
-          <label for="nombreBalance" class="form-label fw-semibold small">Nombre del Balance</label>
-            <input 
-            id="nombreBalance"
-            type="text" 
-            class="form-control form-control-sm"
-            placeholder="Ej. Balance Anual 2025" 
-            [(ngModel)]="nombreBalance"
-            (ngModelChange)="onNombreChange($event)">
-            <div *ngIf="isNombreLoading" class="form-text">
-            <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-            Verificando disponibilidad...
-          </div>
-
-          <div *ngIf="nombreValidationMessage && !isNombreLoading" 
-              class="form-text"
-              [style.color]="isNombreAvailable ? 'green' : 'red'">
-            {{ nombreValidationMessage }}
+      <div *ngIf="isDistributionMode && sourceAccount" class="alert alert-primary d-flex flex-wrap justify-content-between align-items-center mb-4 p-3 border-start border-4 border-primary">
+        <div class="d-flex align-items-center">
+          <i class="bi bi-info-circle-fill me-2 fs-5"></i>
+          <div>
+            <strong class="d-block">Modo Distribución:</strong>
+            <span class="small">Distribuyendo saldo de <strong>{{ sourceAccount[headers[0]] }}</strong>. Seleccione cuentas de destino.</span>
           </div>
         </div>
-
-        <!-- Ejercicio -->
-        <div class="col-md-3">
-          <label for="anioInput" class="form-label fw-semibold small">Ejercicio <span
-              class="text-danger">*</span></label>
-          <select id="anioInput" class="form-select form-select-sm" [(ngModel)]="anioSeleccionado">
-            <option value="" disabled selected>-- Selecciona --</option>
-            <option *ngFor="let anio of listaAnios" [value]="anio">
-              {{ anio }}
-            </option>
-          </select>
-          <small *ngIf="!anioSeleccionado" class="text-danger">Campo requerido</small>
-        </div>
-
-        <!-- mapping -->
-        <div class="col-md-5">
-          <label for="mappingSelect" class="form-label fw-semibold small">Mapping <span
-              class="text-danger">*</span></label>
-          <select id="mappingSelect" class="form-select form-select-sm" [(ngModel)]="selectedMapping"
-            (change)="onMappingChange()">
-            >
-            <option value="" disabled selected>-- Selecciona --</option>
-            <option *ngFor="let mapping of mappings" [value]="mapping.id_mapping">
-              {{ mapping.id_mapping }} - {{ mapping.descripcion }}
-            </option>
-          </select>
-          <small *ngIf="!selectedMapping" class="text-danger">Campo requerido</small>
-        </div>
-
-        <!--EMPRESA-->
-        <div class="col-md-5">
-          <label for="empresaSelect" class="form-label fw-semibold small">Empresa <span
-              class="text-danger">*</span></label>
-          <select id="empresaSelect" class="form-select form-select-sm" [(ngModel)]="selectedEmpresa">
-            <option value="" disabled selected>-- Selecciona --</option>
-            <option *ngFor="let empresa of empresas" [value]="empresa.id_empresa">
-              {{ empresa.id_empresa }} - {{ empresa.descripcion }}
-            </option>
-          </select>
-          <small *ngIf="!selectedEmpresa" class="text-danger">Campo requerido</small>
-        </div>
-
-        <!-- Fecha inicio -->
-        <div class="col-md-3">
-          <label for="fechaInicio" class="form-label fw-semibold small">Fecha de Inicio</label>
-          <input id="fechaInicio" type="date" class="form-control form-control-sm" [(ngModel)]="fechaInicio" />
-        </div>
-
-        <!-- Fecha fin -->
-        <div class="col-md-3">
-          <label for="fechaFin" class="form-label fw-semibold small">Fecha de Fin</label>
-          <input id="fechaFin" type="date" class="form-control form-control-sm" [(ngModel)]="fechaFin" />
-        </div>
-
-        <!-- Botones -->
-        <div class="col-12 d-flex flex-wrap gap-2 justify-content-end">
-          <button *ngIf="processed" class="btn btn-success btn-sm" (click)="procesarInformacion()">
-            <i class="bi bi-upload me-1"></i> Confirmar subida
+        <div class="d-flex gap-2 mt-2 mt-md-0">
+          <button class="btn btn-primary btn-sm d-flex align-items-center" (click)="openDistributionModal()">
+            <i class="bi bi-check-circle me-1"></i> Confirmar
           </button>
-          
-          <button *ngIf="processed" class="btn btn-success btn-sm"
-            [disabled]="!anioSeleccionado || !selectedMapping" (click)="visualizarProcesado()">
-            <i class="bi bi-arrow-counterclockwise"></i> Reprocesar Información
-          </button>
-
-          <button *ngIf="processed" class="btn btn-outline-success btn-sm" (click)="descargarProcesado()">
-            <i class="bi bi-download me-1"></i> CSV procesado
-          </button>
-
-          
-
-          <button *ngIf="!processed" class="btn btn-success btn-sm"
-            [disabled]="!anioSeleccionado || !selectedMapping" (click)="visualizarProcesado()">
-            <i class="bi bi-eye me-1"></i> Procesar Información
-          </button>
-
-          <button class="btn btn-secondary btn-sm" (click)="descargarOriginal()">
-            <i class="bi bi-file-earmark-arrow-down me-1"></i> CSV original
-          </button>
-
-          <button class="btn btn-danger btn-sm" (click)="cancel()">
+          <button class="btn btn-secondary btn-sm d-flex align-items-center" (click)="cancelDistribution()">
             <i class="bi bi-x-circle me-1"></i> Cancelar
           </button>
         </div>
+      </div>
+
+      <section *ngIf="tableData.length > 0" class="mb-4">
+<div class="table-responsive rounded shadow-sm" style="max-height: 36rem; overflow-y: auto;">
+  <table class="table table-hover table-striped table-sm align-middle mb-0">
+    <thead class="table-light sticky-top small text-secondary fw-semibold">
+      <tr>
+        <!-- Checkbox de selección -->
+        <th *ngIf="isDistributionMode" class="text-center" style="width: 40px;">
+          <i class="bi bi-check2-square"></i>
+        </th>
+
+        <!-- Encabezados dinámicos -->
+        <th *ngFor="let h of headers" 
+            [ngStyle]="h === 'FSA' ? {'min-width.px': 280} : {}">
+          {{ h }}
+        </th>
+
+        <!-- Acciones -->
+        <th *ngIf="processed" class="text-center" style="width: 90px;">Acciones</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      <tr *ngFor="let row of tableData"
+          [class.table-warning]="row.isSelectionDisabled"
+          [class.border-start]="row.isSelectionDisabled"
+          [class.border-3]="row.isSelectionDisabled"
+          [class.border-primary]="row.isSelectionDisabled"
+          class="align-middle">
+
+        <!-- Checkbox o icono de origen -->
+        <td *ngIf="isDistributionMode" class="text-center">
+          <input *ngIf="!row.isSelectionDisabled" type="checkbox" class="form-check-input" [(ngModel)]="row.isSelected">
+          <i *ngIf="row.isSelectionDisabled" class="bi bi-arrow-right-circle-fill text-primary" title="Cuenta de Origen"></i>
+        </td>
+
+        <!-- Datos de cada columna -->
+        <td *ngFor="let h of headers" class="text-dark small">
+          <ng-container *ngIf="h === 'FSA'; else normalCell">
+            <ng-select [items]="fsas" bindLabel="display" bindValue="id_fsa" [(ngModel)]="row['FSA']"
+                       [searchable]="true" [clearable]="true" [addTag]="false" placeholder="Buscar o crear FSA"
+                       (change)="onFsaChange(row, row['FSA'])" class="w-100 rounded">
+            </ng-select>
+          </ng-container>
+
+          <ng-template #normalCell>
+            <span *ngIf="h === 'Saldo Actual'; else defaultText" class="fw-semibold text-dark">
+              {{ row[h] | number:'1.0-0' }}
+            </span>
+            <ng-template #defaultText>{{ row[h] }}</ng-template>
+          </ng-template>
+        </td>
+
+        <!-- Botón de acción -->
+        <td *ngIf="processed" class="text-center">
+          <button class="btn btn-sm btn-outline-primary d-flex align-items-center justify-content-center"
+                  (click)="startDistribution(row)" [disabled]="isDistributionMode"
+                  title="Distribuir Saldo">
+            <i class="bi bi-distribute-vertical"></i>
+          </button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+
       </section>
 
-      <!-- WARNING MAPEADAS -->
-      <section *ngIf="msgWarning" class="alert alert-warning small">
-        ⚠️ {{ msgWarning }}
-        <details class="mt-2 small">
-          <summary class="fw-semibold text-dark cursor-pointer">
-            Ver cuentas no mapeadas
-          </summary>
-          <ul class="ps-3 mb-0">
-            <li *ngFor="let cuenta of cuentasNoMapeadas" class="small">
-              {{ cuenta }}
-            </li>
-          </ul>
-        </details>
-      </section>
-
-      <!-- RESULTADO -->
-      <section *ngIf="processed" class="alert alert-secondary border-start border-4 border-success">
-        <p class="mb-1 small">
-          <strong>Resultado:</strong> Acreedor
-          <span class="text-primary">{{ totalAcreedor | number:'1.0-0' }}</span>
-          - Deudor
-          <span class="text-danger">{{ totalDeudor | number:'1.0-0' }}</span> =
-          <strong class="text-dark">{{ resultadoSaldo | number:'1.0-0' }}</strong>
-        </p>
-        <p class="fw-semibold small" [ngClass]="{
-            'text-success': resultadoSaldo === 0,
-            'text-danger': resultadoSaldo !== 0}">{{ resultadoSaldo === 0 ? '✔ El saldo cuadra correctamente.' : '✖  El saldo no cuadra, revise los datos.' }}
-        </p>
-      </section>
-
-      <!-- MENSAJE SI NO ESTÁ PROCESADO -->
-      <ng-template #noData>
-        <div class="alert alert-light border-start border-3 border-warning small mt-3">
-          Asegúrate de que el año y la mapping sean correctos. Luego, haz clic
-          en <strong>"Visualizar CSV procesado"</strong>.
+      <section class="mb-4">
+        <div class="row g-4">
+          <div class="col-lg-6">
+            <fieldset class="border rounded-3 p-3 h-100">
+              <legend class="float-none w-auto px-2 small fw-semibold">Información del Balance</legend>
+              <div class="mb-3">
+                <label for="nombreBalance" class="form-label small">Nombre del Balance</label>
+                <input id="nombreBalance" type="text" class="form-control form-control-sm" placeholder="Ej. Balance Anual 2025" [(ngModel)]="nombreBalance" (ngModelChange)="onNombreChange($event)">
+                <div *ngIf="isNombreLoading" class="form-text small d-flex align-items-center mt-2">
+                  <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>Verificando...
+                </div>
+                <div *ngIf="nombreValidationMessage && !isNombreLoading" class="form-text small mt-2" [class.text-success]="isNombreAvailable" [class.text-danger]="!isNombreAvailable">
+                  {{ nombreValidationMessage }}
+                </div>
+              </div>
+              <div class="row g-3">
+                <div class="col-sm-6">
+                  <label for="fechaInicio" class="form-label small">Fecha de Inicio</label>
+                  <input id="fechaInicio" type="date" class="form-control form-control-sm" [(ngModel)]="fechaInicio" />
+                </div>
+                <div class="col-sm-6">
+                  <label for="fechaFin" class="form-label small">Fecha de Fin</label>
+                  <input id="fechaFin" type="date" class="form-control form-control-sm" [(ngModel)]="fechaFin" />
+                </div>
+              </div>
+            </fieldset>
+          </div>
+          <div class="col-lg-6">
+            <fieldset class="border rounded-3 p-3 h-100">
+              <legend class="float-none w-auto px-2 small fw-semibold">Parámetros de Procesamiento</legend>
+              <div class="row g-3">
+                <div class="col-sm-4">
+                  <label for="anioInput" class="form-label small">Ejercicio <span class="text-danger">*</span></label>
+                  <select id="anioInput" class="form-select form-select-sm" [(ngModel)]="anioSeleccionado">
+                    <option value="" disabled selected>Selecciona</option>
+                    <option *ngFor="let anio of listaAnios" [value]="anio">{{ anio }}</option>
+                  </select>
+                </div>
+                <div class="col-sm-8">
+                  <label for="mappingSelect" class="form-label small">Mapping <span class="text-danger">*</span></label>
+                  <select id="mappingSelect" class="form-select form-select-sm" [(ngModel)]="selectedMapping" (change)="onMappingChange()">
+                    <option value="" disabled selected>Selecciona</option>
+                    <option *ngFor="let mapping of mappings" [value]="mapping.id_mapping">{{ mapping.descripcion }}</option>
+                  </select>
+                </div>
+                <div class="col-12">
+                  <label for="empresaSelect" class="form-label small">Empresa <span class="text-danger">*</span></label>
+                  <select id="empresaSelect" class="form-select form-select-sm" [(ngModel)]="selectedEmpresa">
+                    <option value="" disabled selected>Selecciona</option>
+                    <option *ngFor="let empresa of empresas" [value]="empresa.id_empresa">{{ empresa.descripcion }}</option>
+                  </select>
+                </div>
+              </div>
+            </fieldset>
+          </div>
         </div>
-      </ng-template>
+      </section>
 
-      <!-- BOTONES -->
+      <section class="d-flex flex-wrap gap-2 justify-content-end border-top pt-4 mt-4">
+        <button class="btn btn-sm btn-outline-secondary" (click)="descargarOriginal()">
+          <i class="bi bi-file-earmark-arrow-down me-1"></i> CSV Original
+        </button>
+        <button class="btn btn-sm btn-outline-danger" (click)="cancel()">
+          <i class="bi bi-x-circle me-1"></i> Cancelar Proceso
+        </button>
+        
+        <button *ngIf="!processed" class="btn btn-sm btn-primary" [disabled]="!anioSeleccionado || !selectedMapping || !selectedEmpresa || !nombreBalance || !fechaInicio || !fechaFin" (click)="visualizarProcesado()">
+          <i class="bi bi-play-circle me-1"></i> Procesar Información
+        </button>
+        <ng-container *ngIf="processed">
+          <button class="btn btn-sm btn-outline-primary" (click)="visualizarProcesado()">
+            <i class="bi bi-arrow-counterclockwise me-1"></i> Reprocesar
+          </button>
+          <button class="btn btn-sm btn-success" (click)="procesarInformacion()">
+            <i class="bi bi-upload me-1"></i> <strong>Confirmar y Subir</strong>
+          </button>
+        </ng-container>
+      </section>
+
+      <section *ngIf="msgWarning || processed" class="mt-4">
+        <div *ngIf="msgWarning" class="alert alert-warning small">
+          <i class="bi bi-exclamation-triangle-fill me-2"></i> {{ msgWarning }}
+          <details class="mt-2 small">
+            <summary class="fw-semibold text-dark" style="cursor: pointer;">Ver cuentas no mapeadas</summary>
+            <ul class="list-unstyled ps-3 mt-2">
+              <li *ngFor="let cuenta of cuentasNoMapeadas" class="small font-monospace">{{ cuenta }}</li>
+            </ul>
+          </details>
+        </div>
+
+        <div *ngIf="processed" class="alert" [ngClass]="resultadoSaldo === 0 ? 'alert-success' : 'alert-danger'">
+          <div class="d-flex justify-content-between align-items-center">
+            <span class="fw-semibold">
+              <i class="bi me-2 fs-5" [ngClass]="resultadoSaldo === 0 ? 'bi-check-circle-fill' : 'bi-x-octagon-fill'"></i>
+              {{ resultadoSaldo === 0 ? 'El saldo cuadra correctamente.' : 'El saldo no cuadra, revise los datos.' }}
+            </span>
+            <strong class="font-monospace fs-6">{{ resultadoSaldo | number:'1.0-0' }}</strong>
+          </div>
+        </div>
+      </section>
+
     </section>
   </div>
 </main>

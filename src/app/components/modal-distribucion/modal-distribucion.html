@@ -1,0 +1,77 @@
+<!-- Modal Header -->
+<div class="modal-header border-0 pb-0">
+    <h4 class="modal-title fw-bold text-black">Distribuir Saldo</h4>
+    <button type="button" class="btn-close" aria-label="Close" (click)="activeModal.dismiss()"></button>
+</div>
+
+<!-- Modal Body -->
+<div class="modal-body">
+    <!-- Cuenta de Origen -->
+    <div class="mb-4 p-3 bg-light rounded shadow-sm">
+        <h6 class="text-success fw-semibold mb-2">Cuenta de Origen</h6>
+        <p class="mb-1"><strong>Cuenta:</strong> {{ sourceAccount[codigoKey] }} - {{ sourceAccount[nombreKey] }}</p>
+        <p class="mb-0"><strong>Saldo a Distribuir:</strong> 
+            <span class="fw-bold fs-5 text-success">{{ sourceAccount[saldoKey] | currency: 'CLP' }}</span>
+        </p>
+    </div>
+
+    <!-- Método de Distribución -->
+    <div class="mb-4">
+        <label class="form-label fw-semibold">Método de Distribución</label>
+        <div class="d-flex gap-3">
+            <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" name="distType" id="typePercentage" [(ngModel)]="distributionType" value="percentage">
+                <label class="form-check-label" for="typePercentage">Porcentaje (%)</label>
+            </div>
+            <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" name="distType" id="typeAmount" [(ngModel)]="distributionType" value="amount">
+                <label class="form-check-label" for="typeAmount">Monto Fijo</label>
+            </div>
+        </div>
+    </div>
+
+    <hr class="my-4">
+
+    <!-- Cuentas de Destino -->
+    <h6 class="fw-semibold text-black mb-3">Cuentas de Destino</h6>
+    <div class="table-responsive">
+        <table class="table table-sm table-borderless align-middle">
+            <thead class="text-muted small">
+                <tr>
+                    <th>Cuenta</th>
+                    <th style="width: 120px;">{{ distributionType === 'percentage' ? 'Porcentaje (%)' : 'Monto' }}</th>
+                    <th class="text-end" style="width: 140px;">Monto a Recibir</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let acc of destinationAccounts" class="border-bottom">
+                    <td class="text-black">{{ acc[codigoKey] }} - {{ acc[nombreKey] }}</td>
+                    <td>
+                        <input type="number" class="form-control form-control-sm rounded-pill" [(ngModel)]="distributions[acc[codigoKey]].value" placeholder="0" (ngModelChange)="updateDistribution()">
+                    </td>
+                    <td class="text-end fw-bold text-success">{{ distributions[acc[codigoKey]].amount | currency: 'CLP' }}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Total Distribuido -->
+    <div *ngIf="!validationError" class="mt-3 d-flex justify-content-end">
+        <div class="alert alert-success d-flex align-items-center py-2 px-3 mb-0" role="alert">
+            <i class="bi bi-check-circle-fill me-2"></i>
+            <strong>Total Distribuido: {{ totalDistributed | currency: 'CLP' }}</strong>
+        </div>
+    </div>
+
+    <!-- Error de Validación -->
+    <div *ngIf="validationError" class="alert alert-danger mt-3 p-2 small d-flex align-items-center">
+        <i class="bi bi-exclamation-triangle-fill me-2"></i>
+        {{ validationError }}
+    </div>
+</div>
+
+<!-- Modal Footer -->
+<div class="modal-footer border-0 pt-3">
+    <button type="button" class="btn btn-outline-secondary fw-semibold" (click)="activeModal.dismiss()">Cancelar</button>
+    <button type="button" class="btn btn-success fw-semibold" (click)="apply()" [disabled]="validationError">Aplicar Distribución</button>
+</div>

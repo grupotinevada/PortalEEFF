@@ -6,7 +6,8 @@ LA BASE DE DATOS ES MYSQL, Y SE UTILIZA EL PATRON DE DISEÑO MVC (Modelo-Vista-C
 
 const app = require('./backend/app');
 const PORT = 3000;
-app.listen(PORT, () => {
-  console.log(`Servidor corriendo en http://localhost:${PORT}`);
-  console.log('Usuario de prueba: admin@example.com / admin123');
+const IP = '0.0.0.0'
+app.listen(PORT, IP,() => {
+  console.log(`Servidor corriendo en http://${IP}:${PORT}`);
+  console.log('Usuario de prueba: admin@inevada.com / admin123456');
 });
