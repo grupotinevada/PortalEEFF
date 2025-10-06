@@ -1,7 +1,7 @@
 <app-navbar></app-navbar>
 <app-spinner [showSpinner]="showSpinner"></app-spinner>
 
-<main *ngIf="file" class="container-fluid min-vh-100 d-flex flex-column py-4 bg-light">
+<main *ngIf="file" class="container-fluid min-vh-100 d-flex flex-column py-4 bg-success bg-opacity-25">
   <div class="container-fluid">
     <section class="bg-white rounded-4 border-0 shadow-sm flex-fill w-100 h-100 p-4 p-md-5" 
          style="transform: scale(0.95); transform-origin: top;">
@@ -111,7 +111,7 @@
       <section class="mb-4">
         <div class="row g-4">
           <div class="col-lg-6">
-            <fieldset class="border rounded-3 p-3 h-100">
+            <fieldset class="border border-secondary rounded-3 p-3 h-100">
               <legend class="float-none w-auto px-2 small fw-semibold">Información del Balance</legend>
               <div class="mb-3">
                 <label for="nombreBalance" class="form-label small">Nombre del Balance</label>
@@ -136,7 +136,7 @@
             </fieldset>
           </div>
           <div class="col-lg-6">
-            <fieldset class="border rounded-3 p-3 h-100">
+            <fieldset class="border border-secondary rounded-3 p-3 h-100">
               <legend class="float-none w-auto px-2 small fw-semibold">Parámetros de Procesamiento</legend>
               <div class="row g-3">
                 <div class="col-sm-4">
