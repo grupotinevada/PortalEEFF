@@ -38,3 +38,56 @@ td, th {
   white-space: normal;
   height: fit-content;
 }
+
+.distribution-selectable-row:hover {
+  cursor: pointer;
+  background-color: #e9f5ff; /* Un sutil color azul al pasar el mouse */
+}
+
+
+
+
+.custom-context-menu {
+  position: absolute; /* Usamos absolute como en tu ejemplo */
+  display: none;      /* El menú empieza oculto */
+  z-index: 1050;
+  min-width: 220px;
+  background-color: #ffffff;
+  border: 1px solid #e9ecef;
+  transition: all 0.1s ease-in-out;
+  font-size: 0.9rem;
+  cursor: pointer; /* Añadimos cursor pointer como en tu ejemplo */
+}
+
+.context-item {
+  display: block;
+  width: 100%;
+  padding: 0.5rem 1.2rem;
+  clear: both;
+  font-weight: 400;
+  color: #212529;
+  text-align: inherit;
+  white-space: nowrap;
+  background-color: transparent;
+  border: 0;
+  text-decoration: none;
+}
+
+.context-item:hover {
+  background-color: #f8f9fa;
+  color: #1e2125;
+}
+
+.context-item.disabled,
+.context-item:disabled {
+  color: #adb5bd;
+  pointer-events: none;
+  background-color: transparent;
+}
+
+.context-divider {
+  height: 0;
+  margin: 0.5rem 0;
+  overflow: hidden;
+  border-top: 1px solid #dee2e6;
+}

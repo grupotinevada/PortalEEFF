@@ -94,6 +94,8 @@ export class Preview implements OnInit {
 
   isDistributionMode = false; 
   sourceAccount: any = null;
+  isDistribuited = false;
+
   constructor(
     private mappingService: MappingService,
     private balanceService: BalanceService,
@@ -672,6 +674,8 @@ ngOnDestroy(): void {
     if (!this.tableData || this.tableData.length === 0) return;
 
     try {
+
+      const cuentasManuales = this.tableData.filter(row => row.isManual);   // aqui me quedé
       // ✅ Si es el primer procesamiento, guardamos originales
       if (!this.processed) {
         this.originalTableData = [...this.tableData];
@@ -877,18 +881,34 @@ procesarInformacion(): void {
       });
       htmlCambios += '</ul>';
 
-      Swal.fire({
+      const isBaseMapping = this.selectedMapping === 'MP-01';
+      const swalOptions: any = {
         title: 'Cambios de FSA Detectados',
         icon: 'warning',
-        html: `<p>Se detectaron <b>${cambiosFsa.length}</b> cambios en las asignaciones de FSA.</p>
-               ${htmlCambios}
-               <p class="mt-3">Estos cambios no estan contemplados en el mapping actual <b>${this.selectedMapping} - ${this.mappingCompleto.find((m) => m.id_mapping === this.selectedMapping)?.descripcion}</b>. Puedes <b>ACTUALIZAR</b> el mapping seleccionado o <b>CREAR</b> un mapping con estos cambios<br><b>¿Que desea hacer?</b></p>`,
-        showDenyButton: true,
         showCancelButton: true,
-        confirmButtonText: 'Crear nuevo',
-        denyButtonText: 'Actualizar',
         cancelButtonText: 'Cancelar',
-      }).then((result) => {
+      };
+
+      if (isBaseMapping) {
+        // Si es el mapping base, solo permitimos CREAR.
+        swalOptions.html = `<p>Se detectaron <b>${cambiosFsa.length}</b> cambios en las asignaciones de FSA partiendo del mapping base <b>(MP-01)</b>.</p>
+               ${htmlCambios}
+               <p class="mt-3">Estos cambios no estan contemplados en el mapping actual <b>${this.selectedMapping} - ${this.mappingCompleto.find((m) => m.id_mapping === this.selectedMapping)?.descripcion}</b>. al ser el mapping <b>${this.selectedMapping}</b> debes crear uno nuevo</p>`,
+        swalOptions.confirmButtonText = 'Crear Nuevo Mapping';
+        swalOptions.showDenyButton = false; // <-- LA CLAVE: Ocultamos el botón de actualizar
+
+      } else {
+        // Si es cualquier otro mapping, permitimos AMBAS opciones.
+        swalOptions.html = `<p>Se detectaron <b>${cambiosFsa.length}</b> cambios en las asignaciones de FSA.</p>
+               ${htmlCambios}
+               <p class="mt-3">Estos cambios no están contemplados en el mapping actual <b>${this.selectedMapping} - ${this.mappingCompleto.find((m) => m.id_mapping === this.selectedMapping)?.descripcion}</b>.<br><b>¿Qué desea hacer?</b></p>`;
+        swalOptions.showDenyButton = true; // <-- Mostramos el botón
+        swalOptions.confirmButtonText = 'Crear nuevo';
+        swalOptions.denyButtonText = 'Actualizar';
+      }
+      
+      // --- FIN DE LA NUEVA VALIDACIÓN ---
+      Swal.fire(swalOptions).then((result) => {
         if (result.isDenied) {
           const updates$ = cambiosFsa.map((cambio) =>
             this.mappingService.crearOActualizarMapeo({
@@ -981,6 +1001,25 @@ procesarInformacion(): void {
               });
             }
           });
+        }
+      });
+      return;
+    }
+
+    if(this.isDistribuited){
+      this.showSpinner = false;
+      Swal.fire({
+        title: 'Distribución realizada',
+        icon: 'info',
+        html: `<p>Has realizado una distribución de saldo.<br>¿Deseas continuar con el procesamiento o seguir trabajando?</p>`,
+        showCancelButton: true,
+        confirmButtonText: 'Continuar',
+        cancelButtonText: 'Seguir trabajando',
+      })
+      .then((result) => {
+        if (result.isConfirmed) {
+          this.showSpinner = true;
+          this.continuarProcesamiento();
         }
       });
       return;
@@ -1249,7 +1288,7 @@ procesarInformacion(): void {
     );
   }
 
-
+  
   /**
    * Inicia el modo de distribución desde una fila específica.
    * @param row La fila de la cuenta origen.
@@ -1291,6 +1330,7 @@ procesarInformacion(): void {
     const modalRef = this.modalService.open(ModalDistribucion, {
       size: 'lg',
       backdrop: 'static',
+      
     });
 
     modalRef.componentInstance.sourceAccount = this.sourceAccount;
@@ -1299,9 +1339,13 @@ procesarInformacion(): void {
 
     modalRef.result.then((result) => {
       if (result) {
+        this.isDistribuited = true;
+        console.log('bandera distribuited en true');
         this.applyDistribution(result);
       }
     }).catch(() => {
+      this.isDistribuited = false;
+      console.log('bandera distribuited en false');
       console.log('Distribución cancelada por el usuario.');
     });
   }
@@ -1322,7 +1366,17 @@ procesarInformacion(): void {
       }
     });
 
-    this.sourceAccount[saldoKey] -= distributionData.totalDistributed;
+        // 2. CORRECCIÓN: Busca la cuenta de origen en la tabla y actualízala
+    const sourceAccountCode = this.sourceAccount[codigoKey];
+    const sourceAccountInTable = this.tableData.find(row => row[codigoKey] === sourceAccountCode);
+    
+    if (sourceAccountInTable) {
+      sourceAccountInTable[saldoKey] -= distributionData.totalDistributed;
+    } else {
+      // Opcional: Manejar el caso improbable de que la cuenta de origen no se encuentre
+      console.error('Error: No se encontró la cuenta de origen en la tabla para actualizar el saldo.');
+      Swal.fire('Error Inesperado', 'No se pudo actualizar el saldo de la cuenta de origen.', 'error');
+    }
 
     this.cancelDistribution();
     
@@ -1336,4 +1390,113 @@ procesarInformacion(): void {
     });
   }
 
+  agregarNuevaCuenta(): void {
+  // Verificación de seguridad: no debería ocurrir si el botón está bien condicionado.
+  if (!this.processed || this.tableData.length === 0) {
+    Swal.fire('Acción no disponible', 'Primero debe procesar la información para poder agregar cuentas.', 'info');
+    return;
+  }
+
+  Swal.fire({
+    title: 'Agregar Nueva Cuenta',
+    html: `
+      <p class="small text-muted">La nueva cuenta heredará los parámetros del balance actual (ejercicio, mapping, fechas, etc.). El saldo inicial será 0 y el FSA deberá ser asignado manualmente.</p>
+      <input id="swal-input-cuenta" class="swal2-input" placeholder="Código / N° Cuenta">
+      <input id="swal-input-nombre" class="swal2-input" placeholder="Nombre de la cuenta">
+    `,
+    focusConfirm: false,
+    showCancelButton: true,
+    confirmButtonText: 'Agregar',
+    cancelButtonText: 'Cancelar',
+    preConfirm: () => {
+      const cuentaInput = document.getElementById('swal-input-cuenta') as HTMLInputElement;
+      const nombreInput = document.getElementById('swal-input-nombre') as HTMLInputElement;
+      const cuenta = cuentaInput.value.trim();
+      const nombre = nombreInput.value.trim();
+
+      // Validación de campos vacíos
+      if (!cuenta || !nombre) {
+        Swal.showValidationMessage('El código y el nombre son obligatorios.');
+        return null;
+      }
+
+      // Validación de cuenta duplicada
+      const cuentaKey = this.headers[0]; // Asume que la primera columna es siempre el N° de cuenta
+      const existe = this.tableData.some(row => row[cuentaKey] === cuenta);
+      if (existe) {
+        Swal.showValidationMessage(`La cuenta '${cuenta}' ya existe en la tabla.`);
+        return null;
+      }
+
+      return { cuenta, nombre };
+    }
+  }).then((result) => {
+    if (result.isConfirmed && result.value) {
+      const { cuenta, nombre } = result.value;
+      const templateRow = this.tableData[0]; // Usamos la primera fila como plantilla para heredar datos
+
+      // Construimos el objeto de la nueva cuenta usando los headers actuales como llaves
+      const nuevaCuenta: any = {
+        [this.headers[0]]: cuenta,                 // num_cuenta (ingresado por usuario)
+        [this.headers[1]]: nombre,                 // nombre (ingresado por usuario)
+        [this.headers[2]]: 0,                      // Saldo Actual (inicia en 0)
+        [this.headers[3]]: templateRow[this.headers[3]], // Ejercicio (heredado)
+        [this.headers[4]]: templateRow[this.headers[4]], // Mapping (heredado)
+        [this.headers[5]]: null,                   // FSA (se inicializa vacío)
+        [this.headers[6]]: templateRow[this.headers[6]], // Nombre Balance (heredado)
+        [this.headers[7]]: templateRow[this.headers[7]], // Fecha Inicio (heredado)
+        [this.headers[8]]: templateRow[this.headers[8]], // Fecha Fin (heredado)
+        [this.headers[9]]: templateRow[this.headers[9]], // Empresa (heredado)
+        isManual: true
+      };
+
+      // Agregamos la nueva cuenta al principio del array para que sea visible inmediatamente
+      this.tableData.unshift(nuevaCuenta);
+
+      Swal.fire({
+        toast: true,
+        position: 'top-end',
+        icon: 'success',
+        title: 'Cuenta agregada correctamente',
+        showConfirmButton: false,
+        timer: 2000
+      });
+    }
+  });
+}
+/**
+   * Alterna la selección de una fila como destino en el modo de distribución.
+   * Se activa al hacer clic en la fila.
+   * @param row La fila sobre la que se hizo clic.
+   */
+  toggleRowSelection(row: any): void {
+    // Solo funciona si estamos en modo distribución y la fila no es la de origen.
+    if (this.isDistributionMode && !row.isSelectionDisabled) {
+      row.isSelected = !row.isSelected;
+    }
+  }
+
+ /**
+   * Maneja el evento de clic derecho para mostrar el menú contextual.
+   * @param event El MouseEvent para posicionar el menú.
+   */
+  onRightClick(event: MouseEvent): void {
+    event.preventDefault(); // Evita el menú nativo del navegador.
+
+    const menu = document.getElementById('actionsContextMenu');
+    if (!menu) return;
+
+    // Posicionamos el menú usando pageX/pageY, como en tu ejemplo.
+    menu.style.display = 'block';
+    menu.style.left = event.pageX + 'px';
+    menu.style.top = event.pageY + 'px';
+
+    // Añadimos un listener para ocultar el menú al hacer clic en cualquier otro lado.
+    // La opción { once: true } hace que el listener se elimine solo después de ejecutarse.
+    const hideMenu = () => {
+      menu.style.display = 'none';
+      document.removeEventListener('click', hideMenu);
+    };
+    document.addEventListener('click', hideMenu);
+  }
 }
