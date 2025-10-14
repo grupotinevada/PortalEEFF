@@ -725,6 +725,10 @@ ngOnDestroy(): void {
         [headersFiltrados[9]]: b.id_empresa,
       }));
 
+      if (cuentasManuales.length > 0) {
+        this.tableData.unshift(...cuentasManuales);
+      }
+
       // ✅ Bandera: ya está procesado (aunque siempre parte de original)
       this.processed = true;
     } catch (err: any) {
