@@ -16,6 +16,7 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { tap, switchMap, take, finalize, catchError, EMPTY, of, throwError, map, takeUntil, Subject } from 'rxjs';
 import Swal from 'sweetalert2';
 import { FsaService } from '../../services/fsa.service';
+import { EditarBalance } from '../editar-balance/editar-balance';
 
 @Component({
   selector: 'app-balances',
@@ -150,6 +151,7 @@ loadBalances(): void {
           if (res.success) {
             this.balances = res.data;
             this.total = res.total;
+            console.log('Balances cargados:', this.balances);
           } else {
             // 2. REEMPLAZO: Muestra un error de negocio con Swal
             Swal.fire({
@@ -267,5 +269,26 @@ private getFsaData(): void {
       this.fsas = [];
     }
   });
+}
+
+abrirModalEdicion(balanceId: string) {
+  const modalRef = this.modalService.open(EditarBalance, { 
+    fullscreen: true, // ¡Clave para la pantalla completa!
+    scrollable: true 
+  });
+  modalRef.componentInstance.id = balanceId;
+  modalRef.componentInstance.estados = this.estados
+
+  modalRef.result.then(
+    (result) => {
+      if (result === 'saved') {
+        console.log('Balance guardado, recargar lista.');
+        // Aquí puedes llamar a tu método para refrescar la lista de balances
+      }
+    },
+    (reason) => {
+      console.log(`Modal cerrado: ${reason}`);
+    }
+  );
 }
 }

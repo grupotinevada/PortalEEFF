@@ -1468,6 +1468,91 @@ procesarInformacion(): void {
     }
   });
 }
+editarCuentaManual(row: any): void {
+    const cuentaKey = this.headers[0];
+    const nombreKey = this.headers[1];
+
+    Swal.fire({
+      title: 'Editar Cuenta Manual',
+      html: `
+        <input id="swal-input-cuenta" class="swal2-input" placeholder="Código / N° Cuenta" value="${row[cuentaKey]}">
+        <input id="swal-input-nombre" class="swal2-input" placeholder="Nombre de la cuenta" value="${row[nombreKey]}">
+      `,
+      focusConfirm: false,
+      showCancelButton: true,
+      confirmButtonText: 'Guardar Cambios',
+      cancelButtonText: 'Cancelar',
+      preConfirm: () => {
+        const nuevoCodigo = (document.getElementById('swal-input-cuenta') as HTMLInputElement).value.trim();
+        const nuevoNombre = (document.getElementById('swal-input-nombre') as HTMLInputElement).value.trim();
+
+        if (!nuevoCodigo || !nuevoNombre) {
+          Swal.showValidationMessage('El código y el nombre son obligatorios.');
+          return null;
+        }
+
+        // Validar si el nuevo código ya existe en otra fila
+        const existe = this.tableData.some(item => item !== row && item[cuentaKey] === nuevoCodigo);
+        if (existe) {
+          Swal.showValidationMessage(`La cuenta '${nuevoCodigo}' ya existe.`);
+          return null;
+        }
+
+        return { nuevoCodigo, nuevoNombre };
+      }
+    }).then((result) => {
+      if (result.isConfirmed && result.value) {
+        const { nuevoCodigo, nuevoNombre } = result.value;
+        // Actualizamos los datos en la fila original
+        row[cuentaKey] = nuevoCodigo;
+        row[nombreKey] = nuevoNombre;
+
+        Swal.fire({
+          toast: true,
+          position: 'top-end',
+          icon: 'success',
+          title: 'Cuenta actualizada',
+          showConfirmButton: false,
+          timer: 2000
+        });
+      }
+    });
+  }
+
+  /**
+   * Elimina una cuenta agregada manualmente de la tabla.
+   * @param row La fila de la cuenta a eliminar.
+   */
+  eliminarCuentaManual(row: any): void {
+    const cuentaKey = this.headers[0];
+    
+    Swal.fire({
+      title: '¿Estás seguro?',
+      text: `Se eliminará la cuenta "${row[cuentaKey]}" de la tabla. Esta acción no se puede deshacer.`,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#3085d6',
+      confirmButtonText: 'Sí, eliminar',
+      cancelButtonText: 'Cancelar'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        const index = this.tableData.findIndex(item => item === row);
+        if (index > -1) {
+          this.tableData.splice(index, 1);
+          Swal.fire({
+            toast: true,
+            position: 'top-end',
+            icon: 'success',
+            title: 'Cuenta eliminada',
+            showConfirmButton: false,
+            timer: 2000
+          });
+        }
+      }
+    });
+  }
+
 /**
    * Alterna la selección de una fila como destino en el modo de distribución.
    * Se activa al hacer clic en la fila.

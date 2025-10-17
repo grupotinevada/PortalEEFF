@@ -22,6 +22,7 @@ export interface IBalanceGet{ // solo lo usa el balance.service.getBalanceById, 
   id_mapping: string;
   id_fsa?: string;
   id_empresa?: string;
+  id_estado?: string;
   empresaDesc?: string;
 }
 export interface BalanceResumen {

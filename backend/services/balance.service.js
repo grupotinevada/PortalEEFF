@@ -273,6 +273,112 @@ static async getDistinctBalances(query) {
       return { success: false, message: 'Error al obtener balances' };
     }
   }
+
+  /**
+ * Actualiza un conjunto de balances por su ID.
+ * Valida la consistencia de los datos y la unicidad del nuevo nombre si este cambia.
+ * @param {string} id_blce - El ID del conjunto de balances a actualizar.
+ * @param {Array} balances - El nuevo array de filas para el balance.
+ * @param {string} userId - El ID del usuario que realiza la acción.
+ * @returns {Promise<Object>} Resultado de la operación.
+ */
+static async update(id_blce, balances, userId) {
+  console.log("BalanceService.update llamado con id_blce:", id_blce, "y balances: ", balances.slice(0, 3));
+  
+    try {
+
+        const balancesCompatibles = balances.map(b => ({
+            ...b,
+            nombre_balance: b.nombre_conjunto
+        }));
+        // --- 1. Validaciones Iniciales ---
+        if (!id_blce) {
+            return { success: false, message: 'ID del balance no proporcionado.' };
+        }
+        if (!Array.isArray(balancesCompatibles)) {
+            return { success: false, message: 'Los datos del balance deben ser un array.' };
+        }
+
+
+
+        // Caso especial: si el array está vacío, significa que el usuario eliminó todas las cuentas.
+        if (balancesCompatibles.length === 0) {
+            Logger.userAction(userId, 'UPDATE_BALANCE_EMPTY', `Vaciando todas las filas del balance con id_blce: ${id_blce}`);
+            const result = await BalanceModel.updateById(id_blce, []);
+            return {
+                success: true,
+                message: `Se eliminaron todas las filas del balance.`,
+                updated: result.updated,
+            };
+        }
+
+        // --- 2. Validaciones de Datos y Consistencia ---
+        const primerBalance = balancesCompatibles[0];
+        const { nombre_conjunto, id_mapping, ejercicio, fecha_inicio, fecha_fin, id_empresa, id_estado } = primerBalance;
+
+        // Validar si el nombre del balance ha cambiado y si el nuevo nombre está disponible.
+        const originalBalance = await BalanceModel.findById(id_blce);
+        if (!originalBalance || originalBalance.length === 0) {
+            return { success: false, message: `No se encontró un balance con el ID: ${id_blce}` };
+        }
+
+        const nombreOriginal = originalBalance[0].nombre_conjunto;
+        if (nombre_conjunto !== nombreOriginal) {
+            const nombreTomado = await BalanceModel.existsByNombreConjunto(nombre_conjunto, userId);
+            if (nombreTomado) {
+                return {
+                    success: false,
+                    message: `El nombre de balance "${nombre_conjunto}" ya está en uso por otro conjunto.`,
+                };
+            }
+        }
+
+        // Validaciones de consistencia interna del lote (similar a createBulk)
+        const cuentasVistas = new Set();
+        for (const b of balancesCompatibles) {
+            // Todos los registros deben compartir los mismos datos maestros
+            if (
+                b.nombre_conjunto !== nombre_conjunto || b.id_mapping !== id_mapping ||
+                b.ejercicio !== ejercicio || b.fecha_inicio !== fecha_inicio ||
+                b.fecha_fin !== fecha_fin || b.id_empresa !== id_empresa || b.id_estado !== id_estado
+            ) {
+                return {
+                    success: false,
+                    message: 'Inconsistencia en los datos. Todos los registros deben compartir el mismo nombre, mapping, ejercicio, fechas, empresa y estado.',
+                };
+            }
+            // Lógica de fechas
+            if (new Date(b.fecha_inicio) > new Date(b.fecha_fin)) {
+                return { success: false, message: 'La fecha de inicio no puede ser mayor que la fecha de fin.' };
+            }
+            // Cuentas duplicadas
+            if (cuentasVistas.has(b.num_cuenta)) {
+                return { success: false, message: `Cuenta duplicada en los datos enviados: ${b.num_cuenta}` };
+            }
+            cuentasVistas.add(b.num_cuenta);
+        }
+
+        // --- 3. Preparar Datos y Llamar al Modelo ---
+        const balancesCompatiblesToUpdate = balancesCompatibles.map((b) => ({
+            ...b,
+            id_blce, // Forzamos el ID correcto para todas las filas
+            id_user: userId,
+        }));
+
+        const result = await BalanceModel.updateById(id_blce, balancesCompatiblesToUpdate);
+
+        Logger.userAction(userId, 'UPDATE_BALANCE', `Actualizadas: ${result.updated} filas para el id_blce: ${id_blce}`);
+        return {
+            success: true,
+            message: `Se actualizaron ${result.updated} filas para el balance.`,
+            updated: result.updated,
+        };
+
+    } catch (error) {
+        Logger.error(`Error en BalanceService.update: ${error.message}`);
+        return { success: false, message: 'Error interno al actualizar el balance.' };
+    }
+}
 }
 
 module.exports = BalanceService;

@@ -40,12 +40,19 @@ static async checkName(nombre) {
   
   //=========================== FIN FUNCIONES AUXILIARES ===========//
 
-  static async createBulk(balances) {
-    //inserta el array
+/**
+   * Inserta un array de balances.
+   * Acepta un 'connection' opcional para poder ser usado dentro de una transacción.
+   * Si no se provee una conexión, usa el pool por defecto.
+   */
+  static async createBulk(balances, connection = null) {
+    // Si no se pasó una conexión, usamos el pool. De lo contrario, usamos la conexión existente.
+    const db = connection || pool; 
+    
     const values = balances.map((b) => [
       b.id_blce,
       b.num_cuenta,
-      b.nombre_balance,
+      b.nombre_balance || b.nombre_conjunto, // Soporta ambos nombres
       b.nombre,
       b.saldo,
       b.ejercicio,
@@ -57,12 +64,14 @@ static async checkName(nombre) {
       b.id_estado,
       b.id_empresa
     ]);
-    const [result] = await pool.query(
+    console.log("Valores a insertar (primeros 3):", values.slice(0, 3));
+    const [result] = await db.query(
       `INSERT INTO balance 
-    (id_blce, num_cuenta, nombre_conjunto, nombre, saldo, ejercicio, fecha_inicio, fecha_fin, id_user, id_mapping, id_fsa, id_estado,id_empresa)
-     VALUES ?`,
+      (id_blce, num_cuenta, nombre_conjunto, nombre, saldo, ejercicio, fecha_inicio, fecha_fin, id_user, id_mapping, id_fsa, id_estado, id_empresa)
+      VALUES ?`,
       [values]
     );
+   
     return { inserted: result.affectedRows };
   }
 
@@ -257,15 +266,49 @@ static async findById(id_blce) {
   return rows;
 }
 
-  //=========================== TABLA FSA ========================================//
-  static async getFsaCategoria() {
-    const [rows] = await pool.query(`
-    SELECT f.id_fsa, f.desc, f.id_cate, f.orden, c.descripcion AS categoria
-    FROM fsa f
-    LEFT JOIN categoria c ON f.id_cate = c.id_cate order by f.orden
-  `);
-    return rows;
+/**
+   * Actualiza un balance completo eliminando los registros antiguos y reinsertando los nuevos.
+   * Utiliza una transacción para garantizar la integridad de los datos.
+   * @param {string} id_blce El ID del balance a actualizar.
+   * @param {Array} balances El array de objetos de balance (filas) a insertar.
+   * @returns {Promise<{updated: number}>} Un objeto indicando el número de filas insertadas.
+   */
+  /**
+   * Actualiza un balance completo eliminando los registros antiguos y reinsertando los nuevos.
+   * Ahora reutiliza la función createBulk dentro de una transacción.
+   */
+  static async updateById(id_blce, balances) {
+    console.log("BalanceModel.updateById llamado con id_blce:", id_blce, "y balances: ", balances.slice(0, 3));
+    const connection = await pool.getConnection();
+
+    try {
+      await connection.beginTransaction();
+
+      // 1. Eliminar todas las filas antiguas para este id_blce
+      await connection.query("DELETE FROM balance WHERE id_blce = ?", [id_blce]);
+
+      // Si hay datos nuevos, los insertamos
+      if (balances && balances.length > 0) {
+        // 2. REUTILIZAMOS createBulk, pasándole la conexión de la transacción
+        await BalanceModel.createBulk(balances, connection);
+      }
+
+      await connection.commit();
+      
+      return { updated: balances ? balances.length : 0 };
+
+    } catch (error) {
+      await connection.rollback();
+      console.error("Error en la transacción de actualización del balance:", error);
+      throw error;
+    } finally {
+      connection.release();
+    }
   }
+
+
+
+
 }
 
 module.exports = BalanceModel;

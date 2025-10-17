@@ -17,6 +17,8 @@ router.get('/balance/:id_blce', authenticateToken, BalanceController.getById);
 
 router.get('/check-name/:nombre', authenticateToken, BalanceController.checkName);
 
+router.put('/:id_blce', authenticateToken, BalanceController.update);
+
 //router.get('/fsa', authenticateToken, validate, BalanceController.obtenerFsasConCategoria);
 
 module.exports = router;

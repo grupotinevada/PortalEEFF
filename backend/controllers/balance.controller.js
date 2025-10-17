@@ -8,8 +8,6 @@ class BalanceController {
 static async createBulk(req, res) {
   try {
     console.log("POST /bulk - Subiendo balances masivamente");
-    console.log("Cuerpo de la petición:", req.body);
-    console.log("Usuario autenticado:", req.user);
     const balances = req.body;
     const userId = req.user.id_user;
 
@@ -188,9 +186,50 @@ static async checkName(req, res) {
   }
 }
 
+/**
+ * Controlador para actualizar un conjunto de balances.
+ * @param {object} req - Objeto de solicitud de Express.
+ * @param {object} res - Objeto de respuesta de Express.
+ */
+static async update(req, res) {
+  console.log("PUT /:id_blce - Actualizando balance");
+    try {
+        const { id_blce } = req.params;         
+        const balances = req.body;  
+        console.log("Primeros 3 balances:", balances.slice(0, 3));
+        const userId = req.user?.id_user;       
 
+        if (!userId) {
+            return res.status(401).json({ success: false, message: 'Usuario no autenticado.' });
+        }
+        if (!id_blce) {
+            return res.status(400).json({ success: false, message: 'Falta el ID del balance en la URL.' });
+        }
+        if (!Array.isArray(balances)) {
+            return res.status(400).json({ success: false, message: 'El cuerpo de la petición debe ser un array.' });
+        }
 
-//ME QUEDE AQUI
+        Logger.info(`Usuario ${userId} inició la actualización del balance con ID: ${id_blce}`);
+        const result = await BalanceService.update(id_blce, balances, userId);
+
+        // --- Manejo de la Respuesta del Servicio ---
+        if (!result.success) {
+           
+            const statusCode = result.message.includes('en uso') ? 409 : (result.message.includes('No se encontró') ? 404 : 400);
+            return res.status(statusCode).json(result);
+        }
+
+        // Si todo salió bien
+        return res.status(200).json(result);
+
+    } catch (error) {
+        Logger.error(`Error en BalanceController.update: ${error.message}`);
+        res.status(500).json({
+            success: false,
+            message: "Error interno del servidor al actualizar el balance.",
+        });
+    }
+}
 
 }
 

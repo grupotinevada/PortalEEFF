@@ -14,15 +14,6 @@ export class BalanceService {
 
   constructor(private http: HttpClient) {}
 
-createBalance(balance: IBalance): Observable<any> {
-  return this.http.post(`${this.apiUrl}`, balance, {
-    withCredentials: true,
-    headers: new HttpHeaders({
-      'Content-Type': 'application/json'
-    })
-  });
-}
-
 createBalanceBulk(balances: IBalance[]): Observable<any> {
   return this.http.post(`${this.apiUrl}/bulk`, balances, {
     withCredentials: true,
@@ -31,6 +22,30 @@ createBalanceBulk(balances: IBalance[]): Observable<any> {
     })
   });
 }
+
+/**
+   * Actualiza un conjunto completo de balances.
+   * Envía una petición PUT al backend con el array de las nuevas filas del balance.
+   * @param id_blce El ID del conjunto de balances a reemplazar.
+   * @param balances El array con los nuevos datos del balance.
+   * @returns Un Observable que emite la respuesta del backend.
+   */
+  updateBalance(id_blce: string, balances: any[]): Observable<any> {
+    const url = `${this.apiUrl}/${id_blce}`; 
+    
+    return this.http.put(url, balances, {
+      withCredentials: true,
+      headers: new HttpHeaders({
+        'Content-Type': 'application/json'
+      })
+    }).pipe(
+      catchError((error: HttpErrorResponse) => {
+        console.error('Error al actualizar el balance:', error);
+        
+        return throwError(() => new Error('Ocurrió un error al intentar guardar los cambios.'));
+      })
+    );
+  }
 
 
   getResumen(params: {

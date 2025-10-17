@@ -110,12 +110,31 @@
         </td>
 
         <!-- Botón de acción -->
-        <td *ngIf="processed" class="text-center">
-          <button class="btn btn-sm btn-outline-primary d-flex align-items-center justify-content-center"
-                  (click)="startDistribution(row)" [disabled]="isDistributionMode"
-                  title="Distribuir Saldo">
-            <i class="bi bi-distribute-vertical"></i>
-          </button>
+<td *ngIf="processed" class="text-center">
+          <div class="d-flex justify-content-center gap-1">
+            <button class="btn btn-sm btn-outline-primary"
+                    (click)="startDistribution(row)" 
+                    [disabled]="isDistributionMode || row.isManual"
+                    title="Distribuir Saldo">
+              <i class="bi bi-distribute-vertical"></i>
+            </button>
+            
+            <button *ngIf="row.isManual"
+                    class="btn btn-sm btn-outline-secondary"
+                    (click)="editarCuentaManual(row)"
+                    [disabled]="isDistributionMode"
+                    title="Editar Cuenta Manual">
+              <i class="bi bi-pencil-fill"></i>
+            </button>
+            
+            <button *ngIf="row.isManual"
+                    class="btn btn-sm btn-outline-danger"
+                    (click)="eliminarCuentaManual(row)"
+                    [disabled]="isDistributionMode"
+                    title="Eliminar Cuenta Manual">
+              <i class="bi bi-trash-fill"></i>
+            </button>
+          </div>
         </td>
       </tr>
     </tbody>

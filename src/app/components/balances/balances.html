@@ -82,7 +82,7 @@
                 <td>{{ b.fecha_fin | date: 'dd-MM-yyyy'}}</td>
                 <td>{{ b.fecha_creacion| date: 'dd-MM-yyyy'}}</td>
                 <td>
-                  <span class="badge bg-light text-dark">{{ b.id_mapping }} - {{ b.mapping_desc }}</span>
+                  <span class="badge bg-light text-dark">{{ b.id_mapping }} </span>
                 </td>
                 <td>
                   <span class="badge" [ngStyle]="{'background-color': b.estado_color, 'color': 'white'}">
@@ -98,7 +98,7 @@
                   type="button"
                   class="btn btn-outline-primary btn-sm me-1"
                   title="Editar"
-                  disabled
+                  (click)="abrirModalEdicion(b.id_blce)"
                 >
                   <i class="bi bi-pencil"></i>
                 </button>

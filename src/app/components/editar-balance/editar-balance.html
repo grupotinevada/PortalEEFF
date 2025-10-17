@@ -1,0 +1,186 @@
+<div class="modal-header bg-success border-bottom">
+  <h5 class="modal-title d-flex align-items-center fw-bold">
+    <i class="bi bi-pencil-square fs-4 me-2 text-light"></i>
+    Editando Balance: <span class="text-light ms-2">{{ nombreBalance }}</span>
+  </h5>
+  <button type="button" class="btn-close btn-close-white" aria-label="Close" (click)="activeModal.dismiss('Cross click')"></button>
+</div>
+
+<div class="modal-body p-4 p-md-5" style="overflow-y: auto;">
+  <app-spinner [showSpinner]="showSpinner"></app-spinner>
+
+  <div *ngIf="msgError" class="alert alert-danger">
+    <i class="bi bi-exclamation-triangle-fill me-2"></i> {{ msgError }}
+  </div>
+
+  <ng-container *ngIf="!msgError && processed">
+    
+    <header class="d-flex flex-column flex-md-row justify-content-between align-items-md-center border-bottom pb-3 mb-4">
+        <div>
+          <h6 class="text-dark fw-bold mb-1">Parámetros del Balance</h6>
+          <small class="text-body-secondary">Modifique los datos generales o edite las cuentas de forma individual.</small>
+        </div>
+       <div class="d-flex gap-2">
+          <button type="button" class="btn btn-success d-flex align-items-center" (click)="abrirModal()">
+            <i class="bi bi-plus-circle-dotted me-2"></i>
+            <span class="fw-semibold">Crear FSA</span>
+          </button>
+          
+          <button *ngIf="processed" 
+                  type="button" 
+                  class="btn btn-outline-info d-flex align-items-center" 
+                  (click)="agregarNuevaCuenta()" 
+                  [disabled]="isDistributionMode">
+            <i class="bi bi-plus-square-dotted me-2"></i>
+            <span class="fw-semibold">Agregar Cuenta</span>
+          </button>
+        </div>
+    </header>
+
+    <div *ngIf="isDistributionMode && sourceAccount" class="alert alert-primary d-flex flex-wrap justify-content-between align-items-center mb-4 p-3 border-start border-4 border-primary">
+      <div class="d-flex align-items-center">
+        <i class="bi bi-info-circle-fill me-2 fs-5"></i>
+        <div>
+          <strong class="d-block">Modo Distribución:</strong>
+          <span class="small">Distribuyendo saldo de <strong>{{ sourceAccount[headers[0]] }}</strong>. Seleccione cuentas de destino.</span>
+        </div>
+      </div>
+      <div class="d-flex gap-2 mt-2 mt-md-0">
+        <button class="btn btn-primary btn-sm d-flex align-items-center" (click)="openDistributionModal()">
+          <i class="bi bi-check-circle me-1"></i> Confirmar
+        </button>
+        <button class="btn btn-danger btn-sm d-flex align-items-center" (click)="cancelDistribution()">
+          <i class="bi bi-x-circle me-1"></i> Cancelar
+        </button>
+      </div>
+    </div>
+
+    <section class="mb-4">
+      <div class="table-responsive rounded shadow-sm" style="max-height: 36rem; overflow-y: auto;">
+        <table class="table table-hover table-striped table-sm align-middle mb-0">
+            <thead class="table-light sticky-top small text-secondary fw-semibold">
+              <tr>
+                <th *ngIf="isDistributionMode" class="text-center" style="width: 40px;"><i class="bi bi-check2-square"></i></th>
+                <th *ngFor="let h of headers" [ngStyle]="h === 'FSA' ? {'min-width.px': 280} : {}">{{ h }}</th>
+                <th class="text-center" style="width: 90px;">Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let row of tableData"
+                  [class.table-warning]="row.isSelectionDisabled"
+                  [class.border-start]="row.isSelectionDisabled"
+                  [class.border-3]="row.isSelectionDisabled"
+                  [class.border-primary]="row.isSelectionDisabled"
+                  [ngClass]="{'distribution-selectable-row': isDistributionMode && !row.isSelectionDisabled}"
+                  (click)="toggleRowSelection(row)"
+                  class="align-middle">
+        
+                <td *ngIf="isDistributionMode" class="text-center">
+                  <input *ngIf="!row.isSelectionDisabled" type="checkbox" class="form-check-input" [(ngModel)]="row.isSelected" (click)="$event.stopPropagation()">
+                  <i *ngIf="row.isSelectionDisabled" class="bi bi-arrow-right-circle-fill text-primary" title="Cuenta de Origen"></i>
+                </td>
+        
+                <td *ngFor="let h of headers" class="text-dark small">
+                  <ng-container *ngIf="h === 'FSA'; else normalCell">
+                    <ng-select [items]="fsas" bindLabel="display" bindValue="id_fsa" [(ngModel)]="row['FSA']"
+                               [searchable]="true" [clearable]="true" [addTag]="false" placeholder="Buscar o crear FSA"
+                               (change)="onFsaChange(row, row['FSA'])" class="w-100 rounded">
+                    </ng-select>
+                  </ng-container>
+                  <ng-template #normalCell>
+                    <span *ngIf="h === 'Saldo Actual'; else defaultText" class="fw-semibold text-dark">
+                      {{ row[h] | number:'1.0-0' }}
+                    </span>
+                    <ng-template #defaultText>{{ row[h] }}</ng-template>
+                  </ng-template>
+                </td>
+        
+                <td class="text-center">
+                  <div class="d-flex justify-content-center gap-1">
+                    <button class="btn btn-sm btn-outline-primary" (click)="startDistribution(row)" [disabled]="isDistributionMode || row.isManual" title="Distribuir Saldo">
+                      <i class="bi bi-distribute-vertical"></i>
+                    </button>
+                    <button class="btn btn-sm btn-outline-secondary" (click)="editarCuentaManual(row)" [disabled]="isDistributionMode" title="Editar Cuenta Manual">
+                      <i class="bi bi-pencil-fill"></i>
+                    </button>
+                    <button class="btn btn-sm btn-outline-danger" (click)="eliminarCuentaManual(row)" [disabled]="isDistributionMode" title="Eliminar Cuenta Manual">
+                      <i class="bi bi-trash-fill"></i>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="mb-4">
+        <div class="row g-4">
+          <div class="col-lg-6">
+            <fieldset class="border border-secondary rounded-3 p-3 h-100">
+              <legend class="float-none w-auto px-2 small fw-semibold">Información del Balance</legend>
+              <div class="mb-3">
+                <label for="nombreBalance" class="form-label small">Nombre del Balance</label>
+                <input id="nombreBalance" type="text" class="form-control form-control-sm" placeholder="Ej. Balance Anual 2025" [(ngModel)]="nombreBalance">
+              </div>
+              <div class="row g-3">
+                <div class="col-sm-6">
+                  <label for="fechaInicio" class="form-label small">Fecha de Inicio</label>
+                  <input id="fechaInicio" type="date" class="form-control form-control-sm" [(ngModel)]="fechaInicio" />
+                </div>
+                <div class="col-sm-6">
+                  <label for="fechaFin" class="form-label small">Fecha de Fin</label>
+                  <input id="fechaFin" type="date" class="form-control form-control-sm" [(ngModel)]="fechaFin" />
+                </div>
+              </div>
+            </fieldset>
+          </div>
+          <div class="col-lg-6">
+            <fieldset class="border border-secondary rounded-3 p-3 h-100">
+              <legend class="float-none w-auto px-2 small fw-semibold">Parámetros de Procesamiento</legend>
+              <div class="row g-3">
+                <div class="col-sm-4">
+                  <label for="anioInput" class="form-label small">Ejercicio <span class="text-danger">*</span></label>
+                  <select id="anioInput" class="form-select form-select-sm" [(ngModel)]="anioSeleccionado">
+                    <option *ngFor="let anio of listaAnios" [value]="anio">{{ anio }}</option>
+                  </select>
+                </div>
+                <div class="col-sm-8">
+                  <label for="mappingSelect" class="form-label small">Mapping <span class="text-danger">*</span></label>
+                  <select id="mappingSelect" class="form-select form-select-sm" [(ngModel)]="selectedMapping">
+                    <option *ngFor="let mapping of mappings" [value]="mapping.id_mapping">{{ mapping.descripcion }}</option>
+                  </select>
+                </div>
+                <div class="col-12">
+                  <label for="empresaSelect" class="form-label small">Empresa <span class="text-danger">*</span></label>
+                  <select id="empresaSelect" class="form-select form-select-sm" [(ngModel)]="selectedEmpresa">
+                    <option *ngFor="let empresa of empresas" [value]="empresa.id_empresa">{{ empresa.descripcion }}</option>
+                  </select>
+                </div>
+                <div class="col-12">
+              <label for="estadoSelect" class="form-label small">Estado <span class="text-danger">*</span></label>
+              <select id="estadoSelect" class="form-select form-select-sm" [(ngModel)]="selectedEstado">
+                <option *ngFor="let estado of estados" [value]="estado.id_estado">{{ estado.desc }}</option>
+              </select>
+            </div>
+              </div>
+            </fieldset>
+          </div>
+        </div>
+      </section>
+    
+
+
+  </ng-container>
+</div>
+
+<div class="modal-footer bg-light border-top">
+  <button type="button" class="btn btn-outline-danger" (click)="activeModal.dismiss('cancel')">
+    <i class="bi bi-x-circle me-1"></i>
+    Cancelar
+  </button>
+  <button type="button" class="btn btn-primary fw-semibold" (click)="guardarCambios()" [disabled]="!processed || showSpinner">
+    <i class="bi bi-check-circle-fill me-1"></i>
+    Guardar Cambios
+  </button>
+</div>
