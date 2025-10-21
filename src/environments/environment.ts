@@ -1,4 +1,4 @@
 export const environment = {
   production: true,
-  apiUrl: 'http://localhost:3000/api', // Ejemplo de variable
+  apiUrl: 'https://portaleeffapi.inevada.cl/api', // Ejemplo de variable
 };

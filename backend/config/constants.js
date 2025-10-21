@@ -14,5 +14,10 @@ module.exports = {
         waitForConnections: true,
         connectionLimit: 10,
         queueLimit: 0 
-    }
+    },
+    MICROSOFT_CLIENT_ID: process.env.MICROSOFT_CLIENT_ID,
+    MICROSOFT_CLIENT_SECRET: process.env.MICROSOFT_CLIENT_SECRET,
+    MICROSOFT_TENANT_ID: process.env.MICROSOFT_TENANT_ID,
+    MICROSOFT_REDIRECT_URL: process.env.MICROSOFT_REDIRECT_URL, 
+    FRONTEND_URL: process.env.FRONTEND_URL, 
 };

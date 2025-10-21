@@ -700,6 +700,33 @@ ngOnDestroy(): void {
         this.selectedEmpresa
       );
 
+
+      const cuentasEnArchivo = new Set(filasProcesadas.map(f => f.num_cuenta));
+
+     
+      const cuentasManualesDelMapping = (this.mappingCompleto || []).filter(mapeo =>
+        mapeo.isManual && 
+        !cuentasEnArchivo.has(mapeo.num_cuenta)
+      );
+
+      
+      const filasManualesParaAgregar = cuentasManualesDelMapping.map(mapeo => ({
+        num_cuenta: mapeo.num_cuenta,
+        nombre: mapeo.nombre || 'Cuenta Manual', // Usar el nombre guardado
+        saldo: 0, // Las cuentas manuales del mapping inician en 0
+        ejercicio: this.anioSeleccionado,
+        id_mapping: this.selectedMapping,
+        id_fsa: mapeo.id_fsa,
+        nombre_balance: this.nombreBalance,
+        fecha_inicio: this.fechaInicio,
+        fecha_fin: this.fechaFin,
+        id_empresa: this.selectedEmpresa,
+        isManual: true 
+      }));
+
+      
+      const todasLasFilas = [...filasManualesParaAgregar, ...filasProcesadas];
+
       this.totalDeudor = totalDeudor;
       this.totalAcreedor = totalAcreedor;
       this.resultadoSaldo = totalDeudor - totalAcreedor;
@@ -712,7 +739,7 @@ ngOnDestroy(): void {
       }
 
       this.headers = headersFiltrados;
-      this.tableData = filasProcesadas.map((b) => ({
+      this.tableData = todasLasFilas.map((b) => ({
         [headersFiltrados[0]]: b.num_cuenta,
         [headersFiltrados[1]]: b.nombre,
         [headersFiltrados[2]]: b.saldo,
@@ -723,6 +750,7 @@ ngOnDestroy(): void {
         [headersFiltrados[7]]: b.fecha_inicio,
         [headersFiltrados[8]]: b.fecha_fin,
         [headersFiltrados[9]]: b.id_empresa,
+        isManual: b.isManual || false
       }));
 
       if (cuentasManuales.length > 0) {
@@ -863,6 +891,9 @@ procesarInformacion(): void {
         `[Fila ${rowIndex}] Cuenta: "${cuentaId}" | FSA Original (Mapping): "${fsaOriginal}" | FSA Nuevo (Archivo): "${fsaNuevo}"`
       );
 
+      const isManual = currentRow.isManual || false;
+      const nombreCuenta = readCell(currentRow, this.headers[1]);
+
       if (fsaOriginal !== fsaNuevo) {
         console.warn(`  -> ¡CAMBIO DETECTADO en la fila ${rowIndex} para la cuenta "${cuentaId}"!`);
         cambiosFsa.push({
@@ -870,6 +901,8 @@ procesarInformacion(): void {
           cuenta: cuentaId || '(sin nombre)',
           fsaOriginal: fsaOriginal || 'N/A',
           fsaNuevo: fsaNuevo || 'N/A',
+          nombre: isManual ? nombreCuenta : null,
+          isManual: isManual
         });
       }
     });
@@ -920,6 +953,8 @@ procesarInformacion(): void {
               id_fsa: cambio.fsaNuevo,
               id_mapping: this.selectedMapping,
               descripcion: this.mappingCompleto.find((m) => m.id_mapping === this.selectedMapping)?.descripcion || 'Actualizado desde subida de balances',
+              nombre: cambio.nombre,
+              isManual: cambio.isManual
             })
           );
           forkJoin(updates$).subscribe({
@@ -981,7 +1016,12 @@ procesarInformacion(): void {
                   const nuevoMappingId = mappingRes?.data?.id_mapping || result.value.codigo;
                   const updates$ = cambiosFsa.map((cambio) =>
                     this.mappingService.crearOActualizarMapeo({
-                      num_cuenta: cambio.cuenta, id_fsa: cambio.fsaNuevo, id_mapping: nuevoMappingId, descripcion: result.value.descripcion,
+                      num_cuenta: cambio.cuenta, 
+                      id_fsa: cambio.fsaNuevo, 
+                      id_mapping: nuevoMappingId, 
+                      descripcion: result.value.descripcion,
+                      nombre: cambio.nombre,
+                      isManual: cambio.isManual
                     })
                   );
                   forkJoin(updates$).subscribe({

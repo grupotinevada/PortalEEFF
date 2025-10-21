@@ -90,7 +90,7 @@ class MappingService {
 
   //funcion upsertMapping
   static async crearOActualizarMapeo(datosMapeo) {
-    const { num_cuenta, id_fsa, id_mapping, descripcion } = datosMapeo;
+    const { num_cuenta, id_fsa, id_mapping, descripcion, nombre, isManual } = datosMapeo;
 
     // 1. Validación de datos de entrada
     if (!num_cuenta || !id_fsa || !id_mapping || !descripcion) {
@@ -98,7 +98,7 @@ class MappingService {
     }
 
     // 2. Llamada al modelo
-    return MappingModel.crearOActualizarMapeo(num_cuenta, id_fsa, id_mapping, descripcion);
+    return MappingModel.crearOActualizarMapeo(num_cuenta, id_fsa, id_mapping, descripcion, nombre, isManual);
   }
 
   /**

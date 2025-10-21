@@ -7,6 +7,8 @@ export interface Imapping {
   descripcion: string;
   num_cuenta: string;
   id_fsa: string;
+  nombre?: string;
+  isManual?: boolean
 }
 /**
  * Define la estructura de datos para los select.
@@ -24,9 +26,11 @@ export interface ImappingSelect{
  */
 export interface IMappingPayload {
   num_cuenta: string;
+  nombre?: string;
   id_fsa: string;
   id_mapping: string;
   descripcion: string; 
+  isManual?: boolean;
 }
 
 

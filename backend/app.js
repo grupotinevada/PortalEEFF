@@ -9,7 +9,13 @@ const estadoRoutes = require('./routes/estado.routes');
 const empresaRoutes = require('./routes/empresas.routes');
 const categoriaRoutes = require('./routes/categoria.routes');
 const fsaRoutes = require('./routes/fsa.routes');
+
+/**
+ * Aplicación principal de Express
+ */
+const helmet = require('helmet')
 const app = express();
+app.use(helmet());
 
 // Middleware
 app.use(cors({
@@ -19,7 +25,8 @@ app.use(cors({
     'http://192.168.1.88:4200',
     'https://portaleefftest.inevada.cl',
     'https://portaleeffapitest.inevada.cl',
-    'https://portaleefftest.inevada.cl/login'
+    'https://portaleefftest.inevada.cl/login',
+    'https://portaleeff.inevada.cl',
   ],
   credentials: true 
 }));

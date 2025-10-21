@@ -104,13 +104,15 @@ class MappingModel {
     }
   }
 
-  static async crearOActualizarMapeo(num_cuenta, id_fsa, id_mapping, descripcion) {
+  static async crearOActualizarMapeo(num_cuenta, id_fsa, id_mapping, descripcion, nombre, isManual) {
   const sql = `
-    INSERT INTO cta_fsa_mapeo (num_cuenta, id_mapping, id_fsa, descripcion)
-    VALUES (?, ?, ?, ?)
-    ON DUPLICATE KEY UPDATE 
+    INSERT INTO cta_fsa_mapeo (num_cuenta, id_mapping, id_fsa, descripcion, nombre, isManual)
+    VALUES (?, ?, ?, ?, ?, ?)
+      ON DUPLICATE KEY UPDATE 
       id_fsa = VALUES(id_fsa),
-      descripcion = VALUES(descripcion);
+      descripcion = VALUES(descripcion),
+      nombre = VALUES(nombre),
+      isManual = VALUES(isManual);
   `;
   
     try {
@@ -118,7 +120,9 @@ class MappingModel {
       num_cuenta, 
       id_mapping, 
       id_fsa, 
-      descripcion
+      descripcion,
+      nombre,
+      isManual
     ]);
     
     // En MySQL, un INSERT devuelve affectedRows=1, un UPDATE devuelve affectedRows=2.
