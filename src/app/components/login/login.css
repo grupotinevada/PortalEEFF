@@ -1,0 +1,537 @@
+/* ============================================
+   FLUENT DESIGN - LOGIN COMPONENT
+   Estilo moderno, sobrio y profesional
+   ============================================ */
+
+/* Variables de diseño Fluent */
+:root {
+  --fluent-primary: #0078d4;
+  --fluent-primary-hover: #106ebe;
+  --fluent-primary-active: #005a9e;
+
+  --fluent-secondary: #605e5c;
+  --fluent-secondary-hover: #484644;
+
+  --fluent-error: #ff0008;
+  --fluent-error-bg: #fde7e9;
+
+  --fluent-text-primary: #201f1e;
+  --fluent-text-secondary: #605e5c;
+  --fluent-text-tertiary: #8a8886;
+
+  --fluent-bg-primary: #ffffff;
+  --fluent-bg-secondary: #faf9f8;
+  --fluent-bg-tertiary: #f3f2f1;
+
+  --fluent-border: #edebe9;
+  --fluent-border-hover: #d2d0ce;
+
+  --fluent-shadow-sm: 0 1.6px 3.6px rgba(0, 0, 0, 0.03), 0 0.3px 0.9px rgba(0, 0, 0, 0.02);
+  --fluent-shadow-md: 0 3.2px 7.2px rgba(0, 0, 0, 0.04), 0 0.6px 1.8px rgba(0, 0, 0, 0.03);
+  --fluent-shadow-lg: 0 6.4px 14.4px rgba(0, 0, 0, 0.05), 0 1.2px 3.6px rgba(0, 0, 0, 0.04);
+  --fluent-shadow-xl: 0 25.6px 57.6px rgba(0, 0, 0, 0.07), 0 4.8px 14.4px rgba(0, 0, 0, 0.05);
+
+  --fluent-radius-sm: 4px;
+  --fluent-radius-md: 8px;
+  --fluent-radius-lg: 12px;
+
+  --fluent-transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Contenedor principal */
+.fluent-login-container {
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  overflow: hidden;
+}
+
+/* Fondo decorativo con orbes de gradiente */
+.fluent-background {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.fluent-gradient-orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  opacity: 0.15;
+  animation: float 20s ease-in-out infinite;
+}
+
+.fluent-orb-1 {
+  width: 500px;
+  height: 500px;
+  background: linear-gradient(135deg, #0078d4 0%, #00bcf2 100%);
+  top: -250px;
+  right: -250px;
+  animation-delay: 0s;
+}
+
+.fluent-orb-2 {
+  width: 400px;
+  height: 400px;
+  background: linear-gradient(135deg, #8661c1 0%, #0078d4 100%);
+  bottom: -200px;
+  left: -200px;
+  animation-delay: -10s;
+}
+
+@keyframes float {
+  0%,
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+  33% {
+    transform: translate(30px, -30px) scale(1.1);
+  }
+  66% {
+    transform: translate(-20px, 20px) scale(0.9);
+  }
+}
+
+/* Tarjeta principal con efecto Acrylic */
+.fluent-card {
+  position: relative;
+  width: 100%;
+  max-width: 440px;
+  background-color: #ffffff;
+  border: 1px solid rgba(221, 221, 221, 0.8);
+  border-radius: var(--fluent-radius-lg);
+  box-shadow: var(--fluent-shadow-xl);
+  animation: cardEnter 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes cardEnter {
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.fluent-card-content {
+  padding: 3rem 2.5rem;
+}
+
+/* Secciones con animación */
+.fluent-section {
+  animation: sectionFade 0.4s ease-out;
+}
+
+.fluent-section-center {
+  text-align: center;
+}
+
+@keyframes sectionFade {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Logo */
+.fluent-logo-container {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 2rem;
+}
+
+.fluent-logo {
+  max-width: 140px;
+  height: auto;
+  opacity: 0.95;
+}
+
+/* Encabezados */
+.fluent-header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.fluent-title {
+  font-size: 1.75rem;
+  font-weight: 600;
+  color: var(--fluent-text-primary);
+  margin: 0 0 0.5rem 0;
+  letter-spacing: -0.02em;
+}
+
+.fluent-subtitle {
+  font-size: 1rem;
+  font-weight: 400;
+  color: var(--fluent-text-secondary);
+  margin: 0;
+  line-height: 1.5;
+}
+
+.fluent-subtitle-large {
+  font-size: 1rem;
+  line-height: 1.6;
+  margin-bottom: 1rem;
+}
+
+.fluent-help-text {
+  font-size: 1rem;
+  color: var(--fluent-text-tertiary);
+  margin: 0.5rem 0 0 0;
+}
+
+/* Botones base */
+.fluent-btn {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.625rem;
+  width: 100%;
+  padding: 0.875rem 1.5rem;
+  font-size: 1rem;
+  font-weight: 500;
+  border: none;
+  border-radius: var(--fluent-radius-md);
+  cursor: pointer;
+  transition: var(--fluent-transition);
+  overflow: hidden;
+}
+
+.fluent-btn::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(255, 255, 255, 0);
+  transition: var(--fluent-transition);
+}
+
+.fluent-btn:hover::before {
+    background: linear-gradient(170deg, #dfffe535 0%, #1987542b 100%);
+  box-shadow: #201f1e;
+}
+
+.fluent-btn:active {
+  transform: scale(0.98);
+}
+
+.fluent-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.fluent-btn:disabled:active {
+  transform: none;
+}
+
+/* Botón de Microsoft */
+.fluent-btn-microsoft {
+  background: var(--fluent-primary);
+  box-shadow: #201f1e;
+}
+
+.fluent-btn-microsoft:hover {
+  background: linear-gradient(170deg, #dfffe535 0%, #1987542b 100%);
+  box-shadow: #201f1e;
+}
+
+.fluent-btn-microsoft:active {
+  background: var(--fluent-primary-active);
+}
+
+/* Botón primario */
+.fluent-btn-primary {
+  background: var(--fluent-primary);
+  box-shadow: var(--fluent-shadow-md);
+}
+
+.fluent-btn-primary:hover:not(:disabled) {
+  background: var(--fluent-primary-hover);
+  box-shadow: var(--fluent-shadow-lg);
+}
+
+.fluent-btn-primary:active:not(:disabled) {
+  background: var(--fluent-primary-active);
+}
+
+/* Botón secundario */
+.fluent-btn-secondary {
+  background: var(--fluent-bg-tertiary);
+  color: var(--fluent-text-primary);
+  border: 1px solid var(--fluent-border);
+}
+
+.fluent-btn-secondary:hover {
+  background: var(--fluent-bg-secondary);
+  border-color: var(--fluent-border-hover);
+}
+
+/* Iconos en botones */
+.fluent-btn-icon {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+}
+
+.fluent-btn-arrow {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+  transition: transform 0.2s ease;
+}
+
+.fluent-btn:hover .fluent-btn-arrow {
+  transform: translateX(3px);
+}
+
+/* Divisor */
+.fluent-divider {
+  position: relative;
+  display: flex;
+  align-items: center;
+  margin: 1.75rem 0;
+}
+
+.fluent-divider::before,
+.fluent-divider::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: var(--fluent-border);
+}
+
+.fluent-divider-text {
+  padding: 0 1rem;
+  font-size: 0.7rem;
+  color: var(--fluent-text-tertiary);
+  font-weight: 500;
+}
+
+/* Link button */
+.fluent-link-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  width: 100%;
+  padding: 0.75rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--fluent-text-secondary);
+  background: transparent;
+  border: none;
+  border-radius: var(--fluent-radius-sm);
+  cursor: pointer;
+  transition: var(--fluent-transition);
+}
+
+.fluent-link-btn:hover {
+  color: #106ebe;
+}
+
+.fluent-link-back {
+  margin-top: 1rem;
+}
+
+.fluent-back-icon {
+  width: 16px;
+  height: 16px;
+}
+
+/* Formulario */
+.fluent-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+/* Grupo de input */
+.fluent-input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.fluent-label {
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--fluent-text-primary);
+}
+
+.fluent-input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.fluent-input-icon {
+  position: absolute;
+  left: 1rem;
+  width: 18px;
+  height: 18px;
+  color: var(--fluent-text-tertiary);
+  pointer-events: none;
+  transition: var(--fluent-transition);
+}
+
+.fluent-input {
+  width: 100%;
+  padding: 0.875rem 1rem 0.875rem 3rem;
+  font-size: 1rem;
+  color: var(--fluent-text-primary);
+  background: var(--fluent-bg-primary);
+  border: 1px solid var(--fluent-border);
+  border-radius: var(--fluent-radius-md);
+  transition: var(--fluent-transition);
+  outline: none;
+}
+
+.fluent-input::placeholder {
+  color: var(--fluent-text-tertiary);
+}
+
+.fluent-input:hover {
+  border-color: var(--fluent-border-hover);
+}
+
+.fluent-input:focus {
+  border-color: var(--fluent-primary);
+  box-shadow: 0 0 0 1px var(--fluent-primary);
+}
+
+.fluent-input:focus + .fluent-input-icon {
+  color: var(--fluent-primary);
+}
+
+.fluent-input-error {
+  border-color: red;
+}
+
+.fluent-input-error:focus {
+  border-color: red;
+  box-shadow: 0 0 0 1px red;
+}
+
+.fluent-error-text {
+  font-size: 0.925rem;
+  color: red;
+  margin-top: -0.25rem;
+}
+
+/* Alertas */
+.fluent-alert {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.875rem 1rem;
+  border-radius: var(--fluent-radius-md);
+  font-size: 0.875rem;
+  line-height: 1.5;
+}
+
+.fluent-alert-error {
+  background: var(--fluent-error-bg);
+  color: red;
+  border: 1px solid rgba(209, 52, 56, 0.2);
+}
+
+.fluent-alert-icon {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+}
+
+/* Icono de estado */
+.fluent-status-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 80px;
+  height: 80px;
+  margin: 0 auto 1.5rem;
+  border-radius: 50%;
+}
+
+.fluent-status-error {
+  background: var(--fluent-error-bg);
+  color: var(--fluent-error);
+}
+
+.fluent-status-icon svg {
+  width: 40px;
+  height: 40px;
+}
+
+/* Footer */
+.fluent-footer {
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--fluent-border);
+  text-align: center;
+}
+
+.fluent-footer-text {
+  font-size: 0.8125rem;
+  color: var(--fluent-text-tertiary);
+  margin: 0;
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+  .fluent-login-container {
+    padding: 1rem;
+  }
+
+  .fluent-card-content {
+    padding: 2rem 1.5rem;
+  }
+
+  .fluent-title {
+    font-size: 1.5rem;
+  }
+
+  .fluent-btn {
+    padding: 0.75rem 1.25rem;
+  }
+}
+
+/* Mejoras de accesibilidad */
+.fluent-btn:focus-visible,
+.fluent-input:focus-visible,
+.fluent-link-btn:focus-visible {
+  outline: 2px solid var(--fluent-primary);
+  outline-offset: 2px;
+}
+
+/* Modo de alto contraste */
+@media (prefers-contrast: high) {
+  .fluent-card {
+    background: white;
+    border: 2px solid var(--fluent-text-primary);
+  }
+
+  .fluent-input {
+    border-width: 2px;
+  }
+}
+
+/* Reducción de movimiento */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

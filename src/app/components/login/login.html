@@ -1,92 +1,189 @@
-<div class="container d-flex justify-content-center align-items-center min-vh-100">
-  <div class="card shadow-lg border-0" style="width: 25rem;">
-    <div class="card-body p-4 p-md-5">
+<div class="fluent-login-container">
+  <!-- Fondo decorativo con efecto de profundidad -->
+  <div class="fluent-background">
+    <div class="fluent-gradient-orb fluent-orb-1"></div>
+    <div class="fluent-gradient-orb fluent-orb-2"></div>
+  </div>
 
-      <!-- Usamos @switch para mostrar una de las tres secciones -->
+  <!-- Tarjeta principal con efecto Acrylic -->
+  <div class="fluent-card">
+    <div class="fluent-card-content">
+
       @switch (currentSection) {
 
-        <!-- ============================================= -->
-        <!-- SECCIÓN 1: INICIO DE SESIÓN CON MICROSOFT (VISIBLE POR DEFECTO) -->
-        <!-- ============================================= -->
+        <!-- SECCIÓN: LOGIN CON MICROSOFT -->
         @case ('microsoft') {
-          <div class="text-center">
-            <img src="/logo.png" alt="Logo Corporativo" class="img-fluid mb-4">
-            <h5 class="card-title mb-3">Acceso al Portal</h5>
-            <p class="text-muted mb-4">Inicia sesión de forma segura con tu cuenta corporativa.</p>
-            
+          <div class="fluent-section" [@fadeIn]>
+            <!-- Logo -->
+            <div class="fluent-logo-container">
+              <img src="/logo.png" alt="Logo Corporativo" class="fluent-logo">
+            </div>
+
+            <!-- Título y descripción -->
+            <div class="fluent-header">
+              <h1 class="fluent-title">Bienvenido</h1>
+              <p class="fluent-subtitle">Accede de forma segura con tu cuenta corporativa</p>
+            </div>
+
             <!-- Botón de Microsoft -->
-            <a href="http://localhost:3003/api/auth/microsoft" class="btn btn-primary btn-lg w-100 shadow-sm">
-              <i class="bi bi-microsoft me-2"></i> Iniciar sesión con Microsoft
-            </a>
-
-            <div class="mt-4">
-              <button (click)="showFormLogin()" class="btn btn-link btn-sm text-muted">
-                Usar credenciales de portal
-              </button>
-            </div>
-          </div>
-        }
-
-        <!-- ============================================= -->
-        <!-- SECCIÓN 2: FORMULARIO DE LOGIN (OCULTO) -->
-        <!-- ============================================= -->
-        @case ('form') {
-          <div class="text-center mb-4">
-             <img src="/logo.png" alt="Logo Corporativo" class="img-fluid">
-          </div>
-          <p class="card-text text-center text-muted mb-4">Ingresa tus credenciales para acceder.</p>
-          
-          <form [formGroup]="form" (ngSubmit)="onSubmit()">
-            <div class="input-group mb-3">
-              <span class="input-group-text bg-light border-end-0"><i class="bi bi-envelope-fill"></i></span>
-              <input type="email" class="form-control form-control-lg bg-light border-start-0" id="email" formControlName="email" placeholder="Correo electrónico">
-            </div>
-            <div class="input-group mb-4">
-              <span class="input-group-text bg-light border-end-0"><i class="bi bi-shield-lock-fill"></i></span>
-              <input type="password" class="form-control form-control-lg bg-light border-start-0" id="password" formControlName="password" placeholder="Contraseña">
-            </div>
-            
-            <button type="submit" class="btn btn-outline-success btn-lg w-100 mb-3 shadow">
-              Iniciar sesión
+            <button 
+              type="button"
+              class="fluent-btn fluent-btn-microsoft"  onclick="window.location.href='http://localhost:3003/api/auth/microsoft'">
+              <svg class="fluent-btn-icon" viewBox="0 0 23 23" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M0 0H10.8571V10.8571H0V0Z" fill="#F25022"/>
+                <path d="M12.1429 0H23V10.8571H12.1429V0Z" fill="#7FBA00"/>
+                <path d="M0 12.1429H10.8571V23H0V12.1429Z" fill="#00A4EF"/>
+                <path d="M12.1429 12.1429H23V23H12.1429V12.1429Z" fill="#FFB900"/>
+              </svg>
+              <span>Continuar con Microsoft</span>
             </button>
 
-            @if(errorMsg){
-              <div class="alert alert-danger mt-3 mb-0 text-center">
-                {{ errorMsg }}
-              </div>
-            }
-          </form>
+            <!-- Divisor -->
+            <div class="fluent-divider">
+              <span class="fluent-divider-text">o</span>
+            </div>
 
-          <div class="text-center mt-3">
-             <button (click)="showMicrosoftLogin()" class="btn btn-link btn-sm text-muted">
-               &larr; Volver al inicio de sesión corporativo
-             </button>
+            <!-- Link alternativo -->
+            <button 
+              type="button"
+              class="fluent-link-btn"
+              (click)="showFormLogin()">
+              Usar credenciales del portal
+            </button>
           </div>
         }
 
-        <!-- ============================================= -->
-        <!-- SECCIÓN 3: NO AUTORIZADO (OCULTO) -->
-        <!-- ============================================= -->
+        <!-- SECCIÓN: FORMULARIO DE LOGIN -->
+        @case ('form') {
+          <div class="fluent-section" [@fadeIn]>
+            <!-- Logo -->
+            <div class="fluent-logo-container">
+              <img src="/logo.png" alt="Logo Corporativo" class="fluent-logo">
+            </div>
+
+            <!-- Título -->
+            <div class="fluent-header">
+              <h1 class="fluent-title">Iniciar sesión</h1>
+              <p class="fluent-subtitle">Ingresa tus credenciales para continuar</p>
+            </div>
+
+            <!-- Formulario -->
+            <form [formGroup]="form" (ngSubmit)="onSubmit()" class="fluent-form">
+              
+              <!-- Campo Email -->
+              <div class="fluent-input-group">
+                <label for="email" class="fluent-label">Correo electrónico</label>
+                <div class="fluent-input-wrapper">
+                  <svg class="fluent-input-icon" viewBox="0 0 20 20" fill="currentColor">
+                    <path d="M3 4a2 2 0 00-2 2v1.161l8.441 4.221a1.25 1.25 0 001.118 0L19 7.162V6a2 2 0 00-2-2H3z"/>
+                    <path d="M19 8.839l-7.77 3.885a2.75 2.75 0 01-2.46 0L1 8.839V14a2 2 0 002 2h14a2 2 0 002-2V8.839z"/>
+                  </svg>
+                  <input 
+                    type="email" 
+                    id="email"
+                    class="fluent-input"
+                    formControlName="email"
+                    placeholder="tu@email.com"
+                    [class.fluent-input-error]="form.get('email')?.invalid && form.get('email')?.touched">
+                </div>
+                @if (form.get('email')?.invalid && form.get('email')?.touched) {
+                  <span class="fluent-error-text">Ingresa un correo válido</span>
+                }
+              </div>
+
+              <!-- Campo Password -->
+              <div class="fluent-input-group">
+                <label for="password" class="fluent-label">Contraseña</label>
+                <div class="fluent-input-wrapper">
+                  <svg class="fluent-input-icon" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd"/>
+                  </svg>
+                  <input 
+                    type="password" 
+                    id="password"
+                    class="fluent-input"
+                    formControlName="password"
+                    placeholder="••••••••"
+                    [class.fluent-input-error]="form.get('password')?.invalid && form.get('password')?.touched">
+                </div>
+                @if (form.get('password')?.invalid && form.get('password')?.touched) {
+                  <span class="fluent-error-text">Mínimo 6 caracteres</span>
+                }
+              </div>
+
+              <!-- Mensaje de error -->
+              @if(errorMsg) {
+                <div class="fluent-alert fluent-alert-error">
+                  <svg class="fluent-alert-icon" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
+                  </svg>
+                  <span>{{ errorMsg }}</span>
+                </div>
+              }
+
+              <!-- Botón Submit -->
+              <button 
+                type="submit" 
+                class="fluent-btn fluent-btn-primary"
+                [disabled]="form.invalid">
+                <span>Iniciar sesión</span>
+                <svg class="fluent-btn-arrow" viewBox="0 0 20 20" fill="currentColor">
+                  <path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd"/>
+                </svg>
+              </button>
+            </form>
+
+            <!-- Link para volver -->
+            <button 
+              type="button"
+              class="fluent-link-btn fluent-link-back"
+              (click)="showMicrosoftLogin()">
+              <svg class="fluent-back-icon" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clip-rule="evenodd"/>
+              </svg>
+              Volver al inicio de sesión corporativo
+            </button>
+          </div>
+        }
+
+        <!-- SECCIÓN: NO AUTORIZADO -->
         @case ('unauthorized') {
-          <div class="text-center">
-            <i class="bi bi-shield-exclamation text-danger" style="font-size: 4rem;"></i>
-            <h4 class="mt-3">Acceso Denegado</h4>
-            <p class="text-muted mt-3">
-              Tu cuenta de Microsoft ha sido autenticada, pero no tienes los permisos necesarios para acceder a esta aplicación.
-            </p>
-            <p class="text-muted small">
-              Por favor, contacta al administrador del sistema si crees que esto es un error.
-            </p>
-            <button (click)="showMicrosoftLogin()" class="btn btn-secondary mt-3">
-              <i class="bi bi-arrow-left me-2"></i> Volver al Inicio
+          <div class="fluent-section fluent-section-center" [@fadeIn]>
+            <!-- Icono de error -->
+            <div class="fluent-status-icon fluent-status-error">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+              </svg>
+            </div>
+
+            <!-- Título y mensaje -->
+            <div class="fluent-header">
+              <h1 class="fluent-title">Acceso denegado</h1>
+              <p class="fluent-subtitle fluent-subtitle-large">
+                Tu cuenta de Microsoft ha sido autenticada correctamente, pero no tienes los permisos necesarios para acceder a esta aplicación.
+              </p>
+              <p class="fluent-help-text">
+                Si crees que esto es un error, contacta al administrador del sistema.
+              </p>
+            </div>
+
+            <!-- Botón para volver -->
+            <button 
+              type="button"
+              class="fluent-btn fluent-btn-secondary"
+              (click)="showMicrosoftLogin()">
+              <svg class="fluent-btn-icon" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clip-rule="evenodd"/>
+              </svg>
+              <span>Volver al inicio</span>
             </button>
           </div>
         }
       }
 
-      <!-- Footer común para todas las secciones -->
-      <div class="text-center mt-4 border-top pt-3">
-        <small class="text-muted">© 2025 Holding Nevada.</small>
+      <!-- Footer -->
+      <div class="fluent-footer">
+        <p class="fluent-footer-text">© 2025 Holding Nevada. Todos los derechos reservados.</p>
       </div>
 
     </div>

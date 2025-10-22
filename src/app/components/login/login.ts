@@ -33,16 +33,43 @@ export class Login implements OnInit{
     this.route.queryParams.subscribe(params => {
       const error = params['error'];
       if (error) {
-        // 2. Si el error es de autorización, mostramos la sección 'unauthorized'
-        if (error === 'auth_failed') {
-          this.currentSection = 'unauthorized';
-        } else {
-          // Para otros errores, mostramos el formulario con el mensaje
-          console.log('Error de login SSO:', error);
-          this.errorMsg = 'Ocurrió un error inesperado durante el inicio de sesión.';
-          this.currentSection = 'form';
+        
+        // ================== LÓGICA DE ERROR MEJORADA ==================
+        // Usamos un switch para manejar todos los casos de error del backend
+        switch(error) {
+          
+          // Caso 1: El usuario fue autenticado por MSAL pero NO existe en nuestra BD.
+          // (Este es el error 'unauthorized_user' que vimos en el log).
+          // La sección 'unauthorized' tiene el mensaje perfecto para esto.
+          case 'unauthorized_user':
+            this.currentSection = 'unauthorized';
+            break;
+          
+          // Caso 2: Un error genérico de autenticación (legacy o por si acaso).
+          case 'auth_failed':
+            this.currentSection = 'unauthorized';
+            break;
+
+          // Caso 3: Errores técnicos en el callback de MSAL.
+          // (ej. 'callback_error', 'callback_error_no_user')
+          // Mostramos el formulario con un mensaje de error específico
+          // para que el usuario pueda intentar el login manual.
+          case 'callback_error':
+          case 'callback_error_no_user':
+            this.errorMsg = 'Hubo un error al procesar su sesión de Microsoft. Intente con sus credenciales.';
+            this.currentSection = 'form';
+            break;
+
+          // Caso 4: Otros errores (sso_failed, etc.)
+          default:
+            console.log('Error de login SSO no manejado:', error);
+            this.errorMsg = 'Ocurrió un error inesperado durante el inicio de sesión.';
+            this.currentSection = 'form';
+            break;
         }
-        // Limpiamos la URL para que el mensaje no persista si el usuario recarga
+        // ================== FIN LÓGICA DE ERROR ==================
+
+        // Limpiamos la URL (esto estaba bien)
         this.router.navigate([], {
           relativeTo: this.route,
           queryParams: {},
