@@ -30,10 +30,12 @@ import { ModalFsa } from '../modal-fsa/modal-fsa';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { FsaService } from '../../services/fsa.service';
 import { ModalDistribucion } from '../modal-distribucion/modal-distribucion';
+import { ResizableColumn } from '../../directives/resizable-column';
+import { TableModule } from 'primeng/table';
 
 @Component({
   selector: 'app-preview',
-  imports: [CommonModule, FormsModule, Spinner, Navbar, NgSelectComponent],
+  imports: [CommonModule, FormsModule, Spinner, Navbar, NgSelectComponent, TableModule],
   templateUrl: './preview.html',
   styleUrls: ['./preview.css'],
 })

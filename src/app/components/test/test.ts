@@ -1,9 +1,10 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
+import { ButtonModule } from 'primeng/button';
 
 @Component({
   selector: 'app-test',
-  imports: [CommonModule],
+  imports: [CommonModule, ButtonModule],
   templateUrl: './test.html',
   styleUrl: './test.css'
 })

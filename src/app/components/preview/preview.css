@@ -12,13 +12,15 @@
 
 table {
   border-collapse: collapse;
-  width: 100%;
+
+  table-layout: auto;
 }
 
 thead th {
   background-color: #d7eaff;
   position: sticky;
   top: 0;
+  position: relative;
 }
 
 td, th {
@@ -26,6 +28,9 @@ td, th {
   border: 1px solid #999;
   font-size: 0.85rem;
   white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: 1px;
 }
 
 .preview-actions {
@@ -90,4 +95,9 @@ td, th {
   margin: 0.5rem 0;
   overflow: hidden;
   border-top: 1px solid #dee2e6;
+}
+
+
+::ng-deep .p-datatable-scrollable-view .p-datatable-table {
+  min-width: 100%;
 }
