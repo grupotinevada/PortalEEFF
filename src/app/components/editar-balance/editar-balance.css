@@ -1,0 +1,64 @@
+.hidden-columns-container {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  padding: 0.5rem;
+  background-color: #f8f9fa;
+  border: 1px solid #dee2e6;
+  border-radius: 0.375rem;
+}
+
+.hidden-column-badge {
+  display: inline-flex;
+  align-items: center;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+/* Estilos para el ícono 'x' dentro del badge */
+.hidden-column-badge .bi-x-circle-fill {
+  cursor: pointer;
+  opacity: 0.7;
+  transition: opacity 0.2s ease;
+}
+
+.hidden-column-badge .bi-x-circle-fill:hover {
+  opacity: 1;
+}
+/* --- FIN DE ESTILOS DE BADGES --- */
+
+
+/* --- INICIO DE ESTILOS DE CABECERA P-TABLE (COPIADO DE PREVIEW) --- */
+:host ::ng-deep th.th-with-actions {
+    white-space: normal;
+    overflow: visible;
+  }
+
+  /* Ajusta los botones para que sean pequeños y compactos
+    dentro del encabezado de la tabla.
+  */
+  :host ::ng-deep th.th-with-actions .btn-group .btn {
+    padding: 0.15rem 0.4rem; /* Padding vertical y horizontal */
+    line-height: 1.2;         /* Alineación vertical */
+  }
+  
+  /* Elimina el margen extra del p-sortIcon cuando está
+    dentro de nuestro botón personalizado.
+  */
+  :host ::ng-deep th.th-with-actions .btn p-sortIcon {
+    margin-right: 0;
+  }
+  
+  /* Ajusta el tamaño del ícono de flecha de PrimeNG
+  */
+  :host ::ng-deep th.th-with-actions .btn .p-sorticon {
+     font-size: 0.8em;
+     vertical-align: middle;
+  }
+  
+  /* Ajusta el tamaño del ícono de ojo de Bootstrap
+  */
+  :host ::ng-deep th.th-with-actions .btn .bi-eye {
+     font-size: 0.9em;
+     vertical-align: middle;
+  }

@@ -1167,3 +1167,73 @@
 [INFO] 2025-09-12T13:45:21.260Z - Usuario Administrador (1) solicitó balance con ID: 8c249332d0e3487e9596d83bc84faf60
 [INFO] 2025-09-12T13:45:21.261Z - Iniciando búsqueda de balance con ID: 8c249332d0e3487e9596d83bc84faf60
 [INFO] 2025-09-12T13:45:21.264Z - Balance encontrado con ID: 8c249332d0e3487e9596d83bc84faf60
+[ACTION] 2025-10-24T13:56:32.180Z - User undefined - LOGIN - Usuario admin@inevada.cl inició sesión
+[INFO] 2025-10-24T14:01:03.641Z - Verificando disponibilidad del nombre de balance: Bala
+[INFO] 2025-10-24T14:01:03.645Z - El nombre "Bala" está disponible.
+[INFO] 2025-10-24T14:01:04.385Z - Verificando disponibilidad del nombre de balance: Balance
+[INFO] 2025-10-24T14:01:04.387Z - El nombre "Balance" está disponible.
+[INFO] 2025-10-24T14:52:13.123Z - Verificando disponibilidad del nombre de balance: ba
+[INFO] 2025-10-24T14:52:13.125Z - El nombre "ba" está disponible.
+[INFO] 2025-10-24T14:52:14.298Z - Verificando disponibilidad del nombre de balance: balance
+[INFO] 2025-10-24T14:52:14.299Z - El nombre "balance" está disponible.
+[INFO] 2025-10-24T15:17:23.619Z - Verificando disponibilidad del nombre de balance: balance
+[INFO] 2025-10-24T15:17:23.620Z - El nombre "balance" está disponible.
+[INFO] 2025-10-24T16:02:10.804Z - Verificando disponibilidad del nombre de balance: v
+[INFO] 2025-10-24T16:02:10.806Z - El nombre "v" está disponible.
+[INFO] 2025-10-24T16:02:12.604Z - Verificando disponibilidad del nombre de balance: balance asda
+[INFO] 2025-10-24T16:02:12.606Z - El nombre "balance asda" está disponible.
+[INFO] 2025-10-24T16:09:39.077Z - Verificando disponibilidad del nombre de balance: aaaaaa
+[INFO] 2025-10-24T16:09:39.078Z - El nombre "aaaaaa" está disponible.
+[INFO] 2025-10-24T16:53:56.014Z - Verificando disponibilidad del nombre de balance: BLANC
+[INFO] 2025-10-24T16:53:56.015Z - El nombre "BLANC" está disponible.
+[INFO] 2025-10-24T16:58:13.236Z - Verificando disponibilidad del nombre de balance: Blance
+[INFO] 2025-10-24T16:58:13.237Z - El nombre "Blance" está disponible.
+[ACTION] 2025-10-24T17:01:03.378Z - User 1 - CREAR_BALANCE_BULK - Insertados: 57 con id_blce: 97e9f3e704104e018287e6c10a19616e
+[INFO] 2025-10-24T17:01:08.406Z - Usuario Administrador (1) solicitó balance con ID: 97e9f3e704104e018287e6c10a19616e
+[INFO] 2025-10-24T17:01:08.407Z - Iniciando búsqueda de balance con ID: 97e9f3e704104e018287e6c10a19616e
+[INFO] 2025-10-24T17:01:08.409Z - Balance encontrado con ID: 97e9f3e704104e018287e6c10a19616e
+[INFO] 2025-10-24T17:53:29.353Z - Verificando disponibilidad del nombre de balance: fc
+[INFO] 2025-10-24T17:53:29.355Z - El nombre "fc" está disponible.
+[INFO] 2025-10-24T17:53:30.161Z - Verificando disponibilidad del nombre de balance: fcccccccccc
+[INFO] 2025-10-24T17:53:30.162Z - El nombre "fcccccccccc" está disponible.
+[INFO] 2025-10-24T18:06:07.635Z - Usuario Administrador (1) solicitó balance con ID: 97e9f3e704104e018287e6c10a19616e
+[INFO] 2025-10-24T18:06:07.636Z - Iniciando búsqueda de balance con ID: 97e9f3e704104e018287e6c10a19616e
+[INFO] 2025-10-24T18:06:07.637Z - Balance encontrado con ID: 97e9f3e704104e018287e6c10a19616e
+[INFO] 2025-10-24T18:06:50.910Z - Usuario Administrador (1) solicitó balance con ID: 97e9f3e704104e018287e6c10a19616e
+[INFO] 2025-10-24T18:06:50.910Z - Iniciando búsqueda de balance con ID: 97e9f3e704104e018287e6c10a19616e
+[INFO] 2025-10-24T18:06:50.912Z - Balance encontrado con ID: 97e9f3e704104e018287e6c10a19616e
+[INFO] 2025-10-24T18:06:52.657Z - Usuario Administrador (1) solicitó balance con ID: 97e9f3e704104e018287e6c10a19616e
+[INFO] 2025-10-24T18:06:52.658Z - Iniciando búsqueda de balance con ID: 97e9f3e704104e018287e6c10a19616e
+[INFO] 2025-10-24T18:06:52.659Z - Balance encontrado con ID: 97e9f3e704104e018287e6c10a19616e
+[INFO] 2025-10-24T18:08:11.727Z - Usuario Administrador (1) solicitó balance con ID: 97e9f3e704104e018287e6c10a19616e
+[INFO] 2025-10-24T18:08:11.727Z - Iniciando búsqueda de balance con ID: 97e9f3e704104e018287e6c10a19616e
+[INFO] 2025-10-24T18:08:11.728Z - Balance encontrado con ID: 97e9f3e704104e018287e6c10a19616e
+[INFO] 2025-10-24T18:08:16.128Z - Usuario Administrador (1) solicitó balance con ID: 97e9f3e704104e018287e6c10a19616e
+[INFO] 2025-10-24T18:08:16.129Z - Iniciando búsqueda de balance con ID: 97e9f3e704104e018287e6c10a19616e
+[INFO] 2025-10-24T18:08:16.131Z - Balance encontrado con ID: 97e9f3e704104e018287e6c10a19616e
+[INFO] 2025-10-24T18:09:06.864Z - Verificando disponibilidad del nombre de balance: aaaaa
+[INFO] 2025-10-24T18:09:06.865Z - El nombre "aaaaa" está disponible.
+[INFO] 2025-10-24T18:09:29.789Z - Usuario Administrador (1) solicitó balance con ID: 97e9f3e704104e018287e6c10a19616e
+[INFO] 2025-10-24T18:09:29.790Z - Iniciando búsqueda de balance con ID: 97e9f3e704104e018287e6c10a19616e
+[INFO] 2025-10-24T18:09:29.791Z - Balance encontrado con ID: 97e9f3e704104e018287e6c10a19616e
+[INFO] 2025-10-24T18:17:42.580Z - Usuario Administrador (1) solicitó balance con ID: 97e9f3e704104e018287e6c10a19616e
+[INFO] 2025-10-24T18:17:42.580Z - Iniciando búsqueda de balance con ID: 97e9f3e704104e018287e6c10a19616e
+[INFO] 2025-10-24T18:17:42.581Z - Balance encontrado con ID: 97e9f3e704104e018287e6c10a19616e
+[INFO] 2025-10-24T18:18:00.796Z - Usuario Administrador (1) solicitó balance con ID: 97e9f3e704104e018287e6c10a19616e
+[INFO] 2025-10-24T18:18:00.796Z - Iniciando búsqueda de balance con ID: 97e9f3e704104e018287e6c10a19616e
+[INFO] 2025-10-24T18:18:00.797Z - Balance encontrado con ID: 97e9f3e704104e018287e6c10a19616e
+[INFO] 2025-10-24T18:23:04.275Z - Verificando disponibilidad del nombre de balance: aa
+[INFO] 2025-10-24T18:23:04.276Z - El nombre "aa" está disponible.
+[INFO] 2025-10-24T18:23:06.711Z - Verificando disponibilidad del nombre de balance: Blance
+[INFO] 2025-10-24T18:23:06.712Z - El nombre "Blance" ya existe.
+[INFO] 2025-10-24T18:23:16.327Z - Verificando disponibilidad del nombre de balance: Blancea
+[INFO] 2025-10-24T18:23:16.328Z - El nombre "Blancea" está disponible.
+[INFO] 2025-10-24T18:26:38.653Z - Usuario Administrador (1) solicitó balance con ID: 97e9f3e704104e018287e6c10a19616e
+[INFO] 2025-10-24T18:26:38.654Z - Iniciando búsqueda de balance con ID: 97e9f3e704104e018287e6c10a19616e
+[INFO] 2025-10-24T18:26:38.655Z - Balance encontrado con ID: 97e9f3e704104e018287e6c10a19616e
+[INFO] 2025-10-24T18:26:48.766Z - Usuario Administrador (1) solicitó balance con ID: 97e9f3e704104e018287e6c10a19616e
+[INFO] 2025-10-24T18:26:48.767Z - Iniciando búsqueda de balance con ID: 97e9f3e704104e018287e6c10a19616e
+[INFO] 2025-10-24T18:26:48.768Z - Balance encontrado con ID: 97e9f3e704104e018287e6c10a19616e
+[INFO] 2025-10-24T18:27:04.786Z - Usuario Administrador (1) solicitó balance con ID: 97e9f3e704104e018287e6c10a19616e
+[INFO] 2025-10-24T18:27:04.787Z - Iniciando búsqueda de balance con ID: 97e9f3e704104e018287e6c10a19616e
+[INFO] 2025-10-24T18:27:04.788Z - Balance encontrado con ID: 97e9f3e704104e018287e6c10a19616e

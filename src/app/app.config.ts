@@ -15,16 +15,7 @@ import { definePreset } from '@primeuix/themes';
 import Aura from '@primeuix/themes/aura';
 import Lara from '@primeuix/themes/lara';
 
-const MyLaraLightPreset = definePreset(Lara, {
-  semantic: {
-    colorScheme: {
-      dark: {
-        // Al no definir nada aquí (o ponerlo vacío),
-        // deshabilitamos el modo oscuro.
-      }
-    }
-  }
-});
+
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -35,8 +26,10 @@ export const appConfig: ApplicationConfig = {
     provideAnimationsAsync(),
     providePrimeNG({
         theme: {
-            // 2. CAMBIA Aura por Lara
-            preset: MyLaraLightPreset 
+          preset: Lara ,
+          options: {
+            darkModeSelector: false || 'none'
+        }
         }
     }),
     provideClientHydration(withEventReplay()),

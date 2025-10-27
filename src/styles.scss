@@ -9,6 +9,10 @@
 
 }
 
+:root {
+  color-scheme: light;
+}
+
 html, body {
   font-family: 'Montserrat', sans-serif;
   background-image: url(../public/prueba.jpg);
@@ -20,3 +24,13 @@ html, body {
   background-attachment: fixed; 
   }
 
+.mi-dropdown-fsa .ng-option {
+  font-size: 0.85rem;      /* El tamaño de fuente de tu tabla */
+  color: lawngreen;
+  white-space: normal;   /* Para que el texto largo se ajuste */
+}
+
+/* Opcional: Si el texto seleccionado también se ve mal */
+.mi-dropdown-fsa .ng-option-selected {
+  font-size: 0.85rem;
+}

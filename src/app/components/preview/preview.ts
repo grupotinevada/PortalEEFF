@@ -32,10 +32,11 @@ import { FsaService } from '../../services/fsa.service';
 import { ModalDistribucion } from '../modal-distribucion/modal-distribucion';
 import { ResizableColumn } from '../../directives/resizable-column';
 import { TableModule } from 'primeng/table';
+import { SelectModule } from 'primeng/select';
 
 @Component({
   selector: 'app-preview',
-  imports: [CommonModule, FormsModule, Spinner, Navbar, NgSelectComponent, TableModule],
+  imports: [CommonModule, FormsModule, Spinner, Navbar, TableModule, SelectModule],
   templateUrl: './preview.html',
   styleUrls: ['./preview.css'],
 })
@@ -97,6 +98,11 @@ export class Preview implements OnInit {
   isDistributionMode = false; 
   sourceAccount: any = null;
   isDistribuited = false;
+
+
+  hiddenColumns: string[] = [];
+
+
 
   constructor(
     private mappingService: MappingService,
@@ -676,7 +682,14 @@ ngOnDestroy(): void {
     if (!this.tableData || this.tableData.length === 0) return;
 
     try {
-
+      this.hiddenColumns = [
+        'Ejercicio',
+        'Mapping',
+        'Nombre Balance',
+        'Fecha Inicio',
+        'Fecha Fin',
+        'Empresa'
+      ];
       const cuentasManuales = this.tableData.filter(row => row.isManual);   // aqui me quedé
       // ✅ Si es el primer procesamiento, guardamos originales
       if (!this.processed) {
@@ -1629,5 +1642,51 @@ editarCuentaManual(row: any): void {
       document.removeEventListener('click', hideMenu);
     };
     document.addEventListener('click', hideMenu);
+  }
+
+    toggleColumnVisibility(header: string, event: MouseEvent): void {
+    event.stopPropagation(); // Previene que se dispare el sort
+    
+    const index = this.hiddenColumns.indexOf(header);
+    if (index === -1) {
+      // No está oculta, la ocultamos
+      this.hiddenColumns.push(header);
+    }
+    // Si ya está oculta, el botón 'eye' no debería ser visible,
+    // pero la lógica para mostrarla está en 'showColumn'.
+  }
+  /**
+   * Muestra una columna. Llamado por el badge (X).
+   */
+  showColumn(header: string, event: MouseEvent): void {
+    event.stopPropagation();
+    const index = this.hiddenColumns.indexOf(header);
+    if (index > -1) {
+      this.hiddenColumns.splice(index, 1);
+    }
+  }
+
+  /**
+   * Verifica si una columna está oculta. Usado por *ngIf en el HTML.
+   */
+  isColumnHidden(header: string): boolean {
+    return this.hiddenColumns.includes(header);
+  }
+
+  /**
+   * Handler para el botón del ojo.
+   */
+  onColumnViewClick(h: string, event: MouseEvent) {
+    this.toggleColumnVisibility(h, event);
+  }
+
+  /**
+   * Calcula el colspan para el mensaje de tabla vacía.
+   */
+  get emptyMessageColspan(): number {
+     const visibleColumnsCount = this.headers.length - this.hiddenColumns.length;
+     const distributionCols = this.isDistributionMode ? 1 : 0;
+     const actionCols = this.processed ? 1 : 0;
+     return visibleColumnsCount + distributionCols + actionCols;
   }
 }
