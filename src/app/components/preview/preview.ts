@@ -22,7 +22,8 @@ import {
   debounceTime,
   distinctUntilChanged,
   Subscription,
-  Subject
+  Subject,
+  Observable
 } from 'rxjs';
 import { IFsa } from '../../models/fsa.model';
 import { NgSelectComponent } from '@ng-select/ng-select';
@@ -30,9 +31,9 @@ import { ModalFsa } from '../modal-fsa/modal-fsa';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { FsaService } from '../../services/fsa.service';
 import { ModalDistribucion } from '../modal-distribucion/modal-distribucion';
-import { ResizableColumn } from '../../directives/resizable-column';
 import { TableModule } from 'primeng/table';
 import { SelectModule } from 'primeng/select';
+import { UsuarioLogin } from '../../models/usuario-login';
 
 @Component({
   selector: 'app-preview',
@@ -41,6 +42,9 @@ import { SelectModule } from 'primeng/select';
   styleUrls: ['./preview.css'],
 })
 export class Preview implements OnInit {
+  //user info
+  readonly currentUser$: Observable<UsuarioLogin | null>;
+
   tableData: any[] = [];
   headers: string[] = [];
   csvContent = '';
@@ -115,7 +119,9 @@ export class Preview implements OnInit {
     private modalService: NgbModal,
 
 
-  ) { }
+  ) {
+    this.currentUser$ = this.authService.currentUser$;
+  }
 
   ngOnInit(): void {
 
@@ -123,7 +129,7 @@ this.subscriptions.add(
   this.previewFileService.reload$.subscribe(() => {
     this.getFsaData();
     this.cargarEmpresas();
-    this.visualizarProcesado();
+
   })
 );
 
@@ -164,10 +170,12 @@ this.subscriptions.add(
     }
     this.readHtmlFile(this.file);
   }
+
+
   onNombreChange(nombre: string): void {
   // Usamos .next() para empujar el nuevo valor del nombre al flujo de nuestro Subject.
   this.nombreBalance$.next(nombre);
-}
+    }
 
   private getFsaData(): void {
     this.showSpinner = true;
@@ -273,37 +281,46 @@ ngOnDestroy(): void {
       });
   }
 
-  private cargarEmpresas() {
-    this.msgError = '';
+ 
+private cargarEmpresas() {
+  this.msgError = '';
 
-    this.authService
-      .isAuthenticated()
-      .pipe(
-        take(1),
-        switchMap((isAuthenticated) => {
-          if (!isAuthenticated) {
-            return throwError(() => new Error('Usuario no autenticado'));
-          }
-          return this.empresaService.getEmpresas();
-        }),
-        map((res) => {
-          if (res.success) {
-            return res.data;
-          }
-          throw new Error('Error al obtener empresas desde la API');
-        })
-      )
-      .subscribe({
-        next: (empresasData) => {
-          this.empresas = empresasData;
-        },
-        error: (error) => {
-          console.error('Error de API al cargar empresas:', error);
-          this.msgError = error.message || 'Ocurrió un error inesperado';
-        },
-      });
-    console.log('empresas', this.empresas);
-  }
+  this.currentUser$.pipe(
+    take(1),
+    switchMap((user) => {
+    if (!user) {
+      return throwError(() => new Error('Usuario no autenticado'));
+    }
+    return this.empresaService.getEmpresas();
+    }),
+    map((res) => {
+    if (res.success) {
+      return res.data;
+    }
+    throw new Error('Error al obtener empresas desde la API');
+    }),
+    switchMap((empresas) => {
+    return this.currentUser$.pipe(
+      take(1),
+      map((user) => {
+      if (user?.roles.empresas && user.roles.empresas.length > 0) {
+        return empresas.filter(e => user.roles.empresas?.includes(e.id_empresa));
+      }
+      return empresas;
+      })
+    );
+    })
+  )
+  .subscribe({
+    next: (empresasData) => {
+    this.empresas = empresasData;
+    },
+    error: (error) => {
+    console.error('Error de API al cargar empresas:', error);
+    this.msgError = error.message || 'Ocurrió un error inesperado';
+    },
+  });
+}
 
   private cargarSelectMappings(): void {
     this.msgError = ''; // Limpiar errores previos

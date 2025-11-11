@@ -1,16 +1,12 @@
 /* ============================================
-   FLUENT DESIGN - LOGIN COMPONENT
-   Estilo moderno, sobrio y profesional
+   FLUENT DESIGN - LOGIN COMPONENT (Simplificado)
    ============================================ */
 
-/* Variables de diseño Fluent */
+/* Variables de diseño Fluent (Solo las usadas) */
 :root {
   --fluent-primary: #0078d4;
   --fluent-primary-hover: #106ebe;
   --fluent-primary-active: #005a9e;
-
-  --fluent-secondary: #605e5c;
-  --fluent-secondary-hover: #484644;
 
   --fluent-error: #ff0008;
   --fluent-error-bg: #fde7e9;
@@ -123,24 +119,15 @@
   padding: 3rem 2.5rem;
 }
 
-/* Secciones con animación */
-.fluent-section {
-  animation: sectionFade 0.4s ease-out;
-}
-
+/* * ----------------------------------------
+ * REFACTORIZACIÓN #1
+ * Se eliminó .fluent-section y @keyframes sectionFade.
+ * Tu componente .ts ya aplica la animación [@fadeIn] de Angular,
+ * por lo que la animación CSS era redundante.
+ * ----------------------------------------
+ */
 .fluent-section-center {
   text-align: center;
-}
-
-@keyframes sectionFade {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
 }
 
 /* Logo */
@@ -217,8 +204,7 @@
 }
 
 .fluent-btn:hover::before {
-    background: linear-gradient(170deg, #dfffe535 0%, #1987542b 100%);
-  box-shadow: #201f1e;
+  background: rgba(255, 255, 255, 0.08); /* Simplificado */
 }
 
 .fluent-btn:active {
@@ -234,15 +220,22 @@
   transform: none;
 }
 
-/* Botón de Microsoft */
+/* * ----------------------------------------
+ * REFACTORIZACIÓN #2
+ * Se corrigió .fluent-btn-microsoft.
+ * Se eliminó el 'box-shadow' roto y el 'background:hover'
+ * inconsistente (era verde).
+ * Ahora usa los estilos primarios estándar.
+ * ----------------------------------------
+ */
 .fluent-btn-microsoft {
   background: var(--fluent-primary);
-  box-shadow: #201f1e;
+  box-shadow: var(--fluent-shadow-md); /* Corregido */
 }
 
 .fluent-btn-microsoft:hover {
-  background: linear-gradient(170deg, #dfffe535 0%, #1987542b 100%);
-  box-shadow: #201f1e;
+  background: var(--fluent-primary-hover); /* Corregido */
+  box-shadow: var(--fluent-shadow-lg);
 }
 
 .fluent-btn-microsoft:active {

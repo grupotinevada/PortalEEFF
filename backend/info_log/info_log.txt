@@ -53,3 +53,36 @@
 [ERROR] 2025-09-11T13:02:41.149Z - Error en BalanceService.getDistinctBalances: Table 'portaleeff3.mapping' doesn't exist
 [ERROR] 2025-09-11T13:02:44.118Z - Error en BalanceService.getDistinctBalances: Table 'portaleeff3.mapping' doesn't exist
 [ERROR] 2025-09-11T13:09:30.419Z - Error en BalanceService.getDistinctBalances: Table 'portaleeff3.mapping' doesn't exist
+[ERROR] 2025-10-30T14:59:01.998Z - Error en BalanceService.getById: You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'WHERE id_blce = '6ead511518184fe4bb7353977106396e'' at line 1
+[ERROR] 2025-10-30T15:09:37.545Z - Error en BalanceService.getById: You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'id_blce = '6ead511518184fe4bb7353977106396e'' at line 1
+[WARN] 2025-11-03T14:11:57.983Z - Login fallido - usuario no encontrado: atorres@inevada.cl
+[WARN] 2025-11-03T14:12:21.610Z - Login fallido - usuario no encontrado: atorres@inevada.cl
+[WARN] 2025-11-03T14:15:49.158Z - Login fallido - contraseña incorrecta: atorres@inevada.cl
+[WARN] 2025-11-05T14:21:43.050Z - Login fallido - usuario no encontrado: ig.salazar@duocuc.cl
+[WARN] 2025-11-05T14:21:50.380Z - Login fallido - contraseña incorrecta: isalazar@inevada.cl
+[WARN] 2025-11-05T14:26:09.135Z - Login fallido - contraseña incorrecta: isalazar@inevada.cl
+[WARN] 2025-11-05T14:26:12.414Z - Login fallido - contraseña incorrecta: isalazar@inevada.cl
+[WARN] 2025-11-05T14:49:12.767Z - Login fallido - contraseña incorrecta: admin@inevada.cl
+[WARN] 2025-11-05T14:49:26.630Z - Login fallido - usuario no encontrado: test1@inevada.cl
+[WARN] 2025-11-05T14:49:28.884Z - Login fallido - usuario no encontrado: test1@inevada.cl
+[WARN] 2025-11-05T14:49:56.964Z - Login fallido - usuario no encontrado: test1@inevada.cl
+[WARN] 2025-11-05T14:50:06.187Z - Login fallido - usuario no encontrado: test1@inevada.cl
+[WARN] 2025-11-05T14:50:06.791Z - Login fallido - usuario no encontrado: test1@inevada.cl
+[WARN] 2025-11-05T14:50:52.374Z - Login fallido - contraseña incorrecta: admin@inevada.cl
+[ERROR] 2025-11-05T14:52:32.189Z - Error en AuthService.login: username is not defined
+[ERROR] 2025-11-05T14:53:54.057Z - Error en AuthService.login: username is not defined
+[ERROR] 2025-11-05T14:58:31.908Z - Error en AuthService.login: username is not defined
+[WARN] 2025-11-05T14:58:55.856Z - Login fallido - contraseña incorrecta: admin@inevada.cl
+[ERROR] 2025-11-05T14:59:04.259Z - Error en AuthService.login: username is not defined
+[ERROR] 2025-11-05T15:00:48.129Z - Error en AuthService.login: username is not defined
+[ERROR] 2025-11-05T15:01:13.349Z - Error en AuthService.login: username is not defined
+[ERROR] 2025-11-05T15:03:06.197Z - Error en AuthService.login: username is not defined
+[ERROR] 2025-11-05T15:03:19.814Z - Error en AuthService.login: username is not defined
+[ERROR] 2025-11-05T15:03:36.901Z - Error en AuthService.login: username is not defined
+[ERROR] 2025-11-06T16:52:53.884Z - Error en AuthService.registerUser: bcrypt is not defined
+[ERROR] 2025-11-06T18:20:41.502Z - Error en AuthService.registerUser: Error al crear el usuario en la base de datos.
+[ERROR] 2025-11-06T20:14:51.210Z - Error en UserController.getAllUsers:
+[WARN] 2025-11-07T15:17:23.232Z - Acceso no autorizado a ruta de admin por usuario: isalazar@inevada.cl (Permiso: 1, Acceso: 4)
+[WARN] 2025-11-07T15:18:56.646Z - Acceso no autorizado a ruta de admin por usuario: isalazar@inevada.cl (Permiso: 1, Acceso: 4)
+[WARN] 2025-11-10T19:17:42.410Z - Acceso no autorizado a ruta de admin por usuario: isalazar@inevada.cl (Permiso: 1, Acceso: undefined)
+[WARN] 2025-11-10T19:18:01.247Z - Acceso no autorizado a ruta de admin por usuario: isalazar@inevada.cl (Permiso: 1, Acceso: undefined)

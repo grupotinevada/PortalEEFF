@@ -9,7 +9,7 @@ static async createBulk(req, res) {
   try {
     console.log("POST /bulk - Subiendo balances masivamente");
     const balances = req.body;
-    const userId = req.user.id_user;
+    const userId = user.id
 
     if (!Array.isArray(balances)) {
       return res.status(400).json({
@@ -86,7 +86,13 @@ static async createBulk(req, res) {
 
   static async getResumen(req, res) {
     try {
-      const response = await BalanceService.getDistinctBalances(req.query);
+      const userId = req.user.id; // Asumiendo que viene de tu middleware de auth
+
+      if (!userId) {
+        return res.status(401).json({ message: "Usuario no autenticado." });
+      }
+
+      const response = await BalanceService.getDistinctBalances(req.query, userId);
 
       if (!response.success) {
         return res.status(400).json({ message: response.message });
@@ -103,9 +109,11 @@ static async getById(req, res) {
   try {
     const user = req.user;
     const id_blce = req.params.id_blce;
+    const userId = user.id; // O user.id, ¡usa el mismo que en createBulk!
 
-
-
+    if (!userId) {
+      return res.status(401).json({ message: "Usuario no autenticado." });
+    }
     // Validación básica del ID
     if (typeof id_blce !== 'string' || id_blce.trim().length === 0) {
       Logger.warn(`Usuario ${user.username} (${user.id}) envió ID inválido: "${id_blce}"`);
@@ -117,7 +125,7 @@ static async getById(req, res) {
 
     Logger.info(`Usuario ${user.username} (${user.id_user}) solicitó balance con ID: ${id_blce}`);
 
-    const result = await BalanceService.getById(id_blce);
+    const result = await BalanceService.getById(id_blce, userId);
 
     if (!result.success) {
       Logger.info(`Balance con ID ${id_blce} no encontrado o inválido`);
@@ -197,7 +205,7 @@ static async update(req, res) {
         const { id_blce } = req.params;         
         const balances = req.body;  
         console.log("Primeros 3 balances:", balances.slice(0, 3));
-        const userId = req.user?.id_user;       
+        const userId = user.id    
 
         if (!userId) {
             return res.status(401).json({ success: false, message: 'Usuario no autenticado.' });

@@ -1,8 +1,7 @@
-import { Component, Input, OnInit, OnDestroy } from '@angular/core';
+import { Component, Input, OnInit, OnDestroy, ElementRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { NgSelectComponent } from '@ng-select/ng-select';
 import { forkJoin, Subscription, Subject } from 'rxjs';
 import { finalize } from 'rxjs/operators';
 import Swal from 'sweetalert2';
@@ -11,8 +10,7 @@ import Swal from 'sweetalert2';
 import { IBalanceGet } from '../../models/balance.model';
 import { IEmpresa } from '../../models/empresa.model';
 import { IFsa } from '../../models/fsa.model';
-import { Imapping, ImappingSelect } from '../../models/mapping.model';
-
+import { ImappingSelect } from '../../models/mapping.model';
 import { BalanceService } from '../../services/balance.service';
 import { EmpresaService } from '../../services/empresa.service';
 import { FsaService } from '../../services/fsa.service';
@@ -36,6 +34,7 @@ import { SelectModule } from 'primeng/select';
     SelectModule],
   templateUrl: './editar-balance.html',
   styleUrl: './editar-balance.css',
+  
 })
 export class EditarBalance implements OnInit, OnDestroy {
   @Input() id!: string; // ID del balance a editar
@@ -76,17 +75,23 @@ export class EditarBalance implements OnInit, OnDestroy {
 // --- NUEVAS PROPIEDADES PARA GUARDAR ESTADO ORIGINAL ---
   private originalTableData: any[] = [];
   private originalFormParams: any = {};
-  
+  // --- Variable que oculta columnas ---
   hiddenColumns: string[] = [];
+
+  public selfElementRef: ElementRef;
+
 
   constructor(
     public activeModal: NgbActiveModal,
     private balanceService: BalanceService,
+    private el: ElementRef,
     private mappingService: MappingService,
     private empresaService: EmpresaService,
     private fsaService: FsaService,
     private modalService: NgbModal
-  ) {}
+  ) {
+    this.selfElementRef = el;
+  }
 
   ngOnInit(): void {
     this.showSpinner = true;
@@ -164,8 +169,6 @@ export class EditarBalance implements OnInit, OnDestroy {
       });
   }
 
-  
-
   /**
    * Rellena el formulario y la tabla con los datos recibidos de la API.
    */
@@ -216,6 +219,7 @@ export class EditarBalance implements OnInit, OnDestroy {
       [this.headers[7]]: this.formatDate(row.fecha_inicio),
       [this.headers[8]]: this.formatDate(row.fecha_fin),
       [this.headers[9]]: row.id_empresa,
+      isManual: !!row.isManual
     }));
 
     this.originalTableData = JSON.parse(JSON.stringify(this.tableData));

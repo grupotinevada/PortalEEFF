@@ -28,7 +28,7 @@
             <!-- Botón de Microsoft -->
             <button 
               type="button"
-              class="fluent-btn fluent-btn-microsoft"  onclick="window.location.href='http://localhost:3003/api/auth/microsoft'">
+              class="fluent-btn fluent-btn-microsoft"  (click)="goToMicrosoftLogin()">
               <svg class="fluent-btn-icon" viewBox="0 0 23 23" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M0 0H10.8571V10.8571H0V0Z" fill="#F25022"/>
                 <path d="M12.1429 0H23V10.8571H12.1429V0Z" fill="#7FBA00"/>
@@ -38,16 +38,11 @@
               <span>Continuar con Microsoft</span>
             </button>
 
-            <!-- Divisor -->
-            <div class="fluent-divider">
-              <span class="fluent-divider-text">o</span>
-            </div>
-
             <!-- Link alternativo -->
             <button 
               type="button"
               class="fluent-link-btn"
-              (click)="showFormLogin()">
+              (click)="showFormLogin()" style="display: none;">
               Usar credenciales del portal
             </button>
           </div>
@@ -83,7 +78,7 @@
                     id="email"
                     class="fluent-input"
                     formControlName="email"
-                    placeholder="tu@email.com"
+                    placeholder="tuemail@inevada.com"
                     [class.fluent-input-error]="form.get('email')?.invalid && form.get('email')?.touched">
                 </div>
                 @if (form.get('email')?.invalid && form.get('email')?.touched) {

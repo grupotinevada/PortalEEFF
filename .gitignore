@@ -75,3 +75,6 @@ use_log.txt
 
 #carpeta
 C:\Users\isalazar\Desktop\Proyectos\Portal EEFF\dist portal eeff
+
+.env.prd
+.env.qa

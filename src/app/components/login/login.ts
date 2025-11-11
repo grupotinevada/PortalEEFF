@@ -1,11 +1,11 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { AuthService } from '../../services/auth.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { finalize } from 'rxjs/operators';
 import { Spinner } from '../spinner/spinner';
 import { state, trigger, transition, style, animate } from '@angular/animations';
-
+import { environment } from '../../../environments/environment.development';
 @Component({
   selector: 'app-login',
   imports: [ReactiveFormsModule, Spinner],
@@ -25,7 +25,8 @@ import { state, trigger, transition, style, animate } from '@angular/animations'
         style({ display: 'none' })
       ])
     ])
-  ]
+  ],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class Login implements OnInit{ 
   form: FormGroup;
@@ -37,7 +38,8 @@ export class Login implements OnInit{
     private authService: AuthService,
     private router: Router,
     private fb: FormBuilder,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private cdr: ChangeDetectorRef
   ) {
     this.form = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
@@ -68,6 +70,7 @@ export class Login implements OnInit{
             this.currentSection = 'form';
             break;
         }
+        this.cdr.markForCheck();
         this.router.navigate([], {
           relativeTo: this.route,
           queryParams: {},
@@ -98,7 +101,10 @@ export class Login implements OnInit{
     const { email, password } = this.form.value;
 
     this.authService.login(email, password).pipe(
-      finalize(() => this.showSpinner = false)).subscribe({
+      finalize(() => {
+        
+        this.showSpinner = false;
+        this.cdr.markForCheck();})).subscribe({
       next: () => {
         this.router.navigate(['/home']);
       },
@@ -107,5 +113,11 @@ export class Login implements OnInit{
         console.error('Login error:', err);
       },
     });
+  }
+
+  goToMicrosoftLogin(): void {
+    // 2. Lee la URL desde el objeto environment importado
+    // Esto es más seguro y fácil de probar que usar window en el template
+    window.location.href = environment.loginbutton;
   }
 }

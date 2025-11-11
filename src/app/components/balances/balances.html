@@ -41,6 +41,16 @@
               </option>
             </select>
           </div>
+          <div class="col">
+            <label class="form-label">Empresa</label>
+            <select class="form-select form-select-sm" formControlName="idEmpresa">
+              <option value="">Todos</option>
+              <option *ngFor="let e of empresas" [value]="e.id_empresa">
+                {{ e.descripcion }}
+              </option>
+            </select>
+          </div>
+
 
           <div class="col d-flex gap-1">
             <button type="submit" class="btn btn-warning btn-sm">Filtrar</button>

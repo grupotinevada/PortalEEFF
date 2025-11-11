@@ -1,6 +1,7 @@
 const jwt = require('jsonwebtoken');
 const UserModel = require('../models/user.model');
 const { JWT_SECRET } = require('../config/constants');
+const AuthService = require('../services/auth.service');
 
 const authenticateToken = async (req, res, next) => {
   try {
@@ -24,9 +25,16 @@ const authenticateToken = async (req, res, next) => {
     if (!user) {
       return res.status(401).json({ message: 'Usuario no encontrado' });
     }
+    const permissions = await UserModel.getPermissionsByUserId(user.id_user);
+    const roles = AuthService.processRoles(permissions);
 
     // Adjuntar usuario al request
-    req.user = user;
+    req.user = {
+      id: user.id_user,
+      email: user.email,
+      username: user.username,
+      roles: roles
+    };
     next();
   } catch (error) {
     console.error('identifyUser error:', error);

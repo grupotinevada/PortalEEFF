@@ -241,7 +241,7 @@
                   <label for="empresaSelect" class="form-label small">Empresa <span class="text-danger">*</span></label>
                   <select id="empresaSelect" class="form-select form-select-sm" [(ngModel)]="selectedEmpresa">
                     <option value="" disabled selected>Selecciona</option>
-                    <option *ngFor="let empresa of empresas" [value]="empresa.id_empresa">{{ empresa.descripcion }}</option>
+                    <option *ngFor="let empresa of empresas" [value]="empresa.id_empresa">{{empresa.id_empresa}} - {{ empresa.descripcion }}</option>
                   </select>
                 </div>
               </div>

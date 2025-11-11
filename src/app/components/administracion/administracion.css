@@ -1,0 +1,116 @@
+/* Usamos :host para encapsular los estilos al componente */
+:host {
+  display: block;
+  /* El color de fondo debe venir del layout padre, 
+     pero si este componente se ve solo, ayuda. */
+  background-color: #f8f9fa; /* Gris claro como el fondo de tu imagen */
+  width: 100%;
+}
+
+.card {
+  /* Una sombra suave para levantar el formulario */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  border: none;
+  border-radius: 8px;
+}
+
+.card-header {
+  border-bottom: 1px solid #eee;
+}
+
+.card-footer {
+  border-top: 1px solid #eee;
+}
+
+.form-label {
+  font-weight: 500;
+}
+
+/* Hace que los checkboxes en línea se vean mejor */
+.form-check-inline {
+  display: flex;
+  align-items: center;
+}
+
+.form-check-input {
+  margin-top: 0;
+  margin-right: 0.5rem;
+}
+
+
+/* --- 1. ESTILOS DE LAYOUT (NUEVO) --- */
+
+:host {
+  display: block;
+  /* El fondo general es blanco, el sidebar lo pinta de verde */
+  background-color: #ffffff; 
+}
+
+/* La barra lateral verde */
+.admin-sidebar {
+  padding: 1.5rem 1rem;
+  /* Alto mínimo: 100% del viewport menos la altura de un navbar estándar (aprox 56px) */
+  min-height: calc(100vh - 56px); 
+  color: white;
+}
+
+.admin-sidebar-menu {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.admin-sidebar-menu li a {
+  display: block;
+  padding: 0.75rem 1rem;
+  text-decoration: none;
+  color: white;
+  border-radius: 6px;
+  font-weight: 500;
+}
+
+/* El ítem activo "Usuarios" (fondo blanco, texto verde) */
+.admin-sidebar-menu li.active a {
+  background-color: white;
+  color: #1D8348; /* Texto del mismo color que el fondo */
+}
+
+/* Hover para los ítems no activos */
+.admin-sidebar-menu li a:hover {
+  background-color: rgba(255, 255, 255, 0.15); /* Hover sutil */
+}
+.admin-sidebar-menu li.active a:hover {
+  background-color: white; /* El activo no cambia en hover */
+}
+
+/* El área de contenido blanca */
+.admin-content {
+  padding: 2rem;
+  background-color: #ffffff;
+  /* Asegura que el contenido pueda scrollear si es muy largo */
+  min-height: calc(100vh - 56px);
+  overflow-y: auto;
+}
+
+/* Apuntamos al checkbox que tiene nuestra clase 'is-enabled' */
+:host ::ng-deep .p-checkbox.is-enabled .p-checkbox-box {
+  /* Cambiamos el fondo y borde de la caja */
+  background-color: #198754 !important; /* Verde (btn-success) */
+  border-color: #198754 !important;
+}
+
+/* Cambiamos el color del icono (el "check") a blanco */
+:host ::ng-deep .p-checkbox.is-enabled .p-checkbox-icon {
+  color: #ffffff !important;
+}
+
+
+/* --- Estilo Deshabilitado (Rojo) --- */
+
+/* Apuntamos al checkbox que tiene nuestra clase 'is-disabled' */
+/* El !important es necesario para sobrescribir los estilos de "disabled" de PrimeNG */
+:host ::ng-deep .p-checkbox.is-disabled .p-checkbox-box {
+  /* Cambiamos el fondo y borde de la caja a rojo */
+  background-color: #dc3545 !important; /* Rojo (btn-danger) */
+  border-color: #dc3545 !important;
+}

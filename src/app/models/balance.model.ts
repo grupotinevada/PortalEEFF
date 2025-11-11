@@ -24,6 +24,7 @@ export interface IBalanceGet{ // solo lo usa el balance.service.getBalanceById, 
   id_empresa?: string;
   id_estado?: string;
   empresaDesc?: string;
+  isManual?: boolean;
 }
 export interface BalanceResumen {
   id_blce: string;

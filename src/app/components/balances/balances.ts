@@ -13,10 +13,13 @@ import { Imapping, ImappingSelect } from '../../models/mapping.model';
 import { Spinner } from '../spinner/spinner';
 import { ModalDetalle } from '../modal-detalle/modal-detalle';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { tap, switchMap, take, finalize, catchError, EMPTY, of, throwError, map, takeUntil, Subject } from 'rxjs';
+import { tap, switchMap, take, finalize, throwError, map, takeUntil, Subject, Observable } from 'rxjs';
 import Swal from 'sweetalert2';
 import { FsaService } from '../../services/fsa.service';
 import { EditarBalance } from '../editar-balance/editar-balance';
+import { IEmpresa } from '../../models/empresa.model';
+import { EmpresaService } from '../../services/empresa.service';
+import { UsuarioLogin } from '../../models/usuario-login';
 
 @Component({
   selector: 'app-balances',
@@ -25,6 +28,8 @@ import { EditarBalance } from '../editar-balance/editar-balance';
   styleUrl: './balances.css'
 })
 export class Balances implements OnInit {
+  readonly currentUser$: Observable<UsuarioLogin | null>;
+
   msgError = ''
   currentView = 'list';
   balances: BalanceResumen[] = [];
@@ -38,6 +43,8 @@ export class Balances implements OnInit {
   
   mappings: ImappingSelect[] = [];
 
+  empresas: IEmpresa[] = [];
+  selectedEmpresa: string = '';
 
   fsas: IFsa[] = [];
 
@@ -50,11 +57,17 @@ export class Balances implements OnInit {
     private estadoService: EstadoService,
     private mappingService: MappingService,
     private modalService: NgbModal,
-    private fsaService: FsaService
-    
-  ) { }
+    private fsaService: FsaService,
+    private empresaService: EmpresaService
+  ) {
+    this.currentUser$ = this.authService.currentUser$;
+  }
 
   ngOnInit(): void {
+    this.currentUser$.pipe(
+      take(1),
+      tap(user => this.checkUser(user))
+    ).subscribe();
     this.filtersForm = this.fb.group({
       nombre: [''],
       ejercicio: [''],
@@ -62,19 +75,72 @@ export class Balances implements OnInit {
       fechaFin: [''],
       idMapping: [''],
       idEstado: [''],
+      idEmpresa: [''],
       idUser: ['']
     });
 
-    this.loadBalances();
+    this.getData();
 
+  }
+
+private getData(){
+    this.loadBalances();
+    this.cargarEmpresas();
     this.getEstados();
     this.cargarMappings();
     this.getFsaData();
-  }
+}
+
+private checkUser(user: UsuarioLogin | null): void {
+    if (user) {
+      console.log('Usuario autenticado en Balances:', user);
+    }
+}
+
+
+private cargarEmpresas() {
+  this.msgError = '';
+
+  this.currentUser$.pipe(
+    take(1),
+    switchMap((user) => {
+    if (!user) {
+      return throwError(() => new Error('Usuario no autenticado'));
+    }
+    return this.empresaService.getEmpresas();
+    }),
+    map((res) => {
+    if (res.success) {
+      return res.data;
+    }
+    throw new Error('Error al obtener empresas desde la API');
+    }),
+    switchMap((empresas) => {
+    return this.currentUser$.pipe(
+      take(1),
+      map((user) => {
+      if (user?.roles.empresas && user.roles.empresas.length > 0) {
+        return empresas.filter(e => user.roles.empresas?.includes(e.id_empresa));
+      }
+      return empresas;
+      })
+    );
+    })
+  )
+  .subscribe({
+    next: (empresasData) => {
+    this.empresas = empresasData;
+    },
+    error: (error) => {
+    console.error('Error de API al cargar empresas:', error);
+    this.msgError = error.message || 'Ocurrió un error inesperado';
+    },
+  });
+}
 
 private getEstados(): void {
   this.loading = true;
-  this.msgError = ''; // Limpiar errores previos
+  this.msgError = '';
 
   this.authService.isAuthenticated().pipe(
     take(1), 

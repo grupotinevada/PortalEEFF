@@ -55,7 +55,7 @@
       </div>
     </div>
 
-    <!-- --- INICIO DE SECCIÓN DE BADGES (COPIADA DE PREVIEW) --- -->
+    <!-- --- INICIO DE SECCIÓN DE BADGES  --- -->
     <section *ngIf="hiddenColumns.length > 0" class="mb-3 hidden-columns-container">
       <span class="small me-2 text-muted">Columnas ocultas:</span>
       <span *ngFor="let hiddenCol of hiddenColumns" 
@@ -78,7 +78,7 @@
           [scrollable]="true" 
           scrollHeight="36rem" 
           [dataKey]="headers[0]"
-          styleClass="table table-hover table-striped table-sm align-middle mb-0 rounded shadow-sm"
+          [styleClass]="'table table-hover table-striped table-sm align-middle mb-0 rounded shadow-sm'"
           >
           
           <ng-template pTemplate="header">
@@ -146,46 +146,65 @@
                               (onChange)="onFsaChange(row, $event.value)" 
                               [style]="{'width': '100%'}"
                               styleClass="rounded"
-                              [appendTo]="'modal-body'"
+                              [appendTo]="selfElementRef.nativeElement"
                               [panelStyle]="{'z-index': 9999}">
                           </p-select>
                         </ng-container>
 
                         <ng-template #normalCell>
-                            <!-- Mantenemos el pipe 'number' que tenías -->
-                            <span *ngIf="h === 'Saldo Actual'; else defaultText" class="fw-semibold text-dark">
+                          <!-- Caso especial para Saldo Actual -->
+                          <ng-container *ngIf="h === 'Saldo Actual'; else nombreCell">
+                            <span class="fw-semibold text-dark">
                               {{ row[h] | number:'1.0-0' }}
                             </span>
-                            <ng-template #defaultText>{{ row[h] }}</ng-template>
+                          </ng-container>
+                        </ng-template>
+
+                        <!-- Caso especial para N° Cuenta -->
+                        <ng-template #nombreCell>
+                          <ng-container *ngIf="h === 'N° Cuenta'; else defaultText">
+                            <span>
+                              {{ row[h] }}
+                              <i *ngIf="row.isManual"
+                                class="bi bi-info-circle-fill text-info ms-2"
+                                title="Esta es una cuenta manual"></i>
+                            </span>
+                          </ng-container>
+                        </ng-template>
+
+                        <!-- Caso por defecto -->
+                        <ng-template #defaultText>
+                          {{ row[h] }}
                         </ng-template>
                     </td>
                   </ng-container>
                   
                   <!-- Celda de acciones (sin cambios) -->
                   <td class="text-center">
-                      <div class="d-flex justify-content-center gap-1">
-                          <button class="btn btn-sm btn-outline-primary"
-                                  (click)="startDistribution(row)" 
-                                  [disabled]="isDistributionMode || row.isManual"
-                                  title="Distribuir Saldo">
-                          <i class="bi bi-distribute-vertical"></i>
-                          </button>
-                          
-                          <button class="btn btn-sm btn-outline-secondary"
-                                  (click)="editarCuentaManual(row)"
-                                  [disabled]="isDistributionMode"
-                                  title="Editar Cuenta Manual">
-                          <i class="bi bi-pencil-fill"></i>
-                          </button>
-                          
-                          <button class="btn btn-sm btn-outline-danger"
-                                  (click)="eliminarCuentaManual(row)"
-                                  [disabled]="isDistributionMode"
-                                  title="Eliminar Cuenta Manual">
-                          <i class="bi bi-trash-fill"></i>
-                          </button>
-                      </div>
-                  </td>
+                  <div class="d-flex justify-content-center gap-1">
+                      
+                      <button class="btn btn-sm btn-outline-primary"
+                              (click)="startDistribution(row)" 
+                              [disabled]="isDistributionMode || row[headers[2]] === 0"
+                              title="Distribuir Saldo | No se puede distribuir desde una cuenta en 0">
+                      <i class="bi bi-cash-stack"></i>
+                      </button>
+                      
+                      <button class="btn btn-sm btn-outline-secondary"
+                              (click)="editarCuentaManual(row)"
+                              [disabled]="isDistributionMode || !row.isManual"
+                              title="Editar Cuenta Manual">
+                      <i class="bi bi-pencil-fill"></i>
+                      </button>
+                      
+                      <button class="btn btn-sm btn-outline-danger"
+                              (click)="eliminarCuentaManual(row)"
+                              [disabled]="isDistributionMode || !row.isManual"
+                              title="Eliminar Cuenta Manual">
+                      <i class="bi bi-trash-fill"></i>
+                      </button>
+                  </div>
+              </td>
               </tr>
           </ng-template>
 

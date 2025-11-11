@@ -1,6 +1,7 @@
 const BalanceModel = require('../models/balance.model');
 const Logger = require('../utils/logger.utils');
 const crypto = require('crypto');
+const UserModel = require('../models/user.model');
 
 /**
  * Servicio para gestionar balances
@@ -57,7 +58,19 @@ static async isNameAvailable(nombre) {
       }
 
       const { id_mapping, nombre_balance, ejercicio, fecha_inicio, fecha_fin, id_empresa } = primerBalance;
-      console.log("Datos del primer balance:", primerBalance);
+      // Obtenemos las empresas permitidas para el usuario
+      const allowedEmpresaIds = await UserModel.getAllowedEmpresaIds(userId);
+
+      if (allowedEmpresaIds !== null) { // Si NO es global
+        // Verificamos que la empresa del balance a crear esté en su lista
+        if (!allowedEmpresaIds.includes(id_empresa)) {
+          Logger.warn(`Usuario ${userId} intentó crear balance en empresa ${id_empresa} no permitida.`);
+          return {
+            success: false,
+            message: 'Acción no permitida. No tiene permisos para crear balances en esta empresa.',
+          };
+        }
+      }
       // Validar consistencia en todo el lote
       const cuentasVistas = new Set();
 
@@ -159,11 +172,10 @@ static async isNameAvailable(nombre) {
 
 
   // CARGA DE BALANCES 
-static async getById(id_blce) {
+static async getById(id_blce, userId) {
   try {
-    Logger.info(`Iniciando búsqueda de balance con ID: ${id_blce}`);
-
-    // Validación básica: existencia y tipo string no vacío
+    Logger.info(`Iniciando búsqueda de balance con ID: ${id_blce} por usuario ${userId}`)
+    
     if (typeof id_blce !== 'string' || id_blce.trim().length === 0) {
       Logger.warn(`ID de balance inválido recibido: ${id_blce}`);
       return { success: false, message: 'ID de balance inválido' };
@@ -174,14 +186,14 @@ static async getById(id_blce) {
       Logger.warn(`ID de balance no cumple con el formato MD5 esperado: ${id_blce}`);
       return { success: false, message: 'Formato de ID no válido' };
     }
+    const allowedEmpresaIds = await UserModel.getAllowedEmpresaIds(userId);
 
-
-    const balances = await BalanceModel.findById(id_blce);
+    const balances = await BalanceModel.findById(id_blce,allowedEmpresaIds);
 
     if (!balances || balances.length === 0) {
-      Logger.info(`No se encontró balance con ID: ${id_blce}`);
-      return { success: false, message: 'Balance no encontrado' };
-    }
+            Logger.info(`No se encontró balance con ID: ${id_blce} (o sin acceso para user ${userId})`);
+            return { success: false, message: 'Balance no encontrado' };
+          }
 
     Logger.info(`Balance encontrado con ID: ${id_blce}`);
     console.log(`Balance encontrado: `, balances);
@@ -199,8 +211,16 @@ static async getById(id_blce) {
 }
   
 
-static async getDistinctBalances(query) {
+static async getDistinctBalances(query, userId) {
   try {
+    const allowedEmpresaIds = await UserModel.getAllowedEmpresaIds(userId);
+      
+      if (allowedEmpresaIds !== null && allowedEmpresaIds.length === 0) {
+        // CASO: NO es 'global' y NO tiene empresas asignadas.
+        // No debe ver NADA. Retornamos vacío sin consultar la BD.
+        Logger.warn(`Usuario ${userId} sin acceso 'global' ni empresas. Acceso denegado a lista.`);
+        return { success: true, data: [], total: 0 };
+      }
     // 1. Destructuramos los parámetros de la query
     const {
       nombre,
@@ -242,6 +262,16 @@ static async getDistinctBalances(query) {
       iduser: idUser ? parseInt(idUser, 10) : undefined, // 'idUser' -> 'iduser'
       id_empresa: idEmpresa || undefined,      // string (char(5)), no parseInt
     };
+    if (allowedEmpresaIds !== null) {
+        // CASO: Es restringido (ej: 'savisa').
+        // Inyectamos el filtro de seguridad que el modelo espera.
+        filters.id_empresa_in = allowedEmpresaIds;
+        
+        // **IMPORTANTE**: Borramos el filtro de empresa de la UI
+        // para que no entre en conflicto con el filtro de seguridad.
+        delete filters.id_empresa;
+        delete filters.empresaDesc; // Borramos también este por si acaso
+      }
 
     // 4. Llamamos al modelo con los filtros limpios
     const [data, total] = await Promise.all([
@@ -286,7 +316,9 @@ static async update(id_blce, balances, userId) {
   console.log("BalanceService.update llamado con id_blce:", id_blce, "y balances: ", balances.slice(0, 3));
   
     try {
+        const allowedEmpresaIds = await UserModel.getAllowedEmpresaIds(userId);
 
+          
         const balancesCompatibles = balances.map(b => ({
             ...b,
             nombre_balance: b.nombre_conjunto
@@ -316,11 +348,22 @@ static async update(id_blce, balances, userId) {
         const primerBalance = balancesCompatibles[0];
         const { nombre_conjunto, id_mapping, ejercicio, fecha_inicio, fecha_fin, id_empresa, id_estado } = primerBalance;
 
-        // Validar si el nombre del balance ha cambiado y si el nuevo nombre está disponible.
-        const originalBalance = await BalanceModel.findById(id_blce);
-        if (!originalBalance || originalBalance.length === 0) {
-            return { success: false, message: `No se encontró un balance con el ID: ${id_blce}` };
+        if (allowedEmpresaIds !== null) { // Si NO es global
+        if (!allowedEmpresaIds.includes(id_empresa)) {
+          Logger.warn(`Usuario ${userId} intentó re-asignar balance ${id_blce} a empresa ${id_empresa} no permitida.`);
+          return {
+            success: false,
+            message: 'Acción no permitida. No tiene permisos para asignar este balance a la empresa seleccionada.',
+          };
         }
+      }
+
+        // Validar si el nombre del balance ha cambiado y si el nuevo nombre está disponible.
+        const originalBalance = await BalanceModel.findById(id_blce, allowedEmpresaIds);
+              if (!originalBalance || originalBalance.length === 0) {
+                  Logger.warn(`Usuario ${userId} intentó actualizar balance ${id_blce} no encontrado o sin acceso.`);
+                  return { success: false, message: `No se encontró un balance con el ID: ${id_blce}` };
+              }
 
         const nombreOriginal = originalBalance[0].nombre_conjunto;
         if (nombre_conjunto !== nombreOriginal) {

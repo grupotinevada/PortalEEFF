@@ -1,22 +1,57 @@
 <div class="modal d-flex flex-column modal-balance-detalle fs-custom" style="height: 100vh; min-height: 500px">
   
-  <div class="modal-header flex-column align-items-start bg-success text-white flex-shrink-0 shadow-sm">
+<div class="modal-header flex-column align-items-start bg-success text-white shadow-sm border-0">
+  
+  <div class="w-100 d-flex justify-content-between align-items-start mb-2">
     
-    <div class="w-100 d-flex justify-content-between align-items-center">
-      <h5 class="modal-title mb-0">
-        Detalle del {{ balance[0].nombre_conjunto || "No se pudo recuperar" }} - {{ balance[0]!.id_empresa }}
+    <div>
+      <h5 class="modal-title mb-1">
+        <i class="bi bi-file-earmark-bar-graph me-2"></i>
+        Detalle del <b>{{ balance[0].nombre_conjunto || "No se pudo recuperar" }}</b>
       </h5>
-      <button type="button" class="btn-close btn-close-white" aria-label="Close" (click)="activeModal.dismiss()"></button>
+      
+      <span class="badge bg-white text-success fw-semibold">
+        <i class="bi bi-building me-1"></i>
+        {{balance[0].empresaDesc}}
+      </span>
     </div>
     
-    <div class="row gx-4 gy-2 mt-2 w-100 small">
-      <div class="col-auto"><strong>Ejercicio:</strong> {{ balance[0]!.ejercicio }}</div>
-      <div class="col-auto"><strong>Desde:</strong> {{ balance[0]!.fecha_inicio | date: 'dd-MM-yyyy' }}</div>
-      <div class="col-auto"><strong>Hasta:</strong> {{ balance[0]!.fecha_fin | date: 'dd-MM-yyyy' }}</div>
-      <div class="col-auto"><strong>Mapping:</strong> {{ balance[0]!.id_mapping }}</div>
-      <div class="col-auto ms-auto text-white-50">ID: {{ balance[0]!.id_blce }}</div>
+    <button type="button" class="btn-close btn-close-white ms-3" aria-label="Close" (click)="activeModal.dismiss()"></button>
+  </div>
+  
+  <div class="w-100 d-flex flex-wrap align-items-center gap-3 mt-2 small">
+    
+    <div class="d-flex align-items-center" title="Ejercicio">
+      <i class="bi bi-calendar-check me-2 fs-6 text-white-75"></i>
+      <strong class="me-1 text-white-75">Ejercicio:</strong>
+      <span class="text-white">{{ balance[0]!.ejercicio }}</span>
+    </div>
+
+    <div class="d-flex align-items-center" title="Fecha de inicio">
+      <i class="bi bi-calendar-event me-2 fs-6 text-white-75"></i>
+      <strong class="me-1 text-white-75">Desde:</strong>
+      <span class="text-white">{{ balance[0]!.fecha_inicio | date: 'dd-MM-yyyy' }}</span>
+    </div>
+
+    <div class="d-flex align-items-center" title="Fecha de fin">
+      <i class="bi bi-calendar-event-fill me-2 fs-6 text-white-75"></i>
+      <strong class="me-1 text-white-75">Hasta:</strong>
+      <span class="text-white">{{ balance[0]!.fecha_fin | date: 'dd-MM-yyyy' }}</span>
+    </div>
+
+    <div class="d-flex align-items-center" title="Mapping">
+      <i class="bi bi-diagram-3 me-2 fs-6 text-white-75"></i>
+      <strong class="me-1 text-white-75">Mapping:</strong>
+      <span class="text-white">{{ balance[0]!.id_mapping }}</span>
+    </div>
+    
+    <div class="d-flex align-items-center ms-auto text-white-50" title="ID del Balance">
+      <i class="bi bi-hash me-1"></i>
+      ID: {{ balance[0]!.id_blce }}
     </div>
   </div>
+
+</div>
 
   <div class="d-flex justify-content-center align-items-center gap-5 p-2 bg-light border-bottom">
     <div class="form-check form-switch focus-ring focus-ring-success">

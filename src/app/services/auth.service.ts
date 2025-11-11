@@ -30,6 +30,7 @@ export class AuthService {
   }
   
   public isAuthenticated(): Observable<boolean> {
+
     return this.currentUser$.pipe(map(user => !!user));
   }
 
@@ -78,4 +79,5 @@ export class AuthService {
       })
     ).subscribe(); // Se necesita .subscribe() para que la petición se ejecute
   }
+  
 }

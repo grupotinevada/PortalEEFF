@@ -19,36 +19,36 @@ class BalanceModel {
     return rows.length > 0;
   }
 
-/**
- * Checks if a balance with the given name already exists in the database.
- * @param {string} nombre The balance name to check.
- * @returns {Promise<boolean>} A promise that resolves to true if the name is taken, false otherwise.
- */
-static async checkName(nombre) {
-  // La validación inicial es buena para evitar consultas innecesarias.
-  if (!nombre || typeof nombre !== 'string') {
-    return false;
+  /**
+   * Checks if a balance with the given name already exists in the database.
+   * @param {string} nombre The balance name to check.
+   * @returns {Promise<boolean>} A promise that resolves to true if the name is taken, false otherwise.
+   */
+  static async checkName(nombre) {
+    // La validación inicial es buena para evitar consultas innecesarias.
+    if (!nombre || typeof nombre !== "string") {
+      return false;
+    }
+
+    const query =
+      "SELECT EXISTS(SELECT 1 FROM balance WHERE nombre_conjunto = ?) AS nameExists;";
+    const [rows] = await pool.query(query, [nombre]);
+
+    // Usar Boolean() es un poco más explícito que `!!`
+    return Boolean(rows[0].nameExists);
   }
 
-  const query = 'SELECT EXISTS(SELECT 1 FROM balance WHERE nombre_conjunto = ?) AS nameExists;';
-  const [rows] = await pool.query(query, [nombre]);
-
-  // Usar Boolean() es un poco más explícito que `!!`
-  return Boolean(rows[0].nameExists);
-}
-
-  
   //=========================== FIN FUNCIONES AUXILIARES ===========//
 
-/**
+  /**
    * Inserta un array de balances.
    * Acepta un 'connection' opcional para poder ser usado dentro de una transacción.
    * Si no se provee una conexión, usa el pool por defecto.
    */
   static async createBulk(balances, connection = null) {
     // Si no se pasó una conexión, usamos el pool. De lo contrario, usamos la conexión existente.
-    const db = connection || pool; 
-    
+    const db = connection || pool;
+
     const values = balances.map((b) => [
       b.id_blce,
       b.num_cuenta,
@@ -62,7 +62,7 @@ static async checkName(nombre) {
       b.id_mapping,
       b.id_fsa,
       b.id_estado,
-      b.id_empresa
+      b.id_empresa,
     ]);
     console.log("Valores a insertar (primeros 3):", values.slice(0, 3));
     const [result] = await db.query(
@@ -71,7 +71,7 @@ static async checkName(nombre) {
       VALUES ?`,
       [values]
     );
-   
+
     return { inserted: result.affectedRows };
   }
 
@@ -87,7 +87,7 @@ static async checkName(nombre) {
     id_user,
     id_mapping,
     id_fsa,
-    id_empresa
+    id_empresa,
   }) {
     const [result] = await pool.query(
       `INSERT INTO balance 
@@ -104,12 +104,11 @@ static async checkName(nombre) {
         id_user,
         id_mapping,
         id_fsa,
-        id_empresa
+        id_empresa,
       ]
     );
     return { id: result.insertId };
   }
-
 
   /**
    * Método privado para construir las partes comunes (JOINs y WHERE) de la consulta.
@@ -164,7 +163,7 @@ static async checkName(nombre) {
     // Añadimos los parámetros de paginación al final
     const queryParams = [
       ...params,
-      parseInt(filters.limit, 10) || 10,   // Valor por defecto para limit
+      parseInt(filters.limit, 10) || 10, // Valor por defecto para limit
       parseInt(filters.offset, 10) || 0, // Valor por defecto para offset
     ];
 
@@ -204,7 +203,8 @@ static async checkName(nombre) {
     idEstado,
     iduser,
     id_empresa,
-    empresaDesc
+    empresaDesc,
+    id_empresa_in,
   }) {
     const params = [];
     let whereClause = "WHERE 1 = 1";
@@ -241,32 +241,57 @@ static async checkName(nombre) {
       whereClause += " AND b.id_user = ?";
       params.push(iduser);
     }
-    if (id_empresa) {
+    if (id_empresa_in) {
+      whereClause += " AND b.id_empresa IN (?)";
+      params.push(id_empresa_in);
+    } else if (id_empresa) {
       whereClause += " AND b.id_empresa = ?";
       params.push(id_empresa);
     }
     if (empresaDesc) {
-      // Usamos el alias 'em' de la tabla empresa definido en el JOIN
-      whereClause += " AND em.descripcion LIKE ?"; 
+      whereClause += " AND em.descripcion LIKE ?";
       params.push(`%${empresaDesc}%`);
     }
 
     return { whereClause, params };
   }
 
+static async findById(id_blce, allowedEmpresaIds) {
+    if (typeof id_blce !== "string" || id_blce.trim().length === 0) {
+      throw new Error("ID de balance inválido");
+    }
+    let sql = `SELECT 
+    b.*, 
+    IFNULL(cfm.isManual, 0) as isManual, 
+    e.descripcion as empresaDesc
+    FROM 
+        balance b
+    JOIN 
+        fsa f ON b.id_fsa = f.id_fsa
+    JOIN 
+        empresa e ON b.id_empresa = e.id_empresa 
+    LEFT JOIN 
+        cta_fsa_mapeo cfm ON b.id_mapping = cfm.id_mapping 
+                        AND b.id_fsa = cfm.id_fsa 
+                        AND b.num_cuenta = cfm.num_cuenta
+    WHERE b.id_blce = ?`; 
 
+    const params = [id_blce];
+    if (allowedEmpresaIds !== null) {
+      // Si NO es global (es un array, ej: ['CV04']  )
+      // Forzamos a que el ID del balance también pertenezca a una empresa permitida.
+      sql += " AND b.id_empresa IN (?)";
+      params.push(allowedEmpresaIds);
+    }
+    // Si es 'global' (null), no se añade este filtro.
 
-static async findById(id_blce) {
-  if (typeof id_blce !== 'string' || id_blce.trim().length === 0) {
-    throw new Error("ID de balance inválido");
+    sql += ";"; 
+
+    const [rows] = await pool.query(sql, params);
+    return rows;
   }
 
-  const sql = "SELECT * FROM balance WHERE id_blce = ?";
-  const [rows] = await pool.query(sql, [id_blce]);
-  return rows;
-}
-
-/**
+  /**
    * Actualiza un balance completo eliminando los registros antiguos y reinsertando los nuevos.
    * Utiliza una transacción para garantizar la integridad de los datos.
    * @param {string} id_blce El ID del balance a actualizar.
@@ -278,14 +303,21 @@ static async findById(id_blce) {
    * Ahora reutiliza la función createBulk dentro de una transacción.
    */
   static async updateById(id_blce, balances) {
-    console.log("BalanceModel.updateById llamado con id_blce:", id_blce, "y balances: ", balances.slice(0, 3));
+    console.log(
+      "BalanceModel.updateById llamado con id_blce:",
+      id_blce,
+      "y balances: ",
+      balances.slice(0,1)
+    );
     const connection = await pool.getConnection();
 
     try {
       await connection.beginTransaction();
 
       // 1. Eliminar todas las filas antiguas para este id_blce
-      await connection.query("DELETE FROM balance WHERE id_blce = ?", [id_blce]);
+      await connection.query("DELETE FROM balance WHERE id_blce = ?", [
+        id_blce,
+      ]);
 
       // Si hay datos nuevos, los insertamos
       if (balances && balances.length > 0) {
@@ -294,21 +326,19 @@ static async findById(id_blce) {
       }
 
       await connection.commit();
-      
-      return { updated: balances ? balances.length : 0 };
 
+      return { updated: balances ? balances.length : 0 };
     } catch (error) {
       await connection.rollback();
-      console.error("Error en la transacción de actualización del balance:", error);
+      console.error(
+        "Error en la transacción de actualización del balance:",
+        error
+      );
       throw error;
     } finally {
       connection.release();
     }
   }
-
-
-
-
 }
 
 module.exports = BalanceModel;

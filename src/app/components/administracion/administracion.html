@@ -1,0 +1,128 @@
+<app-navbar></app-navbar>
+
+<div class="container-fluid">
+  <div class="row g-0"> 
+
+    <div class="col-md-3 col-lg-2 admin-sidebar d-none d-md-block bg-success">
+      <ul class="admin-sidebar-menu">
+        <li class="active">
+          <a href="#">Usuarios</a> 
+        </li>
+      </ul>
+    </div>
+
+    <div class="col-12 col-md-9 col-lg-10 admin-content">
+
+      <div class="page-header d-flex justify-content-between align-items-center mb-4">
+        <h2 class="mb-0">Gestión de Usuarios</h2>
+        
+        <div class="d-flex align-items-center">
+          <span class="p-input-icon-left me-3">
+            <i class="pi pi-search"></i>
+            <input 
+              pInputText 
+              type="text" 
+              [(ngModel)]="globalFilter"
+              (input)="dt.filterGlobal(globalFilter, 'contains')" 
+              placeholder="Buscar en la tabla..." />
+          </span>
+          
+          <button class="btn btn-success" (click)="abrirModalCrear()">
+            <i class="pi pi-plus me-1"></i>
+            Crear Usuario
+          </button>
+        </div>
+      </div>
+
+      <p-table 
+        #dt 
+        [value]="usuarios" 
+        [paginator]="true" 
+        [rows]="5" 
+        [rowsPerPageOptions]="[5, 10, 20]"
+        [globalFilterFields]="['username', 'email']"
+        [tableStyle]="{'min-width': '50rem'}"
+        sortField="username" [sortOrder]="1"
+        responsiveLayout="scroll"
+        styleClass="p-datatable-striped p-datatable-gridlines">
+
+        <ng-template pTemplate="header">
+          <tr>
+            <th pSortableColumn="habilitado">Habilitado <p-sortIcon field="habilitado"></p-sortIcon></th>
+            <th pSortableColumn="username">Nombre <p-sortIcon field="username"></p-sortIcon></th>
+            <th pSortableColumn="email">Email <p-sortIcon field="email"></p-sortIcon></th>
+            <th pSortableColumn="rol">Rol<p-sortIcon field="rol"></p-sortIcon></th>
+            <th>Acceso</th>
+            <th style="width: 10rem">Acciones</th>
+          </tr>
+        </ng-template>
+
+        <ng-template pTemplate="body" let-usuario>
+          <tr>
+        <td>
+            <p-checkbox 
+                [ngModel]="usuario.habilitado == 1" 
+                [disabled]="true" 
+                binary="true"
+                [ngClass]="{'is-enabled': usuario.habilitado == 1, 'is-disabled': usuario.habilitado != 1}"> 
+                
+            </p-checkbox>
+          </td>
+
+            <td>{{ usuario.username }}</td>
+            <td>{{ usuario.email }}</td>
+            <td>
+              <ng-container *ngIf="usuario.roles.length > 0; else noRol">
+                <p-tag 
+                  [severity]="getRolSeverity(usuario.roles[0].id_rol)" 
+                  [value]="usuario.roles[0].descripcion">
+                </p-tag>
+              </ng-container>
+              <ng-template #noRol>
+                <p-tag severity="warn" value="Sin Rol"></p-tag>
+              </ng-template>
+            </td>
+            
+            <td>
+              <ng-container *ngIf="usuario.accesos && usuario.accesos.length > 0; else noAcceso">
+                <span *ngFor="let acceso of usuario.accesos" class="me-1">
+                  <p-tag 
+                    [severity]="getAccesoSeverity(acceso.id_acceso)" 
+                    [value]="acceso.descripcion">
+                  </p-tag>
+                </span>
+              </ng-container>
+              <ng-template #noAcceso>
+                <p-tag severity="danger" value="Sin Acceso"></p-tag>
+              </ng-template>
+            </td>
+
+            <td > 
+              <button 
+                class="btn btn-outline-info"
+                pTooltip="Editar Usuario" tooltipPosition="top"
+                (click)="abrirModalEditar(usuario)">
+                <i class="bi bi-pencil-fill"></i>
+              </button>
+            </td>
+          </tr>
+        </ng-template>
+
+        <ng-template pTemplate="emptymessage">
+          <tr>
+            <td colspan="6" class="text-center">No se encontraron usuarios.</td>
+          </tr>
+        </ng-template>
+      </p-table>
+
+    </div>
+  </div> 
+</div> 
+
+<app-user-form-modal
+  [(display)]="displayModal"
+  [mode]="modalMode"
+  [userToEdit]="selectedUser"
+  [isLoading]="isLoading"
+  (save)="handleSave($event)">
+</app-user-form-modal>

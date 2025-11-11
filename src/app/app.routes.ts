@@ -32,6 +32,11 @@ export const routes: Routes = [
       import('./components/preview/preview').then((m) => m.Preview),
     canActivate: [authGuard],
   },
+    {
+    path: 'admin', loadComponent: () =>
+      import('./components/administracion/administracion').then(m => m.Administracion),
+    canActivate: [authGuard],
+  },
   {
     path: 'balances',
     loadComponent: () =>
@@ -39,4 +44,5 @@ export const routes: Routes = [
     canActivate: [authGuard],
   },
   { path: '**', redirectTo: 'login' },
+
 ];

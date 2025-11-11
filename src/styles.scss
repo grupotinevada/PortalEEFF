@@ -15,14 +15,24 @@
 
 html, body {
   font-family: 'Montserrat', sans-serif;
-  background-image: url(../public/prueba.jpg);
   height: 100%;
   margin: 0px;
-    background-position: center center; /* Centra la imagen */
-  background-repeat: no-repeat;       /* Evita que la imagen se repita */
-  background-size: cover;             /* Escala la imagen para cubrir todo el área */
+  /* ¡Quitamos todas las propiedades background-* de aquí! */
+}
+
+/* 2. Aplica el fondo por DEFECTO a 'app-root' */
+app-root {
+  /* Asegura que app-root ocupe toda la pantalla */
+  display: block;
+  height: 100%;
+  
+  /* Aquí van tus estilos de fondo originales */
+  background-image: url(../public/prueba.jpg);
+  background-position: center center;
+  background-repeat: no-repeat;
+  background-size: cover;
   background-attachment: fixed; 
-  }
+}
 
 .mi-dropdown-fsa .ng-option {
   font-size: 0.85rem;      /* El tamaño de fuente de tu tabla */
@@ -33,4 +43,84 @@ html, body {
 /* Opcional: Si el texto seleccionado también se ve mal */
 .mi-dropdown-fsa .ng-option-selected {
   font-size: 0.85rem;
+}
+
+/* * TEMA "DANGER" (Acceso 4)
+ * Este bloque SÓLO se activa cuando app-root tiene la clase .theme-danger
+ */
+app-root.theme-danger {
+
+  /* --- A. FONDO DE PANTALLA --- */
+  background-image: url(../public/fondosvs-gris.jpg);
+
+
+  /* --- B. BOTONES DE BOOTSTRAP --- */
+  .btn-success {
+    --bs-btn-color: #fff;
+    --bs-btn-bg: var(--bs-danger);
+    --bs-btn-border-color: var(--bs-danger);
+    --bs-btn-hover-color: #fff;
+    --bs-btn-hover-bg: #bb2d3b; // Darker danger
+    --bs-btn-hover-border-color: #b02a37;
+    --bs-btn-active-color: #fff;
+    --bs-btn-active-bg: #b02a37;
+    --bs-btn-active-border-color: #a52834;
+    --bs-btn-focus-shadow-rgb: 220, 53, 69; // Para el "glow" del foco
+  }
+
+  /* --- C. CLASES DE UTILIDAD DE BOOTSTRAP --- */
+  
+  /* Utilidad de fondo (bg-*) */
+  .bg-success {
+    background-color: var(--bs-danger) !important;
+  }
+
+  /* Utilidad de texto (text-*) */
+  .text-success {
+    color: var(--bs-danger) !important;
+  }
+
+  .text-bg-success{
+    color: var(--bs-danger) !important;
+  }
+
+  /* Utilidad de borde (border-*) */
+  .border-success {
+    border-color: var(--bs-danger) !important;
+  }
+
+  /* Utilidad de Dropdown (dropdown-menu-*) */
+  .dropdown-menu-success {
+    background-color: var(--bs-danger);
+    // (Opcional: puedes necesitar estilizar los .dropdown-item también)
+  }
+
+
+  /* --- D. ESTILOS DE TUS COMPONENTES --- */
+
+  /* Tu Sidebar Personalizado */
+  .admin-sidebar {
+    background-color: var(--bs-danger); 
+  }
+  .admin-sidebar-menu li.active a {
+    color: var(--bs-danger); 
+  }
+
+  /* Tus Botones de Acción (Editar) */
+  .btn-action-edit {
+    background-color: var(--bs-danger); 
+  }
+  .btn-action-edit:hover {
+    background-color: #b02a37; 
+  }
+
+  /* --- E. ESTILOS DE PRIMENG --- */
+
+  /* Tags de Rol (p.ej. "Operador") */
+  .p-tag.p-tag-success {
+    background-color: #f8d7da; // Fondo rojo claro
+    color: #58151c; // Texto rojo oscuro
+  }
+
+
 }

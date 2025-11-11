@@ -34,6 +34,20 @@ export class Navbar {
   }
 
 
+  // irAdmin(){
+  //   this.currentUser$.subscribe(user => {
+  //     if (user && user.roles.permiso === 1) {
+  //       this.router.navigate(['admin']);
+  //     } else {
+  //       console.log('Acceso no autorizado');
+  //     }
+  //   });
+  // }
+
+  irAdmin(){
+    this.router.navigate(['admin'])
+  }
+
   irDashboard(){
     this.router.navigate(['dashboard'])
   }
