@@ -218,6 +218,7 @@ this.subscriptions.add(
         },
       });
   }
+
 ngOnDestroy(): void {
   this.subscriptions.unsubscribe();
 }
@@ -1232,24 +1233,24 @@ procesarInformacion(): void {
           this.showSpinner = false;
           const errorMessage =
             err?.error?.message || err?.message || 'Error al subir balances.';
-
+          // HAY QUE ARREGLAR ESTO, NO ES POSIBLE QUE POR UN ERROR SE BORRE UN MAPPING AUTOMATICAMENTE
           // Eliminar el mapping en caso de error
-          try {
-            await this.mappingService.deleteMapping(currentMappingId).toPromise();
-            Swal.fire({
-              icon: 'error',
-              title: 'Error',
-              text: errorMessage + ' El mapping ha sido eliminado.',
-              confirmButtonText: 'Cerrar',
-            });
-          } catch (deleteErr) {
-            Swal.fire({
-              icon: 'error',
-              title: 'Error',
-              text: errorMessage + ' Además, no se pudo eliminar el mapping.',
-              confirmButtonText: 'Cerrar',
-            });
-          }
+          // try {
+          //   await this.mappingService.deleteMapping(currentMappingId).toPromise();
+          //   Swal.fire({
+          //     icon: 'error',
+          //     title: 'Error',
+          //     text: errorMessage + ' El mapping ha sido eliminado.',
+          //     confirmButtonText: 'Cerrar',
+          //   });
+          // } catch (deleteErr) {
+          //   Swal.fire({
+          //     icon: 'error',
+          //     title: 'Error',
+          //     text: errorMessage + ' Además, no se pudo eliminar el mapping.',
+          //     confirmButtonText: 'Cerrar',
+          //   });
+          // }
           this.msgError = errorMessage;
         },
       });

@@ -1,6 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 
-import { NgbAccordionModule, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbAccordionModule, NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 import { BalanceService } from '../../services/balance.service';
 import { Imapping } from '../../models/mapping.model';
@@ -11,11 +11,12 @@ import { Spinner } from '../spinner/spinner';
 import { EEFFService } from '../../services/eeff.service';
 import { CommonModule } from '@angular/common';
 import Swal from 'sweetalert2';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-modal-detalle',
   standalone: true,
-  imports: [Spinner, CommonModule, NgbAccordionModule],
+  imports: [Spinner, CommonModule, NgbAccordionModule, FormsModule],
   templateUrl: './modal-detalle.html',
   styleUrl: './modal-detalle.css',
 })
@@ -32,11 +33,22 @@ export class ModalDetalle implements OnInit {
 
   vistaAgrupada: IMacroCategoria[] = [];
   vistaParaMostrar: IMacroCategoria[] = [];
-
+//VARIABLES PARA LA CONFIGURACIÓN DE IMPRESIÓN
+printConfig = {
+    // Opciones: 'absoluto' (todo +), 'todo_negativo' (todo original), 'auditoria' (Balance +, ER -)
+    alcanceNegativos: 'absoluto', 
+    
+    // Opciones: 'signo' (-100), 'parentesis' (100)
+    estiloNegativo: 'signo',      
+    
+    mostrarFsa: true,
+    categoriasSeleccionadas: [] as { nombre: string; selected: boolean }[]
+  };
   constructor(
     public activeModal: NgbActiveModal,
     private balanceService: BalanceService,
-    private eeffService: EEFFService
+    private eeffService: EEFFService,
+    private modalService: NgbModal,
   ) {}
 
   ngOnInit(): void {
@@ -86,7 +98,12 @@ export class ModalDetalle implements OnInit {
     this.macros = this.vistaAgrupada; // Guardar la vista agrupada en la propiedad macros
     console.log('Vista Agrupada Final:', this.vistaAgrupada);    //VISTA AGRUPADA CON SALDOS ORIGINALES EN NEGATIVO
     
-    this.vistaParaMostrar = this.eeffService.positivizarSaldosParaPreview(this.vistaAgrupada);  //PARA MOSTRAR CON SIGNO BASTA CON USAR VISTA AGRUPARA Y NO VISTAPARAMOSTRAR EN EL HTML
+    const copiaParaPositivizar = typeof structuredClone === 'function'
+      ? structuredClone(this.vistaAgrupada)
+      : JSON.parse(JSON.stringify(this.vistaAgrupada));
+
+    // 3. Ahora positivizamos la COPIA. 'this.vistaAgrupada' queda intacta.
+    this.vistaParaMostrar = this.eeffService.positivizarSaldosParaPreview(copiaParaPositivizar);  //PARA MOSTRAR CON SIGNO BASTA CON USAR VISTA AGRUPARA Y NO VISTAPARAMOSTRAR EN EL HTML
     
     // --- Validaciones ---
     const validaciones = this.eeffService.validarEEFF(this.vistaParaMostrar);
@@ -111,7 +128,6 @@ export class ModalDetalle implements OnInit {
   }
 
   mostrarNegativos(): void {
-    this.vistaParaMostrar = this.vistaAgrupada;
     this.regenerarVista();
   }
 
@@ -149,9 +165,12 @@ regenerarVista(): void {
       this.macros = this.vistaAgrupada;
 
       // 3. Construir vista para mostrar (con saldos positivizados si corresponde)
-      this.vistaParaMostrar = this.eeffService.positivizarSaldosParaPreview(
-        this.vistaAgrupada
-      );
+      const copiaParaPositivizar = typeof structuredClone === 'function'
+        ? structuredClone(this.vistaAgrupada)
+        : JSON.parse(JSON.stringify(this.vistaAgrupada));
+
+      // 3. Ahora positivizamos la COPIA. 'this.vistaAgrupada' queda intacta.
+      this.vistaParaMostrar = this.eeffService.positivizarSaldosParaPreview(copiaParaPositivizar);
 
       // 4. Validaciones sobre la vista "para mostrar"
       const validaciones = this.eeffService.validarEEFF(this.vistaParaMostrar);
@@ -165,174 +184,199 @@ regenerarVista(): void {
   }, 0);
 }
 
+//Abrir el modal de configuración
+abrirModalImpresion(content: any): void {
+    // Inicializar la lista de categorías basándonos en los datos actuales
+    // Marcamos todas como 'true' por defecto
+    this.printConfig.categoriasSeleccionadas = this.vistaAgrupada.map(macro => ({
+      nombre: macro.nombre,
+      selected: true
+    }));
 
-  imprimirEEFF(): void {
-    // 1. Extraer información para el encabezado (sin cambios)
+    this.modalService.open(content, { size: 'm', centered: true });
+  }
+
+  // 5. MÉTODO REFACTORIZADO: Recibe la confirmación del modal y ejecuta la impresión
+ejecutarImpresion(): void {
+    this.modalService.dismissAll();
+
+    // A. Clonado Profundo (Base siempre con negativos originales)
+    let dataParaImprimir: IMacroCategoria[] = typeof structuredClone === 'function' 
+      ? structuredClone(this.vistaAgrupada) 
+      : JSON.parse(JSON.stringify(this.vistaAgrupada));
+
+    // B. APLICAR LÓGICA DE ALCANCE (¿Qué convertimos a positivo?)
+    dataParaImprimir.forEach(macro => {
+      // Detectamos si es Estado de Resultados (ajusta este string según tus datos exactos)
+      const esEstadoResultados = macro.nombre.toUpperCase().includes('RESULTADO') || 
+                                 macro.nombre.toUpperCase().includes('GANANCIA') ||
+                                 macro.nombre.toUpperCase().includes('PERDIDA');
+
+      // Lógica de decisión
+      let debeSerAbsoluto = false;
+
+      if (this.printConfig.alcanceNegativos === 'absoluto') {
+        debeSerAbsoluto = true; // Todo positivo
+      } else if (this.printConfig.alcanceNegativos === 'auditoria') {
+        // En auditoría: Balance (Act/Pas) es absoluto, ER mantiene signo
+        if (!esEstadoResultados) {
+          debeSerAbsoluto = true;
+        }
+      }
+      // Si es 'todo_negativo', debeSerAbsoluto se queda en false
+
+      // C. Aplicar transformación si corresponde
+      if (debeSerAbsoluto) {
+        this.hacerPositivoRecursivo(macro);
+      }
+    });
+
+    // D. FILTRO DE CATEGORÍAS (Igual que antes)
+    const categoriasActivas = this.printConfig.categoriasSeleccionadas
+      .filter(c => c.selected)
+      .map(c => c.nombre);
+
+    dataParaImprimir = dataParaImprimir.filter(macro => categoriasActivas.includes(macro.nombre));
+
+    if (dataParaImprimir.length === 0) {
+      Swal.fire('Atención', 'Debes seleccionar al menos una categoría.', 'warning');
+      return;
+    }
+
+    this.generarHtmlImpresion(dataParaImprimir);
+  }
+
+// Helper para convertir todo un árbol a positivo
+  private hacerPositivoRecursivo(item: any) {
+    if (item.saldo) item.saldo = Math.abs(item.saldo);
+    
+    // Navegar hacia abajo
+    if (item.categorias) {
+      item.categorias.forEach((cat: any) => this.hacerPositivoRecursivo(cat));
+    }
+    if (item.subcategorias) {
+      item.subcategorias.forEach((sub: any) => this.hacerPositivoRecursivo(sub));
+    }
+  }
+
+private generarHtmlImpresion(data: IMacroCategoria[]): void {
     const nombreConjunto = this.balance[0]?.nombre_conjunto || 'Balance';
     const ejercicio = this.balance[0]?.ejercicio || '';
-    const fechaInicio = new Date(
-      this.balance[0]?.fecha_inicio
-    ).toLocaleDateString('es-CL');
-    const fechaFin = new Date(this.balance[0]?.fecha_fin).toLocaleDateString(
-      'es-CL'
-    );
+    const fechaInicio = new Date(this.balance[0]?.fecha_inicio).toLocaleDateString('es-CL');
+    const fechaFin = new Date(this.balance[0]?.fecha_fin).toLocaleDateString('es-CL');
     const fechaImpresion = new Date().toLocaleString('es-CL');
 
-    // 2. Definir los estilos CSS para la impresión (REFINADOS)
+    // MANTENEMOS TUS ESTILOS CSS EXACTOS (incluyendo paginación)
     const styles = `
-    <style>
-      body {
-        margin: 20px;
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        color: #333;
-      }
-      .report-header {
-        text-align: center;
-        margin-bottom: 25px;
-        border-bottom: 2px solid #000;
-        padding-bottom: 10px;
-      }
-      .report-header h1 { margin: 0; font-size: 24px; }
-      .report-header p { margin: 4px 0; font-size: 14px; color: #555; }
-      table {
-        width: 100%;
-        border-collapse: collapse;
-        font-size: 12px;
-      }
-      th, td {
-        padding: 8px 10px;
-        border-bottom: 1px solid #eee; /* Borde de fila más sutil */
-        text-align: left;
-      }
-      th {
-        background-color: #f8f9fa;
-        font-weight: 600;
-        border-bottom: 2px solid #dee2e6;
-      }
-      .text-end { text-align: right; }
-      
-      /* ESTILOS DE FILA REFINADOS */
-      .row-macro-header {
-        font-size: 14px;
-        font-weight: bold;
-        color: #000;
-        text-transform: uppercase;
-        /* Se elimina el color de fondo para un look más limpio */
-        border-top: 1.5px solid #333;
-        border-bottom: 1.5px solid #333;
-      }
-      .row-categoria {
-        /* Se elimina el color de fondo, la negrita es suficiente */
-        font-weight: bold;
-      }
-      .row-subcategoria {
-        /* El estilo itálico se mantiene para la descripción */
-        font-style: italic;
-        color: #555;
-      }
-      .row-macro-total {
-        background-color: #28a745;
-        color: white;
-        font-size: 14px;
-        font-weight: bold;
-        border-top: 2px solid #208336; /* Línea superior fuerte para separar */
-      }
-      .indent-1 { padding-left: 25px !important; }
-      .indent-2 { padding-left: 50px !important; }
-      .footer {
-        text-align: right;
-        font-size: 10px;
-        color: #777;
-        margin-top: 20px;
-      }
-    </style>
-  `;
-
-    // 3. Construir el cuerpo de la tabla (con .toUpperCase() para coherencia)
-    let tableBody = '';
-    this.vistaAgrupada.forEach((macro) => {
-      // Fila de encabezado para la macro categoría
-      tableBody += `
-      <tr class="row-macro-header">
-        <td colspan="2">${macro.nombre.toUpperCase()}</td>
-      </tr>
+      <style>
+        body { margin: 20px; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; color: #333; -webkit-print-color-adjust: exact; }
+        .report-header { text-align: center; margin-bottom: 25px; border-bottom: 2px solid #000; padding-bottom: 10px; }
+        .report-header h1 { margin: 0; font-size: 22px; text-transform: uppercase; }
+        .report-header p { margin: 2px 0; font-size: 12px; color: #555; }
+        table { width: 100%; border-collapse: collapse; font-size: 11px; }
+        tbody.macro-group { break-inside: avoid; page-break-inside: avoid; display: table-row-group; border-bottom: 15px solid transparent; }
+        thead th { background-color: #f0f0f0; border-bottom: 2px solid #000; text-transform: uppercase; font-size: 10px; padding: 8px; position: relative; }
+        th, td { padding: 5px 8px; vertical-align: middle; }
+        .text-end { text-align: right; }
+        .row-macro-header td { font-size: 13px; font-weight: 800; color: #000; text-transform: uppercase; padding-top: 10px; border-bottom: 1px solid #ccc; }
+        .row-categoria td { font-weight: 600; color: #333; }
+        .row-subcategoria td { font-style: italic; color: #555; }
+        .row-macro-total td { font-size: 13px; font-weight: bold; color: #000; border-top: 1px solid #000; border-bottom: 3px double #000; background-color: #f9f9f9; padding-top: 8px; padding-bottom: 8px; }
+        .indent-1 { padding-left: 20px !important; }
+        .indent-2 { padding-left: 40px !important; }
+        .footer { text-align: right; font-size: 9px; color: #999; margin-top: 30px; border-top: 1px solid #eee; padding-top: 5px; }
+      </style>
     `;
 
-      // Filas de categorías y subcategorías
+    // --- NUEVO HELPER DE FORMATEO VISUAL ---
+    const formatearNumero = (valor: number): string => {
+      if (typeof valor !== 'number') return '0'; // Seguridad
+      
+      const esNegativo = valor < 0;
+      const valorAbsoluto = Math.abs(valor);
+      const numeroString = new Intl.NumberFormat('es-CL').format(valorAbsoluto);
+
+      if (esNegativo) {
+        if (this.printConfig.estiloNegativo === 'parentesis') {
+          return `<span style="color: red;">(${numeroString})</span>`; // Opcional: con color rojo
+        } else {
+          return `-${numeroString}`;
+        }
+      }
+      return numeroString;
+    };
+
+    let tableContent = '';
+
+    data.forEach((macro) => {
+      tableContent += `<tbody class="macro-group">`;
+      tableContent += `<tr class="row-macro-header"><td colspan="2">${macro.nombre.toUpperCase()}</td></tr>`;
+
       macro.categorias.forEach((grupo) => {
-        tableBody += `
-        <tr class="row-categoria">
-          <td class="indent-1">${grupo.categoria}</td>
-          <td class="text-end">${new Intl.NumberFormat('es-CL').format(
-            grupo.saldo
-          )}</td>
-        </tr>
-      `;
-        grupo.subcategorias.forEach((sub) => {
-          tableBody += `
-          <tr class="row-subcategoria">
-            <td class="indent-2">${sub.id_fsa} - ${sub.descripcion}</td>
-            <td class="text-end">${new Intl.NumberFormat('es-CL').format(
-              sub.saldo
-            )}</td>
+        tableContent += `
+          <tr class="row-categoria">
+            <td class="indent-1">${grupo.categoria}</td>
+            <td class="text-end">${formatearNumero(grupo.saldo)}</td>
           </tr>
         `;
+        grupo.subcategorias.forEach((sub) => {
+          const nombreCuenta = this.printConfig.mostrarFsa 
+            ? `${sub.id_fsa} - ${sub.descripcion}` 
+            : sub.descripcion;
+          tableContent += `
+            <tr class="row-subcategoria">
+              <td class="indent-2">${nombreCuenta}</td>
+              <td class="text-end">${formatearNumero(sub.saldo)}</td>
+            </tr>
+          `;
         });
       });
 
-      // Fila del total al final de la sección
-      tableBody += `
-      <tr class="row-macro-total">
-        <td>TOTAL ${macro.nombre.toUpperCase()}</td>
-        <td class="text-end">${new Intl.NumberFormat('es-CL').format(
-          macro.saldo
-        )}</td>
-      </tr>
-    `;
+      tableContent += `
+        <tr class="row-macro-total">
+          <td class="indent-1">TOTAL ${macro.nombre.toUpperCase()}</td>
+          <td class="text-end">${formatearNumero(macro.saldo)}</td>
+        </tr>
+      `;
+      tableContent += `</tbody>`;
     });
 
-    // 4. Ensamblar el HTML completo (sin cambios)
     const printHtml = `
-    <html>
-      <head>
-        <title>Reporte - ${nombreConjunto}</title>
-        ${styles}
-      </head>
-      <body>
-        <div class="report-header">
-          <h1>${nombreConjunto}</h1>
-          <p>Ejercicio: ${ejercicio}</p>
-          <p>Período del ${fechaInicio} al ${fechaFin}</p>
-        </div>
-        <table>
-          <thead>
-            <tr>
-              <th>Descripción</th>
-              <th class="text-end">Saldo ($)</th>
-            </tr>
-          </thead>
-          <tbody>
-            ${tableBody}
-          </tbody>
-        </table>
-        <div class="footer">
-          <p>Impreso el: ${fechaImpresion}</p>
-        </div>
-      </body>
-    </html>
-  `;
+      <html>
+        <head>
+          <title>EEFF - ${nombreConjunto}</title>
+          ${styles}
+        </head>
+        <body>
+          <div class="report-header">
+            <h1>Estado de Resultados</h1>
+            <p><strong>${nombreConjunto}</strong></p>
+            <p>Ejercicio: ${ejercicio} | Del ${fechaInicio} al ${fechaFin}</p>
+          </div>
+          <table>
+            <thead>
+              <tr>
+                <th style="text-align:left;">Concepto</th>
+                <th class="text-end" style="width: 150px;">Saldo ($)</th>
+              </tr>
+            </thead>
+            ${tableContent}
+          </table>
+          <div class="footer"><p>Generado el: ${fechaImpresion}</p></div>
+        </body>
+      </html>
+    `;
 
-    // 5. Abrir la ventana de impresión (sin cambios)
     const printWindow = window.open('', '_blank');
     if (printWindow) {
       printWindow.document.write(printHtml);
       printWindow.document.close();
-      printWindow.focus();
-      printWindow.print();
+      setTimeout(() => {
+          printWindow.focus();
+          printWindow.print();
+      }, 250);
     } else {
-      alert(
-        'Por favor, permite las ventanas emergentes para imprimir el reporte.'
-      );
+      Swal.fire('Error', 'Por favor permite las ventanas emergentes.', 'error');
     }
   }
 

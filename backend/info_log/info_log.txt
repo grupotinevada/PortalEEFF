@@ -86,3 +86,6 @@
 [WARN] 2025-11-07T15:18:56.646Z - Acceso no autorizado a ruta de admin por usuario: isalazar@inevada.cl (Permiso: 1, Acceso: 4)
 [WARN] 2025-11-10T19:17:42.410Z - Acceso no autorizado a ruta de admin por usuario: isalazar@inevada.cl (Permiso: 1, Acceso: undefined)
 [WARN] 2025-11-10T19:18:01.247Z - Acceso no autorizado a ruta de admin por usuario: isalazar@inevada.cl (Permiso: 1, Acceso: undefined)
+[WARN] 2025-11-13T17:03:10.657Z - Acceso no autorizado a ruta de admin por usuario: isalazar@inevada.cl (Permiso: 2, Acceso: 4)
+[WARN] 2025-11-13T17:03:53.315Z - Login fallido - contraseña incorrecta: admin@inevada.cl
+[ERROR] 2025-11-13T20:34:00.495Z - Error en BalanceController.update: user is not defined

@@ -9,7 +9,7 @@ static async createBulk(req, res) {
   try {
     console.log("POST /bulk - Subiendo balances masivamente");
     const balances = req.body;
-    const userId = user.id
+    const userId = req.user.id
 
     if (!Array.isArray(balances)) {
       return res.status(400).json({
@@ -204,6 +204,7 @@ static async update(req, res) {
     try {
         const { id_blce } = req.params;         
         const balances = req.body;  
+        const user = req.user;
         console.log("Primeros 3 balances:", balances.slice(0, 3));
         const userId = user.id    
 
