@@ -225,25 +225,61 @@
               <div class="row g-3">
                 <div class="col-sm-4">
                   <label for="anioInput" class="form-label small">Ejercicio <span class="text-danger">*</span></label>
-                  <select id="anioInput" class="form-select form-select-sm" [(ngModel)]="anioSeleccionado">
-                    <option value="" disabled selected>Selecciona</option>
-                    <option *ngFor="let anio of listaAnios" [value]="anio">{{ anio }}</option>
-                  </select>
-                </div>
+                  <p-select
+                      id="anioInput"
+                      [options]="listaAnios"
+                      [(ngModel)]="anioSeleccionado"
+                      placeholder="Selecciona"
+                      [style]="{'width': '100%'}"
+                      styleClass="p-inputtext-xs rounded p-select-xs"
+                      [showClear]="true"
+                      appendTo="body"
+                  />
+                  </div>
                 <div class="col-sm-8">
                   <label for="mappingSelect" class="form-label small">Mapping <span class="text-danger">*</span></label>
-                  <select id="mappingSelect" class="form-select form-select-sm" [(ngModel)]="selectedMapping" (change)="onMappingChange()">
-                    <option value="" disabled selected>Selecciona</option>
-                    <option *ngFor="let mapping of mappings" [value]="mapping.id_mapping">{{ mapping.descripcion }}</option>
-                  </select>
-                </div>
+                  <p-select
+                      id="mappingSelect"
+                      [options]="mappings"
+                      [(ngModel)]="selectedMapping"
+                      optionLabel="descripcion"
+                      optionValue="id_mapping"
+                      (onChange)="onMappingChange()"
+                      placeholder="Selecciona"
+                      [filter]="true"
+                      [showClear]="true"
+                      [style]="{'width': '100%'}"
+                      styleClass="p-inputtext-xs rounded p-select-xs"
+                      appendTo="body"
+                  />
+                  </div>
                 <div class="col-12">
                   <label for="empresaSelect" class="form-label small">Empresa <span class="text-danger">*</span></label>
-                  <select id="empresaSelect" class="form-select form-select-sm" [(ngModel)]="selectedEmpresa">
-                    <option value="" disabled selected>Selecciona</option>
-                    <option *ngFor="let empresa of empresas" [value]="empresa.id_empresa">{{empresa.id_empresa}} - {{ empresa.descripcion }}</option>
-                  </select>
-                </div>
+                  <p-select
+                      id="empresaSelect"
+                      [options]="empresas"
+                      [(ngModel)]="selectedEmpresa"
+                      optionValue="id_empresa"
+                      placeholder="Selecciona"
+                      [filter]="true"
+                      [showClear]="true"
+                      [style]="{'width': '100%'}"
+                      styleClass="p-inputtext-xs rounded p-select-xs"
+                      appendTo="body"
+                      filterBy="id_empresa,descripcion" 
+                  >
+                      <ng-template let-item pTemplate="selectedItem">
+                          <div *ngIf="item">
+                              {{item.id_empresa}} - {{ item.descripcion }}
+                          </div>
+                      </ng-template>
+                      <ng-template let-item pTemplate="item">
+                          <div>
+                              {{item.id_empresa}} - {{ item.descripcion }}
+                          </div>
+                      </ng-template>
+                  </p-select>
+                  </div>
               </div>
             </fieldset>
           </div>

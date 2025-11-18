@@ -89,3 +89,14 @@
 [WARN] 2025-11-13T17:03:10.657Z - Acceso no autorizado a ruta de admin por usuario: isalazar@inevada.cl (Permiso: 2, Acceso: 4)
 [WARN] 2025-11-13T17:03:53.315Z - Login fallido - contraseña incorrecta: admin@inevada.cl
 [ERROR] 2025-11-13T20:34:00.495Z - Error en BalanceController.update: user is not defined
+[WARN] 2025-11-14T17:44:47.778Z - Login fallido - usuario deshabilitado: admin@inevada.cl
+[WARN] 2025-11-14T17:44:47.779Z - Intento de login (local) fallido para: admin@inevada.cl. Razón: Usuario deshabilitado, contacta con el administrador
+[ERROR] 2025-11-14T17:45:31.590Z - Error crítico en acquireTokenByCode: roles.join is not a function. Stack: TypeError: roles.join is not a function
+    at microsoftCallback (C:\Users\ignac\Desktop\PortalEEFF\backend\controllers\auth.controller.js:140:80)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+[ERROR] 2025-11-14T17:47:48.552Z - Error crítico en acquireTokenByCode: roles.join is not a function. Stack: TypeError: roles.join is not a function
+    at microsoftCallback (C:\Users\ignac\Desktop\PortalEEFF\backend\controllers\auth.controller.js:140:80)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+[ERROR] 2025-11-14T17:48:35.198Z - Error crítico en acquireTokenByCode: roles.join is not a function. Stack: TypeError: roles.join is not a function
+    at microsoftCallback (C:\Users\ignac\Desktop\PortalEEFF\backend\controllers\auth.controller.js:140:80)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)

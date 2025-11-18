@@ -92,7 +92,7 @@ export class UserFormModal {
     // Habilitar campos de creación y requerir contraseña
     this.form.get('username')?.enable();
     this.form.get('email')?.enable();
-    this.form.get('password')?.setValidators([Validators.required, Validators.minLength(8)]);
+    this.form.get('password')?.clearValidators()
     this.form.updateValueAndValidity();
   }
 
@@ -119,7 +119,9 @@ export class UserFormModal {
     // Deshabilitar campos no editables y hacer contraseña opcional
     this.form.get('username')?.disable();
     this.form.get('email')?.disable();
-    this.form.get('password')?.clearValidators(); // Contraseña es opcional en edición
+    const passwordControl = this.form.get('password');
+    passwordControl?.clearValidators();
+    passwordControl?.updateValueAndValidity();
     this.form.updateValueAndValidity();
   }
 

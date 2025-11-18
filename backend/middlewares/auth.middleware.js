@@ -25,6 +25,12 @@ const authenticateToken = async (req, res, next) => {
     if (!user) {
       return res.status(401).json({ message: 'Usuario no encontrado' });
     }
+
+    if (user.habilitado !== 1) {
+        console.warn(`Intento de acceso de usuario deshabilitado: ${user.email}`);
+        return res.status(403).json({ message: 'Acceso denegado: Usuario deshabilitado' });
+    }
+    
     const permissions = await UserModel.getPermissionsByUserId(user.id_user);
     const roles = AuthService.processRoles(permissions);
 

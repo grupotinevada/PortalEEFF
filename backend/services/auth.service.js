@@ -3,6 +3,7 @@ const UserModel = require('../models/user.model');
 const { JWT_SECRET } = require('../config/constants');
 const Logger = require('../utils/logger.utils');
 const bcrypt = require('bcryptjs');
+
 /**
  * Servicio de autenticación
  */
@@ -24,57 +25,69 @@ class AuthService {
    * @param {string} password
    * @returns {Object} Resultado con token o error
    */
-  static async login(email, password) {
-    try {
-      const user = await UserModel.findByEmail(email);
+static async login(email, password) {
+    try {
+      const user = await UserModel.findByEmail(email);
 
-      console.log(user);
+      if (!user) {
+        Logger.warn(`Login fallido - usuario no encontrado: ${email}`);
+        // ⚠️ Nota de seguridad: Es mejor usar un mensaje genérico
+        return { success: false, message: 'Credenciales inválidas' };
+      }
 
-      if (!user) {
-        Logger.warn(`Login fallido - usuario no encontrado: ${email}`);
-        return { success: false, message: 'Credenciales inválidas, Email no encontrado' };
+      // 1. Verificar si el usuario está habilitado ANTES de chequear la contraseña
+      if (user.habilitado !== 1) {
+        Logger.warn(`Login fallido - usuario deshabilitado: ${email}`);
+        return { success: false, message: 'Usuario deshabilitado, contacta con el administrador' };
       }
 
-      const isValidPassword = await UserModel.validatePassword(password, user.password_hash);
-      if (!isValidPassword) {
-        Logger.warn(`Login fallido - contraseña incorrecta: ${email}`);
-        return { success: false, message: 'Credenciales inválidas, contraseña incorrecta' };
-      }
 
-      const permissions = await UserModel.getPermissionsByUserId(user.id_user);
-      const roles = this.processRoles(permissions);
+      const isValidPassword = await UserModel.validatePassword(password, user.password_hash);
+      if (!isValidPassword) {
+        Logger.warn(`Login fallido - contraseña incorrecta: ${email}`);
+        // ⚠️ Usamos el mismo mensaje genérico para evitar enumeración de usuarios
+        return { success: false, message: 'Credenciales inválidas' };
+      }
+      
+      const permissions = await UserModel.getPermissionsByUserId(user.id_user);
+      const roles = this.processRoles(permissions);
+      
+      const token = jwt.sign(
+        { 
+          userId: user.id_user, 
+          email: user.email,
+          username: user.username,
+          roles: roles,
+          // 'hablitado' ya no es necesario en el token
+          // El middleware 'authenticateToken' lo validará en cada request
+        },
+        JWT_SECRET,
+        { expiresIn: '8h' }
+      );
+
+      // --- Log de éxito y auditoría ---
+      Logger.info(`Login exitoso para: ${email}. Roles: [${roles.join(', ')}]`);
+      Logger.userAction(user.id_user, 'LOGIN', `Usuario ${email} (${user.username}) inició sesión.`);
       
-      const token = jwt.sign(
-        { 
-        userId: user.id_user, 
-        email: user.email,
-        username: user.username,
-        roles: roles 
-        },
-        JWT_SECRET,
-        { expiresIn: '8h' }
-      );
-
-      Logger.userAction(user.id_user, 'LOGIN', `Usuario ${email} - ${user.username} con roles ${JSON.stringify(roles)} inició sesión`);
-
-      return {
-        success: true,
-        message: 'Login exitoso',
-        token,
-        user: {
-          id: user.id_user,
-          email: user.email,
-          roles: roles,
-          username: user.username
-        }
-        
-      };
-      
-    } catch (error) {
-      Logger.error(`Error en AuthService.login: ${error.message}`);
-      return { success: false, message: 'Error interno, contacta con el administrador' };
-    }
-  }
+      return {
+        success: true,
+        message: 'Login exitoso',
+        token,
+        user: {
+          id: user.id_user,
+          email: user.email,
+          roles: roles,
+          username: user.username,
+          habilitado: user.habilitado // Es útil enviar esto al frontend
+        }
+      };
+      
+    } catch (error) {
+      // --- Log de error mejorado ---
+      Logger.error(`Error en AuthService.login para ${email}: ${error.message}`, error.stack);
+      return { success: false, message: 'Error interno, contacta con el administrador' };
+    }
+  }
 
 
   /**

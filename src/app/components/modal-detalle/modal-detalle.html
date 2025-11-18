@@ -190,15 +190,39 @@
     <button class="btn btn-warning" (click)="abrirModalImpresion(printModal)">
   <i class="bi bi-printer me-2"></i> Imprimir
 </button>
-    <button class="btn btn-success" (click)="exportarCSV()">Exportar CSV</button>
-    <button class="btn btn-danger" (click)="activeModal.close()">Cerrar</button>
+    <button class="btn btn-teal" (click)="abrirModalExcel(excelModal)">
+      <i class="bi bi-file-earmark-spreadsheet me-2"></i> Exportar Excel
+    </button>
+    
+    <!-- <button class="btn btn-success" (click)="exportarCSV()">Exportar CSV</button> -->
+    <button class="btn btn-danger" (click)="activeModal.close()"><i class="bi bi-x me-2"></i>Cerrar</button>
+
+      
+
   </div>
 </div>
+ 
+
+
+
+<!--*****************************************************************************************--><!--*****************************************************************************************-->
+<!--*****************************************************************************************--><!--*****************************************************************************************-->
+<!--*****************************************************************************************--><!--*****************************************************************************************-->
+<!--*****************************************************************************************--><!--*****************************************************************************************-->
+<!--*****************************************************************************************--><!--*****************************************************************************************-->
+
+
+
+
+
+
+
 <ng-template #printModal let-modal>
   <div class="modal-header bg-success text-white border-0">
     <h5 class="modal-title d-flex align-items-center mb-0">
       <i class="bi bi-printer-fill me-2"></i>
-      Opciones de impresión
+      <!-- TÍTULO MODIFICADO -->
+      Opciones y Previsualización de Impresión
     </h5>
     <button
       type="button"
@@ -208,144 +232,202 @@
     </button>
   </div>
   
-  <!-- REEMPLAZA ESTE DIV.MODAL-BODY -->
+  <!-- CUERPO DEL MODAL DIVIDIDO EN DOS COLUMNAS -->
   <div class="modal-body">
+    <div class="row gx-4">
+      
+      <!-- ===== COLUMNA IZQUIERDA: OPCIONES ===== -->
+      <div class="col-md-5">
 
-    <!-- Bloque: Tratamiento de Saldos (NUEVO) -->
-    <div class="mb-4">
-      <div class="d-flex align-items-center mb-1">
-        <h6 class="fw-semibold text-success mb-0">Tratamiento de saldos</h6>
-        <span class="badge bg-success-subtle text-success-emphasis border border-success ms-2">
-          LÓGICA
-        </span>
-      </div>
-      <p class="text-muted small mb-3">
-        Elige cómo se deben calcular los saldos (ej. Modo Auditoría).
-      </p>
+        <!-- Bloque: Tratamiento de Saldos -->
+        <div class="mb-4">
+          <div class="d-flex align-items-center mb-1">
+            <h6 class="fw-semibold text-success mb-0">Tratamiento de saldos</h6>
+            <span class="badge bg-success-subtle text-success-emphasis border border-success ms-2">
+              LÓGICA
+            </span>
+          </div>
+          <p class="text-muted small mb-3">
+            Elige cómo se deben calcular los saldos (ej. Modo Auditoría).
+          </p>
 
-      <div class="d-flex flex-column gap-2">
-        <!-- A. Todo Absoluto (Gestión) -->
-        <div class="form-check">
-          <input class="form-check-input cursor-pointer" type="radio" 
-                 name="alcanceRadio" id="alcanceAbs" value="absoluto"
-                 [(ngModel)]="printConfig.alcanceNegativos">
-          <label class="form-check-label cursor-pointer" for="alcanceAbs">
-            <strong>Solo positivos</strong> <span class="text-muted small">(Gestión)</span>
-            <div class="text-muted small" style="font-size: 0.75em;">Activos, Pasivos y Resultados se muestran en valor absoluto.</div>
-          </label>
+          <div class="d-flex flex-column gap-2">
+            <!-- A. Todo Absoluto (Gestión) -->
+            <div class="form-check">
+              <input class="form-check-input cursor-pointer" type="radio" 
+                     name="alcanceRadio" id="alcanceAbs" value="absoluto"
+                     [(ngModel)]="printConfig.alcanceNegativos"
+                     (ngModelChange)="actualizarPreview()"> <!-- MODIFICADO -->
+              <label class="form-check-label cursor-pointer" for="alcanceAbs">
+                <strong>Solo positivos</strong> <span class="text-muted small">(Gestión)</span>
+                <div class="text-muted small" style="font-size: 0.75em;">Activos, Pasivos y Resultados se muestran en valor absoluto.</div>
+              </label>
+            </div>
+            <!-- B. Modo Auditoría (Híbrido) -->
+            <div class="form-check">
+              <input class="form-check-input cursor-pointer" type="radio" 
+                     name="alcanceRadio" id="alcanceAudit" value="auditoria"
+                     [(ngModel)]="printConfig.alcanceNegativos"
+                     (ngModelChange)="actualizarPreview()"> <!-- MODIFICADO -->
+              <label class="form-check-label cursor-pointer" for="alcanceAudit">
+                <strong>Norma Auditoría</strong> <span class="text-muted small">(Híbrido)</span>
+                <div class="text-muted small" style="font-size: 0.75em;">Activos/Pasivos absolutos. Resultados conservan su signo.</div>
+              </label>
+            </div>
+            <!-- C. Todo Negativo (Original) -->
+            <div class="form-check">
+              <input class="form-check-input cursor-pointer" type="radio" 
+                     name="alcanceRadio" id="alcanceTodos" value="todo_negativo"
+                     [(ngModel)]="printConfig.alcanceNegativos"
+                     (ngModelChange)="actualizarPreview()"> <!-- MODIFICADO -->
+              <label class="form-check-label cursor-pointer" for="alcanceTodos">
+                <strong>Saldos Originales</strong> <span class="text-muted small">(Base de datos)</span>
+                <div class="text-muted small" style="font-size: 0.75em;">Muestra todos los signos tal cual vienen de la carga.</div>
+              </label>
+            </div>
+          </div>
         </div>
-        <!-- B. Modo Auditoría (Híbrido) -->
-        <div class="form-check">
-          <input class="form-check-input cursor-pointer" type="radio" 
-                 name="alcanceRadio" id="alcanceAudit" value="auditoria"
-                 [(ngModel)]="printConfig.alcanceNegativos">
-          <label class="form-check-label cursor-pointer" for="alcanceAudit">
-            <strong>Norma Auditoría</strong> <span class="text-muted small">(Híbrido)</span>
-            <div class="text-muted small" style="font-size: 0.75em;">Activos/Pasivos absolutos. Resultados conservan su signo.</div>
-          </label>
-        </div>
-        <!-- C. Todo Negativo (Original) -->
-        <div class="form-check">
-          <input class="form-check-input cursor-pointer" type="radio" 
-                 name="alcanceRadio" id="alcanceTodos" value="todo_negativo"
-                 [(ngModel)]="printConfig.alcanceNegativos">
-          <label class="form-check-label cursor-pointer" for="alcanceTodos">
-            <strong>Saldos Originales</strong> <span class="text-muted small">(Base de datos)</span>
-            <div class="text-muted small" style="font-size: 0.75em;">Muestra todos los signos tal cual vienen de la carga.</div>
-          </label>
-        </div>
-      </div>
-    </div>
 
-    <!-- Bloque: Estilo de Negativos (NUEVO) -->
-    <!-- Se muestra solo si hay algo que formatear -->
-    <div class="mb-4" *ngIf="printConfig.alcanceNegativos !== 'absoluto'">
-      <div class="d-flex align-items-center mb-1">
-        <h6 class="fw-semibold text-success mb-0">Estilo de negativos</h6>
-      </div>
-      <p class="text-muted small mb-3">
-        Elige cómo representar visualmente los saldos negativos.
-      </p>
-      <div class="d-flex gap-4">
-        <div class="form-check">
-          <input class="form-check-input cursor-pointer" type="radio" 
-                 name="estiloRadio" id="estiloSigno" value="signo"
-                 [(ngModel)]="printConfig.estiloNegativo">
-          <label class="form-check-label cursor-pointer" for="estiloSigno">
-            Signo Menos: <strong>-1.500</strong>
-          </label>
+        <!-- Bloque: Estilo de Negativos -->
+        <div class="mb-4" *ngIf="printConfig.alcanceNegativos !== 'absoluto'">
+          <div class="d-flex align-items-center mb-1">
+            <h6 class="fw-semibold text-success mb-0">Estilo de negativos</h6>
+          </div>
+          <p class="text-muted small mb-3">
+            Elige cómo representar visualmente los saldos negativos.
+          </p>
+          <div class="d-flex gap-4">
+            <div class="form-check">
+              <input class="form-check-input cursor-pointer" type="radio" 
+                     name="estiloRadio" id="estiloSigno" value="signo"
+                     [(ngModel)]="printConfig.estiloNegativo"
+                     (ngModelChange)="actualizarPreview()"> <!-- MODIFICADO -->
+              <label class="form-check-label cursor-pointer" for="estiloSigno">
+                Signo Menos: <strong>-1.500</strong>
+              </label>
+            </div>
+            <div class="form-check">
+              <input class="form-check-input cursor-pointer" type="radio" 
+                     name="estiloRadio" id="estiloParentesis" value="parentesis"
+                     [(ngModel)]="printConfig.estiloNegativo"
+                     (ngModelChange)="actualizarPreview()"> <!-- MODIFICADO -->
+              <label class="form-check-label cursor-pointer" for="estiloParentesis">
+                Paréntesis: <strong>(1.500)</strong>
+              </label>
+            </div>
+          </div>
         </div>
-        <div class="form-check">
-          <input class="form-check-input cursor-pointer" type="radio" 
-                 name="estiloRadio" id="estiloParentesis" value="parentesis"
-                 [(ngModel)]="printConfig.estiloNegativo">
-          <label class="form-check-label cursor-pointer" for="estiloParentesis">
-            Paréntesis: <strong>(1.500)</strong>
-          </label>
-        </div>
-      </div>
-    </div>
 
-    <!-- Bloque: Formato (Tu switch de FSA existente) -->
-    <div class="mb-4">
-       <div class="d-flex align-items-center mb-1">
-        <h6 class="fw-semibold text-success mb-0">Formato</h6>
-        <span class="badge bg-success-subtle text-success-emphasis border border-success ms-2">
-          CONFIGURACIÓN
-        </span>
-      </div>
-       <p class="text-muted small mb-3">
-        Ajusta la información adicional en el informe.
-      </p>
-      <div class="form-check form-switch text-success">
-        <input
-          class="form-check-input cursor-pointer"
-          type="checkbox"
-          role="switch"
-          id="checkFsa"
-          [(ngModel)]="printConfig.mostrarFsa">
-        <label class="form-check-label cursor-pointer" for="checkFsa">
-          Incluir códigos FSA
-        </label>
-      </div>
-    </div>
-
-    <!-- Bloque: Categorías (Se mantiene igual, sin cambios) -->
-    <div>
-      <div class="d-flex align-items-center mb-1">
-        <h6 class="fw-semibold text-success mb-0">
-          Categorías a imprimir
-        </h6>
-        <span class="badge bg-success-subtle text-success-emphasis border border-success ms-2">
-          FILTRO
-        </span>
-      </div>
-      <p class="text-muted small mb-2">
-        Marca las categorías que deseas incluir en el documento a imprimir.
-      </p>
-      <div
-        class="border rounded-3 p-2 bg-light"
-        style="max-height: 220px; overflow-y: auto;">
-        @for (cat of printConfig.categoriasSeleccionadas; track cat.nombre) {
-          <div class="form-check mb-1">
+        <!-- Bloque: Formato -->
+        <div class="mb-4">
+           <div class="d-flex align-items-center mb-1">
+            <h6 class="fw-semibold text-success mb-0">Formato</h6>
+            <span class="badge bg-success-subtle text-success-emphasis border border-success ms-2">
+              CONFIGURACIÓN
+            </span>
+          </div>
+           <p class="text-muted small mb-3">
+            Ajusta la información adicional en el informe.
+          </p>
+          <!-- Switch FSA -->
+          <div class="form-check form-switch text-success">
             <input
               class="form-check-input cursor-pointer"
               type="checkbox"
-              [id]="'cat-' + cat.nombre"
-              [(ngModel)]="cat.selected">
-            <label
-              class="form-check-label cursor-pointer text-uppercase small fw-semibold"
-              [for]="'cat-' + cat.nombre">
-              {{ cat.nombre }}
+              role="switch"
+              id="checkFsa"
+              [(ngModel)]="printConfig.mostrarFsa"
+              (ngModelChange)="actualizarPreview()"> <!-- MODIFICADO -->
+            <label class="form-check-label cursor-pointer" for="checkFsa">
+              Incluir códigos FSA
             </label>
           </div>
-        }
-      </div>
-    </div>
-  </div>
+          <!-- Switch Mostrar Cuentas -->
+          <div class="form-check form-switch text-success mt-2">
+            <input
+              class="form-check-input cursor-pointer"
+              type="checkbox"
+              role="switch"
+              id="checkCuentas"
+              [(ngModel)]="printConfig.mostrarCuentas"
+              (change)="!printConfig.mostrarCuentas && (printConfig.incluirCuentasCero = false)"
+              (ngModelChange)="actualizarPreview()"> <!-- MODIFICADO -->
+            <label class="form-check-label cursor-pointer" for="checkCuentas">
+              <strong>Mostrar detalle de Cuentas</strong>
+            </label>
+          </div>
+          <!-- Switch Cuentas en Cero -->
+          <div class="form-check form-switch text-success" style="margin-left: 1.5rem;">
+            <input
+              class="form-check-input cursor-pointer"
+              type="checkbox"
+              role="switch"
+              id="checkCuentasCero"
+              [(ngModel)]="printConfig.incluirCuentasCero"
+              [disabled]="!printConfig.mostrarCuentas"
+              (ngModelChange)="actualizarPreview()"> <!-- MODIFICADO -->
+            <label class="form-check-label cursor-pointer" 
+                   [class.text-muted]="!printConfig.mostrarCuentas" 
+                   for="checkCuentasCero">
+              Incluir cuentas con saldo 0
+            </label>
+          </div>
+        </div>
+
+        <!-- Bloque: Categorías -->
+        <div>
+          <div class="d-flex align-items-center mb-1">
+            <h6 class="fw-semibold text-success mb-0">
+              Categorías a imprimir
+            </h6>
+            <span class="badge bg-success-subtle text-success-emphasis border border-success ms-2">
+              FILTRO
+            </span>
+          </div>
+          <p class="text-muted small mb-2">
+            Marca las categorías que deseas incluir en el documento.
+          </p>
+          <div
+            class="border rounded-3 p-2 bg-light"
+            style="max-height: 220px; overflow-y: auto;">
+            @for (cat of printConfig.categoriasSeleccionadas; track cat.nombre) {
+              <div class="form-check mb-1">
+                <input
+                  class="form-check-input cursor-pointer"
+                  type="checkbox"
+                  [id]="'cat-' + cat.nombre"
+                  [(ngModel)]="cat.selected"
+                  (ngModelChange)="actualizarPreview()"> <!-- MODIFICADO -->
+                <label
+                  class="form-check-label cursor-pointer text-uppercase small fw-semibold"
+                  [for]="'cat-' + cat.nombre">
+                  {{ cat.nombre }}
+                </label>
+              </div>
+            }
+          </div>
+        </div>
+
+      </div> <!-- FIN COLUMNA IZQUIERDA -->
+
+      <!-- ===== COLUMNA DERECHA: PREVISUALIZACIÓN (NUEVO) ===== -->
+      <div class="col-md-7">
+        <h6 class="fw-semibold text-success mb-2">Previsualización en vivo</h6>
+        <div class="border rounded-2 shadow-sm" style="height: 65vh; overflow: hidden; background-color: #eee;">
+          <iframe 
+            [srcdoc]="previewHtml"
+            style="width: 100%; height: 100%; border: none; background-color: #fff;">
+            <p>Cargando previsualización...</p>
+          </iframe>
+        </div>
+      </div> <!-- FIN COLUMNA DERECHA -->
+
+    </div> <!-- FIN .row -->
+  </div> <!-- FIN .modal-body -->
   
-  <!-- FOOTER -->
-  <div class="modal-footer border-0 pt-0">
+  
+  <!-- FOOTER (Se mantiene igual) -->
+  <div class="modal-footer border-top mt-2">
     <button
       type="button"
       class="btn btn-outline-success"
@@ -356,8 +438,144 @@
       type="button"
       class="btn btn-success"
       (click)="ejecutarImpresion()">
-      <i class="bi bi-check2-circle me-2"></i>
+      <i class="bi bi-printer me-2"></i> <!-- ICONO CAMBIADO -->
       Confirmar e imprimir
+    </button>
+  </div>
+</ng-template>
+
+
+
+
+
+<ng-template #excelModal let-modal>
+  <div class="modal-header bg-primary text-white border-0"> <h5 class="modal-title d-flex align-items-center mb-0">
+      <i class="bi bi-file-earmark-spreadsheet me-2"></i>
+      Opciones de Exportación Excel
+    </h5>
+    <button
+      type="button"
+      class="btn-close btn-close-white"
+      aria-label="Close"
+      (click)="modal.dismiss()">
+    </button>
+  </div>
+  
+  <div class="modal-body">
+    <div class="row">
+      
+      <div class="col-12">
+
+        <div class="mb-4">
+          <div class="d-flex align-items-center mb-1">
+            <h6 class="fw-semibold text-primary mb-0">Tratamiento de saldos</h6>
+             <span class="badge bg-primary-subtle text-primary-emphasis border border-primary ms-2">
+              LÓGICA
+            </span>
+          </div>
+          <p class="text-muted small mb-3">
+            Elige cómo se deben calcular los saldos (ej. Modo Auditoría).
+          </p>
+          <div class="d-flex flex-column gap-2">
+            <div class="form-check">
+              <input class="form-check-input cursor-pointer" type="radio" 
+                     name="alcanceRadioExcel" id="alcanceAbsExcel" value="absoluto"
+                     [(ngModel)]="excelConfig.alcanceNegativos"> <label class="form-check-label cursor-pointer" for="alcanceAbsExcel">
+                <strong>Solo positivos</strong> <span class="text-muted small">(Gestión)</span>
+                <div class="text-muted small" style="font-size: 0.75em;">Activos, Pasivos y Resultados se muestran en valor absoluto.</div>
+              </label>
+            </div>
+            <div class="form-check">
+              <input class="form-check-input cursor-pointer" type="radio" 
+                     name="alcanceRadioExcel" id="alcanceAuditExcel" value="auditoria"
+                     [(ngModel)]="excelConfig.alcanceNegativos"> <label class="form-check-label cursor-pointer" for="alcanceAuditExcel">
+                <strong>Norma Auditoría</strong> <span class="text-muted small">(Híbrido)</span>
+                <div class="text-muted small" style="font-size: 0.75em;">Activos/Pasivos absolutos. Resultados conservan su signo.</div>
+              </label>
+            </div>
+            <div class="form-check">
+              <input class="form-check-input cursor-pointer" type="radio" 
+                     name="alcanceRadioExcel" id="alcanceTodosExcel" value="todo_negativo"
+                     [(ngModel)]="excelConfig.alcanceNegativos"> <label class="form-check-label cursor-pointer" for="alcanceTodosExcel">
+                <strong>Saldos Originales</strong> <span class="text-muted small">(Base de datos)</span>
+                <div class="text-muted small" style="font-size: 0.75em;">Muestra todos los signos tal cual vienen de la carga.</div>
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <div class="mb-4" *ngIf="excelConfig.alcanceNegativos !== 'absoluto'">
+          <div class="d-flex align-items-center mb-1">
+            <h6 class="fw-semibold text-primary mb-0">Estilo de negativos (Hoja Diseño)</h6> </div>
+          <div class="d-flex gap-4">
+            <div class="form-check">
+              <input class="form-check-input cursor-pointer" type="radio" 
+                     name="estiloRadioExcel" id="estiloSignoExcel" value="signo"
+                     [(ngModel)]="excelConfig.estiloNegativo"> <label class="form-check-label cursor-pointer" for="estiloSignoExcel">
+                Signo Menos: <strong>-1.500</strong>
+              </label>
+            </div>
+            <div class="form-check">
+              <input class="form-check-input cursor-pointer" type="radio" 
+                     name="estiloRadioExcel" id="estiloParentesisExcel" value="parentesis"
+                     [(ngModel)]="excelConfig.estiloNegativo"> <label class="form-check-label cursor-pointer" for="estiloParentesisExcel">
+                Paréntesis: <strong>(1.500)</strong>
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <div class="mb-4">
+           <div class="d-flex align-items-center mb-1">
+            <h6 class="fw-semibold text-primary mb-0">Formato</h6> <span class="badge bg-primary-subtle text-primary-emphasis border border-primary ms-2">
+              CONFIGURACIÓN
+            </span>
+          </div>
+          <div class="form-check form-switch text-primary"> <input class="form-check-input cursor-pointer" type="checkbox" role="switch"
+                   id="checkFsaExcel" [(ngModel)]="excelConfig.mostrarFsa"> <label class="form-check-label cursor-pointer" for="checkFsaExcel">
+              Incluir códigos FSA
+            </label>
+          </div>
+          <div class="form-check form-switch text-primary mt-2"> <input class="form-check-input cursor-pointer" type="checkbox" role="switch"
+                   id="checkCuentasExcel" [(ngModel)]="excelConfig.mostrarCuentas"
+                   (change)="!excelConfig.mostrarCuentas && (excelConfig.incluirCuentasCero = false)"> <label class="form-check-label cursor-pointer" for="checkCuentasExcel">
+              <strong>Mostrar detalle de Cuentas</strong>
+            </label>
+          </div>
+          <div class="form-check form-switch text-primary" style="margin-left: 1.5rem;"> <input class="form-check-input cursor-pointer" type="checkbox" role="switch"
+                   id="checkCuentasCeroExcel" [(ngModel)]="excelConfig.incluirCuentasCero"
+                   [disabled]="!excelConfig.mostrarCuentas"> <label class="form-check-label cursor-pointer" 
+                   [class.text-muted]="!excelConfig.mostrarCuentas" 
+                   for="checkCuentasCeroExcel">
+              Incluir cuentas con saldo 0
+            </label>
+          </div>
+        </div>
+
+        <div>
+          <div class="d-flex align-items-center mb-1">
+            <h6 class="fw-semibold text-primary mb-0">Categorías a exportar</h6> </div>
+          <div class="border rounded-3 p-2 bg-light" style="max-height: 220px; overflow-y: auto;">
+            @for (cat of excelConfig.categoriasSeleccionadas; track cat.nombre) { <div class="form-check mb-1">
+                <input class="form-check-input cursor-pointer" type="checkbox"
+                       [id]="'cat-excel-' + cat.nombre" [(ngModel)]="cat.selected"> <label class="form-check-label cursor-pointer text-uppercase small fw-semibold"
+                       [for]="'cat-excel-' + cat.nombre"> {{ cat.nombre }}
+                </label>
+              </div>
+            }
+          </div>
+        </div>
+
+      </div> </div> </div> <div class="modal-footer border-top mt-2">
+    <button
+      type="button"
+      class="btn-outline-danger btn " (click)="modal.dismiss()">
+      Cancelar
+    </button>
+    <button
+      type="button"
+      class="btn btn-teal" (click)="exportarExcel()"> <i class="bi bi-check2-circle me-2"></i>
+      Confirmar y generar Excel
     </button>
   </div>
 </ng-template>
