@@ -37,12 +37,12 @@
             </button>
             <ul class="dropdown-menu dropdown-menu-success" aria-labelledby="balancesDropdown">
               <li>
-                <button class="dropdown-item" [routerLink]="['/balances']" routerLinkActive="border-bottom border-light fw-bold text-light ">
+                <button class="dropdown-item" [routerLink]="['/balances']" routerLinkActive="border-bottom border-light fw-bold text-light " >
                   <i class="bi bi-file-earmark-text me-2"></i>Hojas de trabajo
                 </button>
               </li>
               <li>
-                <button class="dropdown-item" disabled>
+                <button class="dropdown-item" [routerLink]="['/comparativo']" routerLinkActive="border-bottom border-light fw-bold text-light " >
                   <i class="bi bi-file-earmark-lock me-2"></i>EEFF
                 </button>
               </li>

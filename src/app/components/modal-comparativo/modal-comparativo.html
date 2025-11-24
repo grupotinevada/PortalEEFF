@@ -1,0 +1,193 @@
+<div class="modal d-flex flex-column modal-balance-detalle fs-custom" style="height: 90vh; min-height: 500px">
+  
+  <div class="modal-header flex-column align-items-start bg-success text-white shadow-sm border-0 flex-shrink-0">
+    
+    <div class="w-100 d-flex justify-content-between align-items-start mb-2">
+      <div>
+        <h5 class="modal-title mb-1">
+          <i class="bi bi-arrow-left-right me-2"></i>
+          Comparativo de <b>Estados Financieros</b>
+        </h5>
+        <span class="badge bg-white text-success fw-semibold">
+          <i class="bi bi-building me-1"></i>
+          {{ balanceActual?.empresa_desc || "Empresa Seleccionada" }}
+        </span>
+      </div>
+      <button type="button" class="btn-close btn-close-white ms-3" aria-label="Close" (click)="activeModal.dismiss()"></button>
+    </div>
+    
+    <div class="w-100 d-flex flex-wrap align-items-center gap-4 mt-2 small border-top border-success border-opacity-25 pt-2">
+      
+      <div class="d-flex align-items-center" title="Periodo Actual">
+        <i class="bi bi-calendar-check me-2 fs-6 text-white-75"></i>
+        <strong class="me-1 text-white-75">Actual:</strong>
+        <span class="text-white fw-bold">{{ balanceActual?.ejercicio }}</span>
+      </div>
+
+      <div class="d-flex align-items-center" title="Periodo Anterior">
+        <i class="bi bi-clock-history me-2 fs-6 text-white-75"></i>
+        <strong class="me-1 text-white-75">Anterior:</strong>
+        <span class="text-white">{{ balanceAnterior?.ejercicio }}</span>
+      </div>
+
+      <div class="d-flex align-items-center ms-md-auto" title="Mapping Utilizado">
+        <i class="bi bi-diagram-3 me-2 fs-6 text-white-75"></i>
+        <strong class="me-1 text-white-75">Mapping:</strong>
+        <span class="text-white opacity-75">{{ balanceActual?.id_mapping }}</span>
+      </div>
+    </div>
+  </div>
+
+  <app-spinner [showSpinner]="showSpinner"></app-spinner>
+
+  @if (vistaComparativa.length > 0) {
+  <div class="modal-body flex-grow-1 overflow-auto p-0 bg-white custom-scrollbar">
+    
+<div class="sticky-top bg-white border-bottom shadow-sm z-3">
+   <div class="grid-row py-2 px-3 fw-bold text-secondary text-uppercase ls-1 small">
+      
+      <div class="col-concept ps-2">Concepto</div>
+      
+      <div class="col-data text-truncate text-end" title="Periodo Actual">{{ balanceActual?.ejercicio }}</div>
+      <div class="col-data text-truncate text-end" title="Periodo Anterior">{{ balanceAnterior?.ejercicio }}</div>
+      <div class="col-var text-end">Var $</div>
+      <div class="col-var text-end">Var %</div>
+      
+      <div style="width: 3rem;"></div> 
+   </div>
+</div>
+
+    <div ngbAccordion class="accordion-flush">
+      @for (macro of vistaComparativa; track macro.nombre) {
+        <div ngbAccordionItem [collapsed]="true" class="border-bottom">
+          <h2 ngbAccordionHeader>
+            <button ngbAccordionButton class="bg-light-subtle">
+              <div class="grid-row btn-content">
+                  <div class="col-concept fw-bold text-uppercase text-dark" title="{{ macro.nombre }}">
+                    {{ macro.nombre }}
+                  </div>
+                  
+                  <div class="col-data fw-bold font-monospace small text-dark">{{ macro.saldo | currency:'CLP':'symbol':'1.0-0' }}</div>
+                  <div class="col-data fw-semibold font-monospace small text-secondary">{{ macro.saldoAnterior | currency:'CLP':'symbol':'1.0-0' }}</div>
+                  <div class="col-data fw-bold font-monospace small text-dark">{{ macro.diferencia | currency:'CLP':'symbol':'1.0-0' }}</div>
+                  <div class="col-var font-monospace small fw-bold {{ getVariacionClase(macro.variacion) }}">
+                    {{ formatearVariacion(macro.variacion) }}
+                  </div>
+              </div>
+            </button>
+          </h2>
+
+          <div ngbAccordionCollapse>
+            <div ngbAccordionBody class="p-0">
+              <ng-template>
+                <div ngbAccordion class="accordion-flush border-top">
+                  @for (grupo of macro.categorias; track grupo.categoria) {
+                    <div ngbAccordionItem [collapsed]="true" class="border-bottom border-light">
+                      <h2 ngbAccordionHeader>
+                        <button ngbAccordionButton class="bg-white">
+                          <div class="grid-row btn-content">
+                              <div class="col-concept ps-3 text-success fw-bold text-uppercase small text-truncate" title="{{ grupo.categoria }}">
+                                {{ grupo.categoria }}
+                              </div>
+
+                              <div class="col-data font-monospace smaller-text text-dark">{{ grupo.saldo | currency:'CLP':'symbol':'1.0-0' }}</div>
+                              <div class="col-data font-monospace smaller-text text-secondary">{{ grupo.saldoAnterior | currency:'CLP':'symbol':'1.0-0' }}</div>
+                              <div class="col-data font-monospace smaller-text text-dark">{{ grupo.diferencia | currency:'CLP':'symbol':'1.0-0' }}</div>
+                              <div class="col-var font-monospace smaller-text {{ getVariacionClase(grupo.variacion) }}">
+                                {{ formatearVariacion(grupo.variacion) }}
+                              </div>
+                          </div>
+                        </button>
+                      </h2>
+                      
+                      <div ngbAccordionCollapse>
+                        <div ngbAccordionBody class="p-0">
+                          <ng-template>
+                            <div ngbAccordion class="accordion-flush border-top">
+                              @for (sub of grupo.subcategorias; track sub.id_fsa) {
+                                <div ngbAccordionItem [collapsed]="true" class="border-bottom border-light-subtle">
+                                  <h2 ngbAccordionHeader>
+                                    <button ngbAccordionButton class="bg-white">
+                                      <div class="grid-row btn-content">
+                                          <div class="col-concept ps-4 d-flex align-items-center gap-2 overflow-hidden">
+                                            <span class="fw-semibold text-dark text-truncate small" title="{{ sub.descripcion }}">{{ sub.descripcion }}</span>
+                                          </div>
+
+                                          <div class="col-data font-monospace smaller-text text-dark">{{ sub.saldo | currency:'CLP':'symbol':'1.0-0' }}</div>
+                                          <div class="col-data font-monospace smaller-text text-secondary">{{ sub.saldoAnterior | currency:'CLP':'symbol':'1.0-0' }}</div>
+                                          <div class="col-data font-monospace smaller-text text-dark">{{ sub.diferencia | currency:'CLP':'symbol':'1.0-0' }}</div>
+                                          <div class="col-var font-monospace smaller-text {{ getVariacionClase(sub.variacion) }}">
+                                            {{ formatearVariacion(sub.variacion) }}
+                                          </div>
+                                      </div>
+                                    </button>
+                                  </h2>
+
+                                  <div ngbAccordionCollapse>
+                                    <div ngbAccordionBody class="p-0">
+                                      <ng-template>
+                                        <div class="bg-light">
+                                            @for (cuenta of sub.cuentas; track cuenta.num_cuenta) {
+                                              <div class="grid-row py-2 px-3 border-bottom border-light align-items-center hover-bg-gray-50">
+                                                  <div class="col-concept ps-5 d-flex gap-2">
+                                                      <span class="fw-bold text-dark smaller-text">{{ cuenta.num_cuenta }}</span>
+                                                      <span class="text-muted text-truncate smaller-text" title="{{ cuenta.nombre }}">{{ cuenta.nombre }}</span>
+                                                  </div>
+
+                                                  <div class="col-data font-monospace smaller-text text-dark">{{ cuenta.saldo | currency:'CLP':'symbol':'1.0-0' }}</div>
+                                                  <div class="col-data font-monospace smaller-text text-secondary">{{ cuenta.saldoAnterior | currency:'CLP':'symbol':'1.0-0' }}</div>
+                                                  <div class="col-data font-monospace smaller-text text-dark">{{ cuenta.diferencia | currency:'CLP':'symbol':'1.0-0' }}</div>
+                                                  <div class="col-var font-monospace smaller-text fw-bold {{ getVariacionClase(cuenta.variacion) }}">
+                                                    {{ formatearVariacion(cuenta.variacion) }}
+                                                  </div>
+                                                  <div style="width: 20px;"></div> </div>
+                                            }
+                                        </div>
+                                      </ng-template>
+                                    </div>
+                                  </div>
+
+                                </div>
+                              }
+                            </div>
+                          </ng-template>
+                        </div>
+                      </div>
+                    </div>
+                  }
+                </div>
+              </ng-template>
+            </div>
+          </div>
+        </div>
+      }
+    </div>
+  </div>
+  } @else {
+    <div class="modal-body flex-grow-1 d-flex flex-column align-items-center justify-content-center text-muted bg-light">
+      <i class="bi bi-inbox fs-1 opacity-50 mb-2"></i>
+      <h6>No hay datos comparativos disponibles.</h6>
+    </div>
+  }
+
+  <div class="modal-footer bg-white border-top py-2 px-3 flex-shrink-0 z-3">
+     
+     <div class="me-auto text-muted small fst-italic">
+       <i class="bi bi-info-circle me-1"></i> Los valores se muestran en CLP
+     </div>
+
+     <div class="d-flex gap-2">
+        <button type="button" class="btn btn-outline-success" (click)="abrirConfiguracion('print')">
+            <i class="bi bi-printer me-2"></i>Imprimir
+        </button>
+
+        <button type="button" class="btn btn-success" (click)="abrirConfiguracion('excel')">
+            <i class="bi bi-file-earmark-excel me-2"></i>Excel
+        </button>
+
+        <div class="vr mx-2"></div> <button class="btn btn-secondary px-4" (click)="activeModal.close()">
+            Cerrar
+        </button>
+    </div>
+  </div>
+</div>

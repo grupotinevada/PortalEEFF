@@ -1,16 +1,52 @@
-
+/* RESET DE BOOTSTRAP ACCORDION */
 :host ::ng-deep .accordion-button {
-  font-size: 1em;
-  padding: 0.5rem 1.25rem;
+  font-size: 0.9rem; 
+  /* Clave: Quitamos padding nativo para usar grid system interno */
+  padding: 0 !important; 
+  color: #212529;
+  background-color: transparent;
+  box-shadow: none !important;
 }
 
-.modal-balance-detalle .accordion-button {
-  font-size: 0.8rem; /* Aquí usamos 'rem' porque estamos en el contexto global */
+/* Hover Efecto */
+:host ::ng-deep .accordion-button:hover {
+    background-color: rgba(0, 0, 0, 0.03);
 }
 
-
-.accordion-button:not(.collapsed) {
-  /* 👇 Esta es la variable para el color de fondo */
+/* Estado Activo (Verde Suave) */
+:host ::ng-deep .accordion-button:not(.collapsed) {
   --bs-accordion-active-bg: #e3f8ea;
-  /* Cambia #dcfce7 por el color que desees */
+  background-color: var(--bs-accordion-active-bg);
+  color: #0f5132;
+}
+
+/* Flecha alineada */
+:host ::ng-deep .accordion-button::after {
+  margin-right: 1rem;
+  background-size: 0.8rem;
+}
+
+/* Utilidades */
+.smaller-text {
+    font-size: 0.8rem;
+}
+
+.hover-bg-gray-50:hover {
+    background-color: #f8f9fa;
+}
+
+.cursor-pointer {
+    cursor: pointer;
+}
+
+/* Scrollbar */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #ccc;
+  border-radius: 3px;
 }

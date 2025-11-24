@@ -8,7 +8,7 @@ export interface IBalance {   //solo lo usa el balance.service.createBulk
   id_fsa?: string;
 }
 
-export interface IBalanceGet{ // solo lo usa el balance.service.getBalanceById, este es la interfaz mas reciente del backend
+export interface IBalanceGet{ // solo lo usa el balance.service.getBalanceById
   id_blce: string,
   num_cuenta: string;
   nombre: string;
@@ -43,6 +43,12 @@ export interface BalanceResumen {
   email: string;
 }
 
+export interface BalanceResumenResponse { //respuesta del getResumen, BalanceResumen
+  success: boolean;
+  data: BalanceResumen[];
+  total: number;
+}
+
 
 export interface IDefaultMapping {
   num_cuenta: string;
@@ -50,100 +56,77 @@ export interface IDefaultMapping {
   id_mapping: string;
 }
 
-export interface IMacroCategoria {
+// ----------------------------------------------------
+// REFACTORIZACIÓN MÍNIMA (Necesaria para la comparación)
+
+export interface ICuenta {
+  num_cuenta: string;
   nombre: string;
   saldo: number;
-  categorias: IVistaEEFF[]; // Contendrá 'Activo Corriente', 'Activo No Corriente'.
-  orden?: number;
+  id_fsa: string;
 }
-export interface IVistaEEFF {
+
+export interface ISubcategoria {
+  id_fsa: string;
+  descripcion: string;
+  orden?: number;
+  saldo: number;
+  cuentas: ICuenta[]; // Usa la nueva ICuenta
+}
+
+// RENOMBRADO: IVistaEEFF -> ICategoria
+export interface ICategoria {
   categoria: string;
   id_cate?: number;
   saldo: number;
   orden?: number;
-  subcategorias: {
-    id_fsa: string;
-    descripcion: string;
-    orden?: number;
-    saldo: number;
-    cuentas: {
-      num_cuenta: string;
-      nombre: string;
-      saldo: number;
-      id_fsa: string;
-    }[];
-  }[];
+  subcategorias: ISubcategoria[]; // Usa la nueva ISubcategoria
 }
 
+export interface IMacroCategoria {
+  nombre: string;
+  saldo: number;
+  categorias: ICategoria[]; // USANDO ICategoria[]
+  orden?: number;
+}
 export interface IValidacionesEEFF {
   balanceCuadrado: boolean;
   diferenciaBalance: number;
   estadoResultadosSaldo: number;
 }
 
+// ----------------------------------------------------
+// INTERFACES COMPARATIVAS (NUEVAS)
+// ----------------------------------------------------
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-//interfaces para la comparativa
-export interface CuentaComparada {
-  num_cuenta: string;
-  nombre: string;
-  saldo_base?: number;
-  saldo_comp?: number;
+export interface ICuentaComparativa extends ICuenta {
+  saldoAnterior: number;
+  diferencia: number;
+  variacion: number; // Porcentaje de variación
 }
 
-
-export interface VistaCategoria {
-  categoria: string;
-  totalCategoria: number;
-  grupos: {
-    desc: string;
-    totalFsa: number;
-    cuentas: IBalance[];
-  }[];
-}
-export interface ComparativoFsa {
-  desc: string;
-  annio_base: number;
-  totalBase: number;
-  annio_comp: number;
-  totalComp: number;
-  variacionAbs: number;
-  variacionPct: number;
-  cuentasBase: IBalance[];
-  cuentasComp: IBalance[];
-  cuentasFusionadas?: CuentaComparada[];
+export interface ISubcategoriaComparativa extends ISubcategoria {
+  saldoAnterior: number;
+  diferencia: number;
+  variacion: number;
+  cuentas: ICuentaComparativa[]; // Usa la interfaz de cuenta comparativa
 }
 
-export interface ComparativoCategoria {
-  categoria: string;
-  totalBase: number;
-  totalComp: number;
-  variacionAbs: number;
-  variacionPct: number;
-  grupos: ComparativoFsa[];
+export interface ICategoriaComparativa extends ICategoria {
+  saldoAnterior: number;
+  diferencia: number;
+  variacion: number;
+  subcategorias: ISubcategoriaComparativa[]; // Usa la interfaz de subcategoría comparativa
 }
 
-
-export interface BalanceResumenResponse {
-  success: boolean;
-  data: BalanceResumen[];
-  total: number;
+export interface IMacroCategoriaComparativa extends IMacroCategoria {
+  saldoAnterior: number;
+  diferencia: number;
+  variacion: number;
+  categorias: ICategoriaComparativa[]; // Usa la interfaz de categoría comparativa
 }
+
+// Agregado al final para el prompt, aunque ahora las interfaces están tipadas.
+//okok, te doy me falto darte mi modelo de balances, ojo que hay interfaces que no se usan en el eeffService
+
+//ahora que informacion falta para crear esto?

@@ -109,12 +109,26 @@ app-root.theme-danger {
     --bs-btn-focus-shadow-rgb: 220, 53, 69; // Para el "glow" del foco
   }
 
+  .btn-outline-success {
+    --bs-btn-color: var(--bs-danger);
+    --bs-btn-border-color: var(--bs-danger);
+    --bs-btn-hover-color: #fff;
+    --bs-btn-hover-bg: var(--bs-danger);
+    --bs-btn-hover-border-color: var(--bs-danger);
+    --bs-btn-focus-shadow-rgb: 220, 53, 69;
+  }
+
+  .bg-success-subtle {
+    background-color: #f8d7da !important; /* Fondo rojo claro */
+  }
+
   /* --- C. CLASES DE UTILIDAD DE BOOTSTRAP --- */
   
   /* Utilidad de fondo (bg-*) */
   .bg-success {
     background-color: var(--bs-danger) !important;
   }
+  
 
   /* Utilidad de texto (text-*) */
   .text-success {

@@ -27,11 +27,18 @@ export const routes: Routes = [
     canActivate: [authGuard],
   },
   {
+    path: 'comparativo',
+    loadComponent: () =>
+      import('./components/comparativo/comparativo').then((m) => m.Comparativo),
+    canActivate: [authGuard],
+  },
+  {
     path: 'preview',
     loadComponent: () =>
       import('./components/preview/preview').then((m) => m.Preview),
     canActivate: [authGuard],
   },
+  
     {
     path: 'admin', loadComponent: () =>
       import('./components/administracion/administracion').then(m => m.Administracion),

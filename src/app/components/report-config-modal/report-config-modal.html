@@ -1,0 +1,153 @@
+<div class="modal-header text-white border-0" [ngClass]="'bg-' + themeClass">
+  <h5 class="modal-title d-flex align-items-center mb-0">
+    <i class="bi" [ngClass]="type === 'print' ? 'bi-printer-fill' : 'bi-file-earmark-spreadsheet'"></i>
+    <span class="ms-2">{{ title }}</span>
+  </h5>
+  <button type="button" class="btn-close btn-close-white" aria-label="Close" (click)="activeModal.dismiss()"></button>
+</div>
+
+<div class="modal-body">
+  <div class="row gx-4">
+    
+    <div [class]="type === 'print' ? 'col-md-5' : 'col-12'">
+
+      <div class="mb-4" *ngIf="mode === 'standard'">
+        <div class="d-flex align-items-center mb-1">
+          <h6 class="fw-semibold mb-0" [ngClass]="'text-' + themeClass">Tratamiento de saldos</h6>
+          <span class="badge ms-2 border" 
+                [ngClass]="'bg-' + themeClass + '-subtle text-' + themeClass + '-emphasis border-' + themeClass">
+            LÓGICA
+          </span>
+        </div>
+        <p class="text-muted small mb-3">Elige cómo se deben calcular los saldos.</p>
+
+        <div class="d-flex flex-column gap-2">
+          <div class="form-check">
+            <input class="form-check-input cursor-pointer" type="radio" name="alcanceRadio" value="absoluto"
+                   [(ngModel)]="config.alcanceNegativos" (ngModelChange)="emitChange()">
+            <label class="form-check-label cursor-pointer">
+              <strong>Solo positivos</strong> <span class="text-muted small">(Gestión)</span>
+            </label>
+          </div>
+          <div class="form-check">
+            <input class="form-check-input cursor-pointer" type="radio" name="alcanceRadio" value="auditoria"
+                   [(ngModel)]="config.alcanceNegativos" (ngModelChange)="emitChange()">
+            <label class="form-check-label cursor-pointer">
+              <strong>Norma Auditoría</strong> <span class="text-muted small">(Híbrido)</span>
+            </label>
+          </div>
+          <div class="form-check">
+            <input class="form-check-input cursor-pointer" type="radio" name="alcanceRadio" value="todo_negativo"
+                   [(ngModel)]="config.alcanceNegativos" (ngModelChange)="emitChange()">
+            <label class="form-check-label cursor-pointer">
+              <strong>Saldos Originales</strong> <span class="text-muted small">(Base de datos)</span>
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <div class="mb-4" *ngIf="mode === 'standard' && config.alcanceNegativos !== 'absoluto'">
+        <div class="d-flex align-items-center mb-1">
+          <h6 class="fw-semibold mb-0" [ngClass]="'text-' + themeClass">Estilo de negativos</h6>
+        </div>
+        <div class="d-flex gap-4">
+          <div class="form-check">
+            <input class="form-check-input cursor-pointer" type="radio" name="estiloRadio" value="signo"
+                   [(ngModel)]="config.estiloNegativo" (ngModelChange)="emitChange()">
+            <label class="form-check-label cursor-pointer">Signo Menos: <strong>-1.500</strong></label>
+          </div>
+          <div class="form-check">
+            <input class="form-check-input cursor-pointer" type="radio" name="estiloRadio" value="parentesis"
+                   [(ngModel)]="config.estiloNegativo" (ngModelChange)="emitChange()">
+            <label class="form-check-label cursor-pointer">Paréntesis: <strong>(1.500)</strong></label>
+          </div>
+        </div>
+      </div>
+
+      <div class="mb-4">
+        <div class="d-flex align-items-center mb-1">
+          <h6 class="fw-semibold mb-0" [ngClass]="'text-' + themeClass">Formato</h6>
+          <span class="badge ms-2 border"
+                [ngClass]="'bg-' + themeClass + '-subtle text-' + themeClass + '-emphasis border-' + themeClass">
+            CONFIG
+          </span>
+        </div>
+
+        <div class="form-check form-switch mt-2">
+          <input class="form-check-input cursor-pointer" type="checkbox" role="switch"
+                 [(ngModel)]="config.mostrarFsa" (ngModelChange)="emitChange()">
+          <label class="form-check-label cursor-pointer">Incluir códigos FSA</label>
+        </div>
+
+        <div class="form-check form-switch mt-2">
+          <input class="form-check-input cursor-pointer" type="checkbox" role="switch"
+                 [(ngModel)]="config.mostrarCuentas"
+                 (change)="!config.mostrarCuentas && (config.incluirCuentasCero = false)"
+                 (ngModelChange)="emitChange()">
+          <label class="form-check-label cursor-pointer"><strong>Mostrar detalle de Cuentas</strong></label>
+        </div>
+
+        <div class="form-check form-switch" style="margin-left: 1.5rem;">
+  <input
+    class="form-check-input cursor-pointer"
+    type="checkbox"
+    role="switch"
+    [(ngModel)]="config.incluirCuentasCero"
+    (ngModelChange)="emitChange()"
+    disabled="true"
+    pTooltip="No disponible en esta versión"
+    tooltipPosition="top"
+  />
+
+  <label
+    class="form-check-label cursor-pointer"
+    [class.text-muted]="!config.mostrarCuentas"
+    pTooltip="No disponible en esta versión"
+    tooltipPosition="top"
+  >
+    Incluir cuentas con saldo 0
+  </label>
+</div>
+
+
+      </div>
+
+      <div>
+        <div class="d-flex align-items-center mb-1">
+          <h6 class="fw-semibold mb-0" [ngClass]="'text-' + themeClass">Categorías</h6>
+        </div>
+        <div class="border rounded-3 p-2 bg-light" style="max-height: 220px; overflow-y: auto;">
+          @for (cat of config.categoriasSeleccionadas; track cat.nombre) {
+            <div class="form-check mb-1">
+              <input class="form-check-input cursor-pointer" type="checkbox"
+                     [id]="'cat-' + cat.nombre" [(ngModel)]="cat.selected" (ngModelChange)="emitChange()">
+              <label class="form-check-label cursor-pointer text-uppercase small fw-semibold" [for]="'cat-' + cat.nombre">
+                {{ cat.nombre }}
+              </label>
+            </div>
+          }
+        </div>
+      </div>
+    </div> 
+
+    <div class="col-md-7" *ngIf="type === 'print'">
+      <h6 class="fw-semibold mb-2" [ngClass]="'text-' + themeClass">Previsualización en vivo</h6>
+      <div class="border rounded-2 shadow-sm" style="height: 65vh; overflow: hidden; background-color: #eee;">
+        <iframe [srcdoc]="previewHtml" style="width: 100%; height: 100%; border: none; background-color: #fff;">
+          <p>Cargando...</p>
+        </iframe>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div class="modal-footer border-top mt-2">
+  <button type="button" class="btn" [ngClass]="'btn-outline-' + themeClass" (click)="activeModal.dismiss()">
+    Cancelar
+  </button>
+  <button type="button" class="btn" [ngClass]="btnConfirmClass" (click)="confirm()">
+    <i class="bi" [ngClass]="type === 'print' ? 'bi-printer' : 'bi-check2-circle'"></i>
+    <span class="ms-2">{{ type === 'print' ? 'Confirmar e imprimir' : 'Generar Excel' }}</span>
+  </button>
+</div>

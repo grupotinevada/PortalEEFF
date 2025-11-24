@@ -20,10 +20,15 @@ import { EditarBalance } from '../editar-balance/editar-balance';
 import { IEmpresa } from '../../models/empresa.model';
 import { EmpresaService } from '../../services/empresa.service';
 import { UsuarioLogin } from '../../models/usuario-login';
+import { DatePickerModule } from 'primeng/datepicker';
+import { InputTextModule } from 'primeng/inputtext';
+import { InputNumberModule } from 'primeng/inputnumber';
+import { ButtonModule } from 'primeng/button';
+import { SelectModule } from 'primeng/select';
 
 @Component({
   selector: 'app-balances',
-  imports: [CommonModule, Navbar, Spinner, ReactiveFormsModule],
+  imports: [CommonModule, Navbar, Spinner, ReactiveFormsModule, DatePickerModule, InputTextModule,InputNumberModule, ButtonModule, SelectModule],
   templateUrl: './balances.html',
   styleUrl: './balances.css'
 })
@@ -49,7 +54,7 @@ export class Balances implements OnInit {
   fsas: IFsa[] = [];
 
   private destroy$ = new Subject<void>();
-
+  anios: number[] = [];
   constructor(
     private balanceService: BalanceService,
     private fb: FormBuilder,
@@ -80,6 +85,13 @@ export class Balances implements OnInit {
     });
 
     this.getData();
+
+    const currentYear = new Date().getFullYear();
+    // Genera, por ejemplo, desde hace 10 años hasta el próximo año
+    for (let i = 0; i < 12; i++) {
+      this.anios.push(currentYear + 1 - i); 
+      // Esto generará: [2026, 2025, 2024, ..., 2015]
+    }
 
   }
 

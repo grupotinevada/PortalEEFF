@@ -21,12 +21,9 @@ app.use(helmet());
 app.use(cors({
   origin: [
     'http://localhost:4200',
-    'http://192.168.195.65:4200',
-    'http://192.168.1.88:4200',
     'https://portaleefftest.inevada.cl',
-    'https://portaleeffapitest.inevada.cl',
-    'https://portaleefftest.inevada.cl/login',
     'https://portaleeff.inevada.cl',
+    'http://192.168.101.16:3003'
   ],
   credentials: true 
 }));

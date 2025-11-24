@@ -1,0 +1,140 @@
+:host ::ng-deep .accordion-button {
+  font-size:    1.02rem; /* Ajustado a 0.9rem para balancear lectura y espacio */
+  /* IMPORTANTE: Quitamos padding default aqui para controlarlo en el HTML con clases utilitarias */
+  padding: 0 !important; 
+  color: #212529;
+  background-color: transparent;
+  box-shadow: none !important; /* Quitamos el borde azul por defecto */
+}
+
+/* Efecto Hover suave */
+:host ::ng-deep .accordion-button:hover {
+    background-color: rgba(0, 0, 0, 0.03);
+}
+
+/* Color activo rescatado de tu ejemplo */
+:host ::ng-deep .accordion-button:not(.collapsed) {
+  --bs-accordion-active-bg: #e3f8ea; /* Tu color verde suave */
+  background-color: var(--bs-accordion-active-bg);
+  color: #0f5132; /* Texto verde oscuro para contraste */
+}
+
+/* Flecha del acordeón: Aseguramos que esté alineada */
+:host ::ng-deep .accordion-button::after {
+  margin-right: 1rem; /* Espacio desde el borde derecho */
+  background-size: 0.8rem;
+}
+
+/* Estilos utilitarios internos */
+.smaller-text {
+    font-size: 0.8rem;
+}
+
+.hover-bg-gray-50:hover {
+    background-color: #f8f9fa;
+}
+
+/* Scrollbar personalizado para el modal body */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #ccc;
+  border-radius: 3px;
+}
+
+
+/* --- SISTEMA DE GRILLA FIJA PARA COMPARATIVO --- */
+
+/* Contenedor de la fila */
+.grid-row {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    gap: 15px; /* Separación consistente entre columnas */
+}
+
+.grid-row-concept {
+    display: flex;
+    align-items: center;
+    width: 98%;
+    gap: 15px; /* Separación consistente entre columnas */
+}
+
+/* Columna 1: Concepto (Flexible) */
+.col-concept {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+    /* Padding izquierdo para compensar visualmente el texto */
+    padding-left: 0.5rem; 
+}
+
+/* Columnas Numéricas: Anchos AUMENTADOS */
+.col-data {
+    width: 140px;
+    min-width: 140px;
+    padding-left: 10px;
+    display: flex;
+    justify-content: flex-end; /* Alineación derecha estricta */
+    align-items: center;
+    text-align: right;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Columnas Variación */
+.col-var {
+    width: 100px;
+    min-width: 100px;
+    display: flex;             /* Aseguramos que sea flex */
+    justify-content: flex-end; /* ESTO ES LA CLAVE: Empuja el contenido a la derecha */
+    align-items: center;       /* Centrado vertical */
+    text-align: right;
+    white-space: nowrap;
+    padding-left: 10px;
+}
+
+.col-arrow-space {
+    width: 2rem; /* Ancho aproximado de la flecha de Bootstrap */
+    flex-shrink: 0;
+}
+
+
+/* Ajustes del Botón Acordeón */
+:host ::ng-deep .accordion-button {
+    padding: 0 !important;
+    background: transparent;
+    box-shadow: none !important;
+}
+
+/* Contenedor interno del botón y del Header */
+.row-content {
+    width: 100%;
+    padding: 0.75rem 0 0.75rem 1rem; /* Padding uniforme para Header y Body */
+}
+.btn-content {
+    width: 100%;
+    padding: 0.75rem 0 0.75rem 1rem;
+}
+
+/* Utilidad para truncar texto largo en conceptos */
+.text-truncate-custom {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+
+
+
+
+
+
+

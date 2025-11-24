@@ -117,3 +117,10 @@
      font-size: 0.9em;
      vertical-align: middle;
   }
+.text-valido{
+  color: #198754;
+}
+
+.text-invalido{
+  color: #dc3545;
+}

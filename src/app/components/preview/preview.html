@@ -203,7 +203,7 @@
                 <div *ngIf="isNombreLoading" class="form-text small d-flex align-items-center mt-2">
                   <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>Verificando...
                 </div>
-                <div *ngIf="nombreValidationMessage && !isNombreLoading" class="form-text small mt-2" [class.text-success]="isNombreAvailable" [class.text-danger]="!isNombreAvailable">
+                <div *ngIf="nombreValidationMessage && !isNombreLoading" class="form-text small mt-2" [class.text-valido]="isNombreAvailable" [class.text-invalido]="!isNombreAvailable">
                   {{ nombreValidationMessage }}
                 </div>
               </div>

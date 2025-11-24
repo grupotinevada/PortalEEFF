@@ -3,7 +3,13 @@ import {
   IBalanceGet,
   IMacroCategoria,
   IValidacionesEEFF,
-  IVistaEEFF,
+  ICategoria,
+  ICuenta,
+  ISubcategoria, 
+  IMacroCategoriaComparativa, 
+  ICategoriaComparativa, 
+  ISubcategoriaComparativa, 
+  ICuentaComparativa,
 } from '../models/balance.model';
 
 @Injectable({
@@ -50,9 +56,9 @@ export class EEFFService {
                 saldo: 0,
                 id_fsa: 'fsa temporal',
               },
-            ],
+            ] as ICuenta[],
           },
-        ],
+        ] as ISubcategoria[],
       });
     }
 
@@ -114,7 +120,7 @@ export class EEFFService {
             orden: 999,
             saldo: 0,
             cuentas: [],
-          });
+          } as ISubcategoria);
         }
 
         // tomamos la primera subcategoría y agregamos la cuenta especial
@@ -123,7 +129,7 @@ export class EEFFService {
           nombre: 'Total Ganancia Bruta',
           saldo: saldoCat6,
           id_fsa: 'GB',
-        });
+        } as ICuenta);
 
         // actualizar saldos de cat7 y del macro
         categoria7.saldo += saldoCat6;
@@ -165,7 +171,7 @@ export class EEFFService {
           orden: 999,
           saldo: categoria8.saldo,
           cuentas: [],
-        });
+        } as ISubcategoria);
 
         categoria5.saldo += categoria8.saldo;
         macroPatrimonio.saldo += categoria8.saldo;
@@ -189,8 +195,8 @@ export class EEFFService {
   agruparBalancePorCategoria(
     balances: IBalanceGet[],
     fsas: any[]
-  ): IVistaEEFF[] {
-    const agrupado: { [categoria: string]: IVistaEEFF } = {};
+  ): ICategoria[] {
+    const agrupado: { [categoria: string]: ICategoria } = {};
     const idsSinFiltroSaldoCero = [6, 7, 8, 9];
 
     for (const item of balances) {
@@ -218,7 +224,7 @@ export class EEFFService {
           id_cate,
           saldo: 0,
           subcategorias: [],
-        };
+        } as ICategoria;
       }
 
       const categoriaRef = agrupado[categoria];
@@ -233,7 +239,7 @@ export class EEFFService {
           orden: ordenSubcategoria,
           saldo: 0,
           cuentas: [],
-        };
+        }as ISubcategoria;
         categoriaRef.subcategorias.push(subcategoria);
       }
 
@@ -242,7 +248,7 @@ export class EEFFService {
         nombre: item.nombre,
         saldo: item.saldo,
         id_fsa: item.id_fsa || 'sin_fsa',
-      });
+      } as ICuenta);
 
       subcategoria.saldo += item.saldo;
       categoriaRef.saldo += item.saldo;
@@ -306,29 +312,172 @@ export class EEFFService {
     }
     return macros;
   }
+// ----------------------------------------------------
+  // NUEVA FUNCIÓN COMPARATIVA
+  // ----------------------------------------------------
 
-  // eeff.service.ts
-  public exportarCSV(macros: IMacroCategoria[]): void {
-    let csv = 'MacroCategoria,Categoria,Subcategoria,Cuenta,Saldo\n';
+  /**
+   * Genera una vista comparativa entre dos estructuras de EEFF agrupadas.
+   * Asume que `balanceActual` es el periodo más reciente y `balanceAnterior` es el de comparación.
+   *
+   * @param balanceActual Estructura EEFF agrupada del periodo actual.
+   * @param balanceAnterior Estructura EEFF agrupada del periodo anterior.
+   * @returns Estructura comparativa con saldos, diferencias y variaciones.
+   */
+  public generarVistaComparativa(
+    balanceActual: IMacroCategoria[],
+    balanceAnterior: IMacroCategoria[]
+  ): IMacroCategoriaComparativa[] {
+    const vistaComparativa: IMacroCategoriaComparativa[] = [];
+    // Mapeamos el balance anterior por nombre de macro para búsqueda rápida
+    const balancesAnterioresMap = new Map<string, IMacroCategoria>(
+      balanceAnterior.map((m) => [m.nombre, m])
+    );
 
-    for (const macro of macros) {
-      for (const categoria of macro.categorias) {
-        for (const subcategoria of categoria.subcategorias) {
-          for (const cuenta of subcategoria.cuentas) {
-            csv += `"${macro.nombre}","${categoria.categoria}","${subcategoria.descripcion}","${cuenta.nombre}",${cuenta.saldo}\n`;
+    for (const macroActual of balanceActual) {
+      const macroAnterior = balancesAnterioresMap.get(macroActual.nombre);
+
+      // Crear la nueva macro comparativa
+      const macroComp: IMacroCategoriaComparativa = this.crearMacroComp(
+        macroActual,
+        macroAnterior
+      );
+
+      // Mapear y comparar categorías
+      // Mapeamos por id_cate para búsqueda rápida
+      const categoriasAnterioresMap = new Map<number, ICategoria>(
+        macroAnterior?.categorias.map((c) => [c.id_cate!, c]) ?? []
+      );
+
+      for (const categoriaActual of macroActual.categorias) {
+        const categoriaAnterior = categoriasAnterioresMap.get(
+          categoriaActual.id_cate!
+        );
+
+        const categoriaComp: ICategoriaComparativa = this.crearCategoriaComp(
+          categoriaActual,
+          categoriaAnterior
+        );
+
+        // Mapear y comparar subcategorías
+        // Mapeamos por id_fsa para búsqueda rápida
+        const subcategoriasAnterioresMap = new Map<string, ISubcategoria>(
+          categoriaAnterior?.subcategorias.map((s) => [s.id_fsa, s]) ?? []
+        );
+
+        for (const subActual of categoriaActual.subcategorias) {
+          const subAnterior = subcategoriasAnterioresMap.get(subActual.id_fsa);
+
+          const subComp: ISubcategoriaComparativa = this.crearSubComp(
+            subActual,
+            subAnterior
+          );
+
+          // Mapear y comparar cuentas
+          // Mapeamos por num_cuenta para búsqueda rápida
+          const cuentasAnterioresMap = new Map<string, ICuenta>(
+            subAnterior?.cuentas.map((c) => [c.num_cuenta, c]) ?? []
+          );
+
+          for (const cuentaActual of subActual.cuentas) {
+            const cuentaAnterior = cuentasAnterioresMap.get(
+              cuentaActual.num_cuenta
+            );
+
+            const cuentaComp: ICuentaComparativa = this.crearCuentaComp(
+              cuentaActual,
+              cuentaAnterior
+            );
+
+            subComp.cuentas.push(cuentaComp);
           }
+          categoriaComp.subcategorias.push(subComp);
         }
+        macroComp.categorias.push(categoriaComp);
       }
+
+      vistaComparativa.push(macroComp);
     }
 
-    // Crear blob y descargar
-    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-    const url = window.URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.setAttribute('download', 'eeff.csv');
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+    return vistaComparativa;
   }
+
+  // --- Funciones auxiliares para el cálculo (privadas) ---
+
+  private calcularVariacion(saldoActual: number, saldoAnterior: number): number {
+    const diferencia = saldoActual - saldoAnterior;
+
+    // Evitar división por cero
+    if (saldoAnterior === 0) {
+      // Si el saldo anterior es 0 y el actual es diferente de 0, la variación es muy grande.
+      return saldoActual === 0 ? 0 : 999999; // Usar un valor grande (999999%) para indicar cambio de 0 a X
+    }
+
+    return (diferencia / saldoAnterior) * 100;
+  }
+
+  private crearMacroComp(
+    actual: IMacroCategoria,
+    anterior?: IMacroCategoria
+  ): IMacroCategoriaComparativa {
+    const saldoAnterior = anterior?.saldo ?? 0;
+    const diferencia = actual.saldo - saldoAnterior;
+
+    return {
+      ...actual,
+      categorias: [],
+      saldoAnterior,
+      diferencia,
+      variacion: this.calcularVariacion(actual.saldo, saldoAnterior),
+    } as IMacroCategoriaComparativa;
+  }
+
+  private crearCategoriaComp(
+    actual: ICategoria,
+    anterior?: ICategoria
+  ): ICategoriaComparativa {
+    const saldoAnterior = anterior?.saldo ?? 0;
+    const diferencia = actual.saldo - saldoAnterior;
+
+    return {
+      ...actual,
+      subcategorias: [],
+      saldoAnterior,
+      diferencia,
+      variacion: this.calcularVariacion(actual.saldo, saldoAnterior),
+    } as ICategoriaComparativa;
+  }
+
+  private crearSubComp(
+    actual: ISubcategoria,
+    anterior?: ISubcategoria
+  ): ISubcategoriaComparativa {
+    const saldoAnterior = anterior?.saldo ?? 0;
+    const diferencia = actual.saldo - saldoAnterior;
+
+    return {
+      ...actual,
+      cuentas: [],
+      saldoAnterior,
+      diferencia,
+      variacion: this.calcularVariacion(actual.saldo, saldoAnterior),
+    } as ISubcategoriaComparativa;
+  }
+
+  private crearCuentaComp(
+    actual: ICuenta,
+    anterior?: ICuenta
+  ): ICuentaComparativa {
+    const saldoAnterior = anterior?.saldo ?? 0;
+    const diferencia = actual.saldo - saldoAnterior;
+
+    return {
+      ...actual,
+      saldoAnterior,
+      diferencia,
+      variacion: this.calcularVariacion(actual.saldo, saldoAnterior),
+    } as ICuentaComparativa;
+  }
+
+
 }
