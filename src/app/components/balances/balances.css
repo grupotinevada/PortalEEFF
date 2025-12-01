@@ -1,14 +1,48 @@
-.modal-fullscreen-custom .modal-dialog {
-  width: 100vw;
-  max-width: 100vw;
-  height: 100vh;
-  margin: 0;
-  padding: 0;
+/* ================================================= */
+/* 🛠️ CORRECCIÓN DE ALTURAS UNIFORMES (TOOLBAR) 🛠️ */
+/* ================================================= */
+
+/* Forzamos que TODOS los inputs dentro del formulario tengan la misma altura */
+:host ::ng-deep .p-inputtext,
+:host ::ng-deep .p-select,
+:host ::ng-deep .p-datepicker,
+:host ::ng-deep .p-datepicker input {
+  height: 36px !important;
+  /* Altura fija compacta */
+  min-height: 36px !important;
+  font-size: 0.9rem !important;
+  /* Tamaño de letra uniforme */
+  line-height: 1.5 !important;
 }
 
-.modal-fullscreen-custom .modal-content {
-  height: 100vh;
-  border-radius: 0;
+/* Alineación vertical del texto dentro de los Dropdowns/Selects */
+:host ::ng-deep .p-select .p-select-label,
+:host ::ng-deep .p-dropdown .p-dropdown-label {
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
   display: flex;
-  flex-direction: column;
+  align-items: center;
+  height: 100%;
+}
+
+/* Corrección específica para el input dentro del Datepicker */
+:host ::ng-deep .p-datepicker input {
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+  border-radius: 6px !important;
+  /* Coherencia en bordes */
+}
+
+/* Asegurar que los iconos dentro de los inputs no descuadren */
+:host ::ng-deep .p-input-icon-left>i,
+:host ::ng-deep .p-input-icon-right>i {
+  margin-top: -0.55rem !important;
+  /* Centrado vertical del icono */
+}
+
+/* Ajuste para el botón de dropdown que a veces queda grande */
+:host ::ng-deep .p-select .p-select-trigger,
+:host ::ng-deep .p-dropdown .p-dropdown-trigger {
+  height: 36px !important;
+  width: 2rem !important;
 }

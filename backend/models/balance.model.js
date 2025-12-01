@@ -130,11 +130,29 @@ class BalanceModel {
   }
 
   /**
-   * Busca balances con paginación y filtros.
-   */
+    * Busca balances con paginación, filtros y ordenamiento dinámico.
+    */
   static async findDistinctBalances(filters) {
     const { joinClause, whereClause, params } =
       BalanceModel._buildCommonQueryParts(filters);
+
+    const sortMapping = {
+      'nombre_conjunto': 'MAX(b.nombre_conjunto)',
+      'ejercicio': 'MAX(b.ejercicio)',
+      'empresa_desc': 'MAX(em.descripcion)',
+      'fecha_inicio': 'MIN(b.fecha_inicio)',
+      'fecha_fin': 'MAX(b.fecha_fin)',
+      'fecha_creacion': 'MAX(b.fecha_creacion)',
+      'id_mapping': 'MAX(b.id_mapping)',
+      'estado_desc': 'MAX(es.desc)',
+      'username': 'MAX(u.username)'
+    };
+
+    const sortField = filters.sortField && sortMapping[filters.sortField]
+      ? sortMapping[filters.sortField]
+      : 'MAX(b.fecha_creacion)';
+
+    const sortOrder = parseInt(filters.sortOrder) === 1 ? 'ASC' : 'DESC';
 
     const sql = `
     SELECT 
@@ -156,15 +174,15 @@ class BalanceModel {
       ${joinClause}
       ${whereClause}
       GROUP BY b.id_blce
-      ORDER BY MAX(b.fecha_creacion) DESC
+      ORDER BY ${sortField} ${sortOrder}
       LIMIT ? OFFSET ?;
     `;
 
     // Añadimos los parámetros de paginación al final
     const queryParams = [
       ...params,
-      parseInt(filters.limit, 10) || 10, // Valor por defecto para limit
-      parseInt(filters.offset, 10) || 0, // Valor por defecto para offset
+      parseInt(filters.limit, 10) || 10,
+      parseInt(filters.offset, 10) || 0,
     ];
 
     const [rows] = await pool.query(sql, queryParams);
@@ -256,7 +274,7 @@ class BalanceModel {
     return { whereClause, params };
   }
 
-static async findById(id_blce, allowedEmpresaIds) {
+  static async findById(id_blce, allowedEmpresaIds) {
     if (typeof id_blce !== "string" || id_blce.trim().length === 0) {
       throw new Error("ID de balance inválido");
     }
@@ -274,7 +292,7 @@ static async findById(id_blce, allowedEmpresaIds) {
         cta_fsa_mapeo cfm ON b.id_mapping = cfm.id_mapping 
                         AND b.id_fsa = cfm.id_fsa 
                         AND b.num_cuenta = cfm.num_cuenta
-    WHERE b.id_blce = ?`; 
+    WHERE b.id_blce = ?`;
 
     const params = [id_blce];
     if (allowedEmpresaIds !== null) {
@@ -285,7 +303,7 @@ static async findById(id_blce, allowedEmpresaIds) {
     }
     // Si es 'global' (null), no se añade este filtro.
 
-    sql += ";"; 
+    sql += ";";
 
     const [rows] = await pool.query(sql, params);
     return rows;
@@ -307,7 +325,7 @@ static async findById(id_blce, allowedEmpresaIds) {
       "BalanceModel.updateById llamado con id_blce:",
       id_blce,
       "y balances: ",
-      balances.slice(0,1)
+      balances.slice(0, 1)
     );
     const connection = await pool.getConnection();
 

@@ -1,57 +1,21 @@
-/* Usamos :host para encapsular los estilos al componente */
+/* --- LAYOUT GENERAL --- */
 :host {
   display: block;
-  /* El color de fondo debe venir del layout padre, 
-     pero si este componente se ve solo, ayuda. */
-  background-color: #f8f9fa; /* Gris claro como el fondo de tu imagen */
-  width: 100%;
+  background-color: #f8f9fa;
+  /* Fondo gris muy suave para el área principal */
+  min-height: 100vh;
 }
 
-.card {
-  /* Una sombra suave para levantar el formulario */
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-  border: none;
-  border-radius: 8px;
-}
-
-.card-header {
-  border-bottom: 1px solid #eee;
-}
-
-.card-footer {
-  border-top: 1px solid #eee;
-}
-
-.form-label {
-  font-weight: 500;
-}
-
-/* Hace que los checkboxes en línea se vean mejor */
-.form-check-inline {
-  display: flex;
-  align-items: center;
-}
-
-.form-check-input {
-  margin-top: 0;
-  margin-right: 0.5rem;
-}
-
-
-/* --- 1. ESTILOS DE LAYOUT (NUEVO) --- */
-
-:host {
-  display: block;
-  /* El fondo general es blanco, el sidebar lo pinta de verde */
-  background-color: #ffffff; 
-}
-
-/* La barra lateral verde */
+/* --- SIDEBAR VERDE MODERNIZADA --- */
 .admin-sidebar {
-  padding: 1.5rem 1rem;
-  /* Alto mínimo: 100% del viewport menos la altura de un navbar estándar (aprox 56px) */
-  min-height: calc(100vh - 56px); 
+  min-height: 100vh;
+
+  /* Degradado sutil */
   color: white;
+}
+
+.ls-1 {
+  letter-spacing: 1px;
 }
 
 .admin-sidebar-menu {
@@ -62,55 +26,113 @@
 
 .admin-sidebar-menu li a {
   display: block;
-  padding: 0.75rem 1rem;
+  padding: 0.8rem 1rem;
   text-decoration: none;
-  color: white;
-  border-radius: 6px;
+  color: rgba(255, 255, 255, 0.8);
+  border-radius: 8px;
   font-weight: 500;
+  transition: all 0.2s;
+  margin-bottom: 0.25rem;
 }
 
-/* El ítem activo "Usuarios" (fondo blanco, texto verde) */
+.admin-sidebar-menu li a:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  color: white;
+  transform: translateX(4px);
+}
+
 .admin-sidebar-menu li.active a {
   background-color: white;
-  color: #1D8348; /* Texto del mismo color que el fondo */
+  color: #198754;
+  font-weight: 700;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
-/* Hover para los ítems no activos */
-.admin-sidebar-menu li a:hover {
-  background-color: rgba(255, 255, 255, 0.15); /* Hover sutil */
-}
-.admin-sidebar-menu li.active a:hover {
-  background-color: white; /* El activo no cambia en hover */
-}
-
-/* El área de contenido blanca */
+/* Área de contenido */
 .admin-content {
-  padding: 2rem;
-  background-color: #ffffff;
-  /* Asegura que el contenido pueda scrollear si es muy largo */
-  min-height: calc(100vh - 56px);
-  overflow-y: auto;
+  min-height: 100vh;
+  /* background-color se maneja en el HTML (bg-light) */
 }
 
-/* Apuntamos al checkbox que tiene nuestra clase 'is-enabled' */
-:host ::ng-deep .p-checkbox.is-enabled .p-checkbox-box {
-  /* Cambiamos el fondo y borde de la caja */
-  background-color: #198754 !important; /* Verde (btn-success) */
+/* ================================================= */
+/* 🎨 ESTILOS UNIFICADOS (COMO EN BALANCES) 🎨 */
+/* ================================================= */
+
+/* 1. Botones con transición */
+.transition-btn {
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.transition-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15) !important;
+}
+
+/* 2. Overrides de PrimeNG para Inputs Verdes */
+:host ::ng-deep .p-inputtext.border-success-subtle {
+  border-color: #a3cfbb !important;
+  background-color: #fff;
+}
+
+:host ::ng-deep .p-inputtext.border-success-subtle:enabled:focus {
   border-color: #198754 !important;
+  box-shadow: 0 0 0 0.2rem rgba(25, 135, 84, 0.15) !important;
 }
 
-/* Cambiamos el color del icono (el "check") a blanco */
-:host ::ng-deep .p-checkbox.is-enabled .p-checkbox-icon {
-  color: #ffffff !important;
+/* Uniformidad de Altura en Inputs */
+:host ::ng-deep .p-inputtext {
+  min-height: 42px;
+  border-radius: 0.5rem !important;
 }
 
+/* Iconos dentro de inputs */
+:host ::ng-deep .p-input-icon-left>i {
+  margin-top: -0.6rem !important;
+}
 
-/* --- Estilo Deshabilitado (Rojo) --- */
+/* 3. Tabla (Estilo Header Translúcido) */
+:host ::ng-deep .p-datatable .p-datatable-thead>tr>th {
+  background-color: rgba(25, 135, 84, 0.08) !important;
+  color: #000000 !important;
+  border: none;
+  font-size: 0.9rem;
+  letter-spacing: 0.3px;
+}
 
-/* Apuntamos al checkbox que tiene nuestra clase 'is-disabled' */
-/* El !important es necesario para sobrescribir los estilos de "disabled" de PrimeNG */
-:host ::ng-deep .p-checkbox.is-disabled .p-checkbox-box {
-  /* Cambiamos el fondo y borde de la caja a rojo */
-  background-color: #dc3545 !important; /* Rojo (btn-danger) */
-  border-color: #dc3545 !important;
+/* Iconos de Sort */
+:host ::ng-deep .p-datatable .p-sortable-column .p-sortable-column-icon {
+  color: #198754 !important;
+  opacity: 0.6;
+}
+
+:host ::ng-deep .p-datatable .p-sortable-column.p-highlight .p-sortable-column-icon {
+  color: #146c43 !important;
+  opacity: 1;
+}
+
+/* Cuerpo de Tabla */
+:host ::ng-deep .p-datatable .p-datatable-tbody>tr>td {
+  border-bottom: 1px solid #f2f2f2;
+  padding: 1rem 0.75rem;
+  vertical-align: middle;
+}
+
+/* Hover en filas */
+:host ::ng-deep .p-datatable.p-datatable-hoverable-rows .p-datatable-tbody>tr:not(.p-highlight):hover {
+  background-color: #f8fffb !important;
+  /* Verde muy muy suave */
+}
+
+/* Paginador Estilizado */
+:host ::ng-deep .p-paginator {
+  border-top: 1px solid #f0f0f0;
+  padding: 1rem;
+}
+
+:host ::ng-deep .p-paginator .p-paginator-pages .p-paginator-page.p-highlight {
+  background-color: #e6f4ea !important;
+  color: #198754 !important;
+  border-radius: 50%;
+  border: 0;
+  font-weight: bold;
 }

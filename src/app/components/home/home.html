@@ -1,63 +1,73 @@
 <app-navbar></app-navbar>
 
-<main class="container-fluid mt-5 pt-4">
+<div class="container-fluid px-4 my-5">
   <div class="row justify-content-center">
-    <div class="col-lg-10 col-xl-8">
-      <div class="text-center mb-5">
-        <h1 class="display-5 fw-bold text-success mb-3">
-          <i class="bi bi-file-earmark-arrow-up me-2"></i>
-          Carga de Archivos SAP
-        </h1>
-        <p class="lead text-dark fw-bold">
-          Sube tus archivos HTM generados por SAP para procesamiento y análisis
+
+    <div class="col-12 col-md-8 col-lg-6 col-xl-5">
+
+      <div class="text-center mb-5 animate-slide-down">
+        <h2 class="fw-bold text-white mb-2 text-shadow-sm">Importar Archivos</h2>
+        <p class="text-dark text-opacity-75 text-shadow-sm" style="font-size: 1.1rem;">
+          Sube los balances generados por SAP (.HTM) para generar tus estados financieros.
         </p>
       </div>
 
-      <!-- Área de carga de archivos: solo si no hay archivo seleccionado -->
-      <div *ngIf="!selectedFile" class="card shadow-sm mb-4">
-        <div class="card-body p-4">
-          <div
-            class="border border-3 border-dashed border-success rounded-3 p-5 bg-light bg-opacity-10 text-center position-relative"
-            style="cursor: pointer;"
-            (drop)="onFileDrop($event)"
-            (dragover)="onDragOver($event)"
-            (dragleave)="onDragLeave($event)"
-            (click)="fileInput.click()"
-          >
-            <input
-              #fileInput
-              type="file"
-              class="d-none"
-              (change)="onFileSelected($event)"
-              accept=".htm"
-            />
+      <div class="card border-0 shadow-lg rounded-5 overflow-hidden position-relative animate-fade-in">
 
-            <div class="p-3">
-              <i class="bi bi-cloud-arrow-up fs-1 text-success"></i>
-              <h5 class="mt-3 mb-1 fw-bold">
-                Arrastra tu archivo aquí o haz clic para seleccionar
-              </h5>
-              <p class="text-muted mb-0">
-                Formatos aceptados: .htm (Archivos SAP)
-              </p>
-              <small class="text-muted">Tamaño máximo: 10MB</small>
+        <div class="bg-success" style="height: 8px;"></div>
+
+        <div class="card-body p-5">
+
+          <div *ngIf="!savedFileName"
+            class="upload-area position-relative rounded-4 d-flex flex-column align-items-center justify-content-center text-center p-5"
+            [class.drag-over]="isDragOver" (drop)="onFileDrop($event)" (dragover)="onDragOver($event)"
+            (dragleave)="onDragLeave($event)" (click)="fileInput.click()">
+
+            <input #fileInput type="file" class="d-none" (change)="onFileSelected($event)" accept=".htm" />
+
+            <div class="icon-circle mb-4 shadow-sm">
+              <i class="bi bi-cloud-arrow-up-fill text-success" style="font-size: 2.5rem;"></i>
+            </div>
+
+            <h4 class="fw-bold text-dark mb-2">Suelta tu archivo aquí</h4>
+            <p class="text-muted mb-4 px-4">
+              Arrastra el archivo directamente o haz clic para buscarlo en tu carpeta.
+            </p>
+
+            <span class="badge bg-light text-secondary border rounded-pill px-3 py-2 fw-normal">
+              <i class="bi bi-filetype-html me-1 text-success"></i> Solo archivos <strong>.HTM</strong>
+            </span>
+          </div>
+
+          <div *ngIf="savedFileName" class="success-area text-center py-5 animate-scale-in">
+            <div class="success-icon mb-4">
+              <i class="bi bi-check-lg text-white" style="font-size: 3rem;"></i>
+            </div>
+
+            <h3 class="fw-bold text-success mb-2">¡Archivo Procesado!</h3>
+            <p class="text-muted mb-4">
+              Se ha cargado <strong>{{ savedFileName }}</strong> correctamente al sistema.
+            </p>
+
+            <div class="d-flex justify-content-center gap-3">
+              <button class="btn btn-light border shadow-sm rounded-pill px-4 py-2 transition-btn"
+                (click)="savedFileName = null; selectedFile = null">
+                <i class="bi bi-arrow-counterclockwise me-2"></i>Subir otro
+              </button>
+
+              <button class="btn btn-success shadow rounded-pill px-4 py-2 transition-btn" [routerLink]="['/balances']">
+                <i class="bi bi-bar-chart-fill me-2"></i>Ver Balances
+              </button>
             </div>
           </div>
+
         </div>
       </div>
 
-      <!-- Mensaje de éxito si se confirmó archivo -->
-      <div *ngIf="savedFileName" class="alert alert-success mt-4 d-flex align-items-center">
-        <i class="bi bi-check-circle-fill me-2 fs-4"></i>
-        <div>
-          <strong>Archivo procesado correctamente:</strong> {{ savedFileName }}
-        </div>
+      <div class="text-center mt-4 text-muted small opacity-75">
+        <i class="bi bi-shield-check me-1"></i> Sistema seguro de gestión financiera
       </div>
+
     </div>
   </div>
-</main>
-
-<!-- <section class="container-fluid mt-4 mb-5 text-center d-flex justify-content-center gap-3">
-      <button class="btn btn-info" (click)="clonar()">Clonar Mapping</button>
-    <button class="btn btn-danger" (click)="eliminar()">Eliminar Mapping</button>
-</section> -->
+</div>

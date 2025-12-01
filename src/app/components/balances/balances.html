@@ -1,232 +1,174 @@
 <app-navbar></app-navbar>
 
-<main class="container-fluid">
-  <div class="card shadow-sm border-0 mt-2 bg-transparent">
-    <div class="card-body">
-      <h5 class="fw-semibold mb-3 text-success">🧪 Filtros de búsqueda</h5>
-      
-<form [formGroup]="filtersForm" (ngSubmit)="onApplyFilters()">
-  <div class="row row-cols-1 row-cols-md-auto g-3 align-items-end mb-3">
-    
-    <div class="col">
-      <label class="form-label block mb-1">Nombre conjunto</label>
-      <input 
-        pInputText 
-        type="text" 
-        class="w-100 p-inputtext-sm" 
-        placeholder="Buscar por nombre..." 
-        formControlName="nombre" 
-      />
-    </div>
-    
+<div class="container-fluid px-4 my-4">
 
-    <div class="col">
-      <label class="form-label block mb-1">Desde</label>
-      <p-datepicker 
-        formControlName="fechaInicio" 
-        dateFormat="dd/mm/yy" 
-        [showIcon]="true" 
-        placeholder="dd/mm/aaaa"
-        styleClass="w-100"
-        inputStyleClass="p-inputtext-sm w-100">
-      </p-datepicker>
-    </div>
-
-    <div class="col">
-      <label class="form-label block mb-1">Hasta</label>
-      <p-datepicker 
-        formControlName="fechaFin" 
-        dateFormat="dd/mm/yy" 
-        [showIcon]="true" 
-        placeholder="dd/mm/aaaa"
-        styleClass="w-100"
-        inputStyleClass="p-inputtext-sm w-100">
-      </p-datepicker>
-    </div>
-        <div class="col">
-      <label class="form-label d-block mb-1">Ejercicio</label>
-      
-      <p-select 
-        [options]="anios" 
-        formControlName="ejercicio" 
-        placeholder="Año" 
-        
-        styleClass="p-inputtext-sm"
-        appendTo="body" 
-        styleClass="w-100" >
-        </p-select>
-    </div>
-        <div class="col">
-      <label class="form-label block mb-1">Empresa</label>
-      <p-select 
-        [options]="empresas" 
-        formControlName="idEmpresa" 
-        optionLabel="descripcion" 
-        optionValue="id_empresa" 
-        placeholder="Todos" 
-        
-        styleClass="w-100">
-      </p-select>
-    </div>
-
-    <div class="col">
-      <label class="form-label block mb-1">Mapping</label>
-      <p-select 
-        [options]="mappings" 
-        formControlName="idMapping" 
-        optionValue="id_mapping" 
-        placeholder="Todas" 
-        
-        styleClass="w-100" 
-        [filter]="true" 
-        filterBy="descripcion">
-        
-        <ng-template let-item #selectedItem>
-           {{ item.id_mapping }} - {{ item.descripcion }}
-        </ng-template>
-        <ng-template let-item #item>
-           {{ item.id_mapping }} - {{ item.descripcion }}
-        </ng-template>
-      </p-select>
-    </div>
-
-    <div class="col">
-      <label class="form-label block mb-1">Estado</label>
-      <p-select 
-        [options]="estados" 
-        formControlName="idEstado" 
-        optionLabel="desc" 
-        optionValue="id_estado" 
-        placeholder="Todos" 
-        
-        styleClass="w-100">
-      </p-select>
-    </div>
-
-
-
-    <div class="col d-flex gap-1 ">
-      <div class="col d-flex gap-1">
-        <button type="submit" class="btn btn-warning btn-sm text-white">
-          <i class="bi bi-funnel-fill"></i> Filtrar
-        </button>
+  <div class="d-flex align-items-center justify-content-between mb-3">
+    <div class="d-flex align-items-center gap-2">
+      <div class="bg-success bg-opacity-10 text-success rounded p-2">
+        <i class="bi bi-file-earmark-spreadsheet fs-5"></i>
       </div>
-      
-      <button type="button" class="btn btn-secondary btn-sm" (click)="onResetFilters()">
-          <i class="bi bi-eraser-fill"></i>Limpiar
-      </button>
-        
-      <button type="button" class="btn btn-outline-primary btn-sm" disabled>
-          <i class="bi bi-download"></i> Exportar Lista de balances
-      </button>
+      <div>
+        <h4 class="fw-bold text-dark mb-0 ls-tight">Hoja de trabajo</h4>
+        <small class="text-muted">Puedes visualizar y editar balances guardados en el sistema</small>
+      </div>
+    </div>
+
+    <span class="badge bg-white text-dark border shadow-sm py-2 px-3 fw-normal" *ngIf="total > 0">
+      Total : <strong class="ms-1">{{ total }} balances</strong>
+    </span>
+  </div>
+
+  <div class="card border-0 shadow-lg rounded-4 overflow-hidden">
+
+    <div class="bg-success" style="height: 4px;"></div>
+
+    <div class="bg-light border-bottom p-3">
+      <form [formGroup]="filtersForm" (ngSubmit)="onApplyFilters()">
+
+        <div class="d-flex flex-column gap-3">
+
+          <div class="d-flex flex-wrap align-items-end gap-2">
+
+            <div class="flex-grow-1" style="min-width: 200px;">
+              <span class="p-input-icon-left w-100">
+                <i class="bi bi-search text-muted"> Filtros balances</i>
+                <input pInputText type="text" class="w-100 p-inputtext-sm border-0 shadow-sm custom-input"
+                  placeholder="Buscar por nombre..." formControlName="nombre" />
+              </span>
+            </div>
+
+            <div style="width: 100px;">
+              <p-select [options]="anios" formControlName="ejercicio" placeholder="Año"
+                styleClass="w-100 p-inputtext-sm border-0 shadow-sm custom-input" appendTo="body"></p-select>
+            </div>
+
+            <div style="min-width: 180px; max-width: 250px;">
+              <p-select [options]="empresas" formControlName="idEmpresa" optionLabel="descripcion"
+                optionValue="id_empresa" placeholder="Empresa"
+                styleClass="w-100 p-inputtext-sm border-0 shadow-sm custom-input" [filter]="true"
+                filterBy="descripcion"></p-select>
+            </div>
+
+            <div class="d-flex gap-1 ms-auto">
+              <button type="button" class="btn btn-white border shadow-sm text-secondary btn-sm px-3"
+                (click)="showAdvancedFilters = !showAdvancedFilters" [class.active]="showAdvancedFilters"
+                pTooltip="Más filtros" tooltipPosition="top">
+                <i class="bi bi-sliders2 me-1"></i> <span class="d-none d-md-inline">Filtros Avanzados</span>
+                <span class="badge bg-success ms-1 rounded-circle"
+                  *ngIf="filtersForm.get('fechaInicio')?.value || filtersForm.get('idMapping')?.value || filtersForm.get('idEstado')?.value"
+                  style="font-size: 6px; vertical-align: top;"> </span>
+              </button>
+
+              <button type="submit" class="btn btn-success shadow-sm btn-sm px-3 fw-medium" pTooltip="Buscar"
+                tooltipPosition="top">
+                <i class="bi bi-search"></i>
+              </button>
+
+              <button type="button" class="btn btn-light border shadow-sm text-muted btn-sm px-3"
+                (click)="onResetFilters()" pTooltip="Limpiar" tooltipPosition="top">
+                <i class="bi bi-x-lg"></i>
+              </button>
+            </div>
+          </div>
+
+          <div *ngIf="showAdvancedFilters" class="p-3 bg-white rounded border shadow-sm animate-fade-in">
+            <div class="row g-2">
+              <div class="col-12 text-muted small fw-bold text-uppercase mb-1">Filtros Detallados</div>
+
+              <div class="col-6 col-md-3">
+                <label class="small text-muted mb-1">Estado</label>
+                <p-select [options]="estados" formControlName="idEstado" optionLabel="desc" optionValue="id_estado"
+                  placeholder="Todos" styleClass="w-100 p-inputtext-sm border-secondary-subtle"></p-select>
+              </div>
+
+              <div class="col-6 col-md-3">
+                <label class="small text-muted mb-1">Mapping</label>
+                <p-select [options]="mappings" formControlName="idMapping" optionValue="id_mapping"
+                  placeholder="Seleccionar" styleClass="w-100 p-inputtext-sm border-secondary-subtle"
+                  [filter]="true"></p-select>
+              </div>
+
+              <div class="col-6 col-md-3">
+                <label class="small text-muted mb-1">Desde</label>
+                <p-datepicker formControlName="fechaInicio" dateFormat="dd/mm/yy" [showIcon]="false"
+                  placeholder="dd/mm/aaaa" styleClass="w-100"
+                  inputStyleClass="w-100 p-inputtext-sm border-secondary-subtle"></p-datepicker>
+              </div>
+
+              <div class="col-6 col-md-3">
+                <label class="small text-muted mb-1">Hasta</label>
+                <p-datepicker formControlName="fechaFin" dateFormat="dd/mm/yy" [showIcon]="false"
+                  placeholder="dd/mm/aaaa" styleClass="w-100"
+                  inputStyleClass="w-100 p-inputtext-sm border-secondary-subtle"></p-datepicker>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </form>
+    </div>
+
+    <div class="card-body p-0">
+      <p-table #dt [value]="balances" [lazy]="true" (onLazyLoad)="onTableLazyLoad($event)" [paginator]="true"
+        [rows]="10" [totalRecords]="total" [loading]="loading" [rowsPerPageOptions]="[5, 10, 20]"
+        [showCurrentPageReport]="true" currentPageReportTemplate="{first}-{last} de {totalRecords}"
+        styleClass="p-datatable-gridlines p-datatable-sm p-datatable-hoverable-rows" responsiveLayout="scroll">
+        <ng-template pTemplate="header">
+          <tr class="bg-light text-secondary small text-uppercase">
+            <th style="width: 50px" class="text-center border-bottom-0">#</th>
+            <th pSortableColumn="nombre_conjunto" class="border-bottom-0 text-dark">Nombre <p-sortIcon
+                field="nombre_conjunto"></p-sortIcon></th>
+            <th pSortableColumn="ejercicio" class="text-center border-bottom-0 text-dark">Año <p-sortIcon
+                field="ejercicio"></p-sortIcon></th>
+            <th pSortableColumn="empresa_desc" class="border-bottom-0 text-dark">Empresa <p-sortIcon
+                field="empresa_desc"></p-sortIcon></th>
+            <th pSortableColumn="fecha_inicio" class="border-bottom-0 text-dark">Periodo <p-sortIcon
+                field="fecha_inicio"></p-sortIcon></th>
+            <th pSortableColumn="id_mapping" class="border-bottom-0 text-dark">Mapping <p-sortIcon
+                field="id_mapping"></p-sortIcon></th>
+            <th pSortableColumn="estado_desc" class="text-center border-bottom-0 text-dark">Estado <p-sortIcon
+                field="estado_desc"></p-sortIcon></th>
+            <th pSortableColumn="username" class="border-bottom-0 text-dark">Usuario <p-sortIcon
+                field="username"></p-sortIcon></th>
+            <th class="text-center border-bottom-0 text-dark" style="width: 100px;">Acciones</th>
+          </tr>
+        </ng-template>
+
+        <ng-template pTemplate="body" let-b let-rowIndex="rowIndex">
+          <tr class="border-bottom border-light">
+            <td class="text-center text-muted small">{{ rowIndex + 1 }}</td>
+            <td>
+              <div class="fw-medium text-dark">{{ b.nombre_conjunto }}</div>
+            </td>
+            <td class="text-center"><span class="badge bg-light text-dark border">{{ b.ejercicio }}</span></td>
+            <td><span class="text-truncate d-block" style="max-width: 150px;">{{ b.empresa_desc }}</span></td>
+            <td class="small text-muted">{{ b.fecha_inicio | date: 'dd/MM/yy'}} - {{ b.fecha_fin | date: 'dd/MM/yy'}}
+            </td>
+            <td><span class="badge bg-light text-secondary border fw-normal">{{ b.id_mapping }}</span></td>
+            <td class="text-center">
+              <span class="badge rounded-pill px-2"
+                [ngStyle]="{'background-color': b.estado_color, 'color': 'white'}">{{ b.estado_desc }}</span>
+            </td>
+            <td><span class="small text-muted">{{ b.username || 'System' }}</span></td>
+            <td class="text-center">
+              <div class="d-flex justify-content-center gap-1">
+                <button class="btn btn-sm btn-light border text-primary" (click)="abrirModalEdicion(b.id_blce)"><i
+                    class="bi bi-pencil-fill"></i></button>
+                <button class="btn btn-sm btn-light border text-info" (click)="abrirModal(b.id_blce)"><i
+                    class="bi bi-eye-fill"></i></button>
+              </div>
+            </td>
+          </tr>
+        </ng-template>
+
+        <ng-template pTemplate="emptymessage">
+          <tr>
+            <td colspan="9" class="text-center py-4 text-muted">Sin resultados.</td>
+          </tr>
+        </ng-template>
+      </p-table>
     </div>
   </div>
-</form>
-
-      <div class="table-responsive">
-        <table class="table table-hover align-middle">
-          <thead class="table-light">
-            <tr>
-              <th>#</th>
-              <th>Nombre</th>
-              <th>Ejercicio</th>
-              <th>Empresa</th>
-              <th>Inicio</th>
-              <th>Fin</th>
-              <th>Creación</th>
-              <th>Mapping</th>
-              <th>Estado</th>
-              <th>Usuario</th>
-              <th>Acciones</th>
-            </tr>
-          </thead>
-          <tbody *ngIf="!loading">
-            <ng-container *ngIf="balances.length > 0; else noData">
-              <tr *ngFor="let b of balances; let i = index">
-                <td>{{ (page - 1) * limit + i + 1 }}</td>
-                <td>
-                  <div class="fw-semibold">{{ b.nombre_conjunto }}</div>
-                </td>
-                <td>{{ b.ejercicio }}</td>
-                <td>{{ b.id_empresa }} - {{ b.empresa_desc }}</td>
-                <td>{{ b.fecha_inicio | date: 'dd-MM-yyyy'}}</td>
-                <td>{{ b.fecha_fin | date: 'dd-MM-yyyy'}}</td>
-                <td>{{ b.fecha_creacion| date: 'dd-MM-yyyy'}}</td>
-                <td>
-                  <span class="badge bg-light text-dark">{{ b.id_mapping }} </span>
-                </td>
-                <td>
-                  <span class="badge" [ngStyle]="{'background-color': b.estado_color, 'color': 'white'}">
-                    {{ b.estado_desc }}
-                  </span>
-                </td>
-                <td>
-                  <div class="fw-semibold">{{ b.username || "Usuario" }}</div>
-                  <div class="small text-muted">{{ b.email || "Usuario" }}</div>
-                </td>
-                <td class="text-nowrap">
-                <button
-                  type="button"
-                  class="btn btn-outline-primary btn-sm me-1"
-                  title="Editar"
-                  (click)="abrirModalEdicion(b.id_blce)"
-                >
-                  <i class="bi bi-pencil"></i>
-                </button>
-                <button
-                  type="button"
-                  class="btn btn-outline-info btn-sm me-1"
-                  title="Ver"
-                  (click)="abrirModal(b.id_blce)"
-                >
-                  <i class="bi bi-eye"></i>
-                </button>
-                <button
-                  type="button"
-                  class="btn btn-outline-danger btn-sm"
-                  title="Eliminar"
-                  disabled
-                >
-                  <i class="bi bi-trash"></i>
-                </button>
-              </td>
-              </tr>
-            </ng-container>
-
-          <ng-template #noData>
-          
-            <tr>
-              <td colspan="11" class="py-4 align-middle">
-                <div class="alert alert-info d-flex align-items-center justify-content-center mb-0 w-100 h-100" role="alert" style="min-height:120px;">
-                  <i class="bi bi-info-circle me-2"></i>
-                  No se encontraron resultados.
-                </div>
-              </td>
-            </tr>
-          
-        </ng-template>
-          </tbody>
-        </table>
-      </div>
-
-
-
-      <nav *ngIf="!loading && totalPages > 0" class="mt-3" aria-label="Paginación de balances">
-        <ul class="pagination justify-content-center">
-          <li class="page-item" [class.disabled]="page === 1">
-            <a class="page-link" href="#" (click)="$event.preventDefault(); onPageChange(page - 1)">Anterior</a>
-          </li>
-          <li *ngFor="let p of pages" class="page-item" [class.active]="p === page">
-            <a class="page-link" href="#" (click)="$event.preventDefault(); onPageChange(p)">{{ p }}</a>
-          </li>
-          <li class="page-item" [class.disabled]="page === totalPages">
-            <a class="page-link" href="#" (click)="$event.preventDefault(); onPageChange(page + 1)">Siguiente</a>
-          </li>
-        </ul>
-      </nav>
-    </div>
-  </div>
-  
-</main>
+</div>
 
 <app-spinner [showSpinner]="loading"></app-spinner>

@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { Navbar } from '../navbar/navbar';
 import { PreviewFileService } from '../../services/preview-fie';
 import { CloneMappingPayload } from '../../models/mapping.model';
@@ -8,15 +8,16 @@ import { MappingService } from '../../services/mapping.service';
 
 @Component({
   selector: 'app-home',
-  imports: [CommonModule, Navbar],
+  imports: [CommonModule, Navbar, RouterLink],
   templateUrl: './home.html',
   styleUrl: './home.css',
 })
 export class Home {
   selectedFile: File | null = null;
   savedFileName: string | null = null;
+  isDragOver = false;
 
-  constructor(private previewFileService: PreviewFileService, private router: Router, private mappingService: MappingService) {}
+  constructor(private previewFileService: PreviewFileService, private router: Router, private mappingService: MappingService) { }
 
   onFileSelected(event: Event): void {
     const input = event.target as HTMLInputElement;
@@ -37,18 +38,22 @@ export class Home {
     this.selectedFile = null;
   }
 
-  onDragOver(event: DragEvent): void {
+  onDragOver(event: DragEvent) {
     event.preventDefault();
     event.stopPropagation();
+    this.isDragOver = true; // Activa el estilo visual
   }
 
-  onDragLeave(event: DragEvent): void {
+  onDragLeave(event: DragEvent) {
     event.preventDefault();
     event.stopPropagation();
+    this.isDragOver = false; // Desactiva el estilo visual
   }
 
   onFileDrop(event: DragEvent): void {
     event.preventDefault();
+    event.stopPropagation();
+    this.isDragOver = false;
     const file = event.dataTransfer?.files[0];
     if (file) {
       this.onFileSelected({ target: { files: [file] } } as any);
@@ -66,7 +71,7 @@ export class Home {
       idMappingNuevo: "MP-CLONADO",
       descripcionNueva: 'Mapping clonado con cambios',
       cambios: [
-        { num_cuenta: '1101010000', id_fsa: "11-020"}
+        { num_cuenta: '1101010000', id_fsa: "11-020" }
       ]
     };
 

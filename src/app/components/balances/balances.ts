@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { BalanceService } from '../../services/balance.service';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { BalanceResumen } from '../../models/balance.model';
@@ -25,14 +25,35 @@ import { InputTextModule } from 'primeng/inputtext';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { ButtonModule } from 'primeng/button';
 import { SelectModule } from 'primeng/select';
+import { Table, TableModule, TableLazyLoadEvent } from 'primeng/table';
+import { TooltipModule } from 'primeng/tooltip';
+import { TagModule } from 'primeng/tag';
+
 
 @Component({
   selector: 'app-balances',
-  imports: [CommonModule, Navbar, Spinner, ReactiveFormsModule, DatePickerModule, InputTextModule,InputNumberModule, ButtonModule, SelectModule],
+  imports: [
+    CommonModule,
+    Navbar,
+    Spinner,
+    ReactiveFormsModule,
+    DatePickerModule,
+    InputTextModule,
+    InputNumberModule,
+    ButtonModule,
+    SelectModule,
+    TableModule,
+    TooltipModule,
+    TagModule
+  ],
+
   templateUrl: './balances.html',
   styleUrl: './balances.css'
 })
 export class Balances implements OnInit {
+
+  @ViewChild('dt') table!: Table;
+
   readonly currentUser$: Observable<UsuarioLogin | null>;
 
   msgError = ''
@@ -45,7 +66,7 @@ export class Balances implements OnInit {
   loading = false;
   estados: IEstados[] = []
   filtroForm: any;
-  
+
   mappings: ImappingSelect[] = [];
 
   empresas: IEmpresa[] = [];
@@ -55,6 +76,13 @@ export class Balances implements OnInit {
 
   private destroy$ = new Subject<void>();
   anios: number[] = [];
+
+  // Variables para guardar el estado del ordenamiento actual
+  currentSortField: string | undefined;
+  currentSortOrder: number | undefined;
+  //colapsar filtros extra
+  showAdvancedFilters = false;
+
   constructor(
     private balanceService: BalanceService,
     private fb: FormBuilder,
@@ -89,135 +117,161 @@ export class Balances implements OnInit {
     const currentYear = new Date().getFullYear();
     // Genera, por ejemplo, desde hace 10 años hasta el próximo año
     for (let i = 0; i < 12; i++) {
-      this.anios.push(currentYear + 1 - i); 
+      this.anios.push(currentYear + 1 - i);
       // Esto generará: [2026, 2025, 2024, ..., 2015]
     }
 
   }
 
-private getData(){
-    this.loadBalances();
+  private getData() {
+    // this.loadBalances();
     this.cargarEmpresas();
     this.getEstados();
     this.cargarMappings();
     this.getFsaData();
-}
+  }
 
-private checkUser(user: UsuarioLogin | null): void {
+  private checkUser(user: UsuarioLogin | null): void {
     if (user) {
       console.log('Usuario autenticado en Balances:', user);
     }
-}
+  }
 
 
-private cargarEmpresas() {
-  this.msgError = '';
+  private cargarEmpresas() {
+    this.msgError = '';
 
-  this.currentUser$.pipe(
-    take(1),
-    switchMap((user) => {
-    if (!user) {
-      return throwError(() => new Error('Usuario no autenticado'));
-    }
-    return this.empresaService.getEmpresas();
-    }),
-    map((res) => {
-    if (res.success) {
-      return res.data;
-    }
-    throw new Error('Error al obtener empresas desde la API');
-    }),
-    switchMap((empresas) => {
-    return this.currentUser$.pipe(
+    this.currentUser$.pipe(
       take(1),
-      map((user) => {
-      if (user?.roles.empresas && user.roles.empresas.length > 0) {
-        return empresas.filter(e => user.roles.empresas?.includes(e.id_empresa));
-      }
-      return empresas;
+      switchMap((user) => {
+        if (!user) {
+          return throwError(() => new Error('Usuario no autenticado'));
+        }
+        return this.empresaService.getEmpresas();
+      }),
+      map((res) => {
+        if (res.success) {
+          return res.data;
+        }
+        throw new Error('Error al obtener empresas desde la API');
+      }),
+      switchMap((empresas) => {
+        return this.currentUser$.pipe(
+          take(1),
+          map((user) => {
+            if (user?.roles.empresas && user.roles.empresas.length > 0) {
+              return empresas.filter(e => user.roles.empresas?.includes(e.id_empresa));
+            }
+            return empresas;
+          })
+        );
       })
-    );
-    })
-  )
-  .subscribe({
-    next: (empresasData) => {
-    this.empresas = empresasData;
-    },
-    error: (error) => {
-    console.error('Error de API al cargar empresas:', error);
-    this.msgError = error.message || 'Ocurrió un error inesperado';
-    },
-  });
-}
+    )
+      .subscribe({
+        next: (empresasData) => {
+          this.empresas = empresasData;
+        },
+        error: (error) => {
+          console.error('Error de API al cargar empresas:', error);
+          this.msgError = error.message || 'Ocurrió un error inesperado';
+        },
+      });
+  }
 
-private getEstados(): void {
-  this.loading = true;
-  this.msgError = '';
-
-  this.authService.isAuthenticated().pipe(
-    take(1), 
-    switchMap(isAuthenticated => {
-      if (!isAuthenticated) {
-        return throwError(() => new Error('Usuario no autenticado'));
-      }
-      return this.estadoService.getAllEstados();
-    }),
-    map(res => {
-      if (res.success && Array.isArray(res.data)) {
-        return res.data.filter(f => f.id_estado && f.desc && f.color);
-      }
-      throw new Error('Respuesta inválida del servicio FSA');
-    }),
-    finalize(() => this.loading = false)
-
-  ).subscribe({
-    next: (estadosFiltrados) => {
-      this.estados = estadosFiltrados;
-      console.log('estados data cargada:', this.estados);
-    },
-    error: (error) => {
-      console.error('Error al obtener FSA:', error);
-      this.msgError = error.message || 'Ocurrió un error inesperado';
-      this.estados = [];
-    }
-  });
-}
-
-private cargarMappings() {
-  this.loading = true;
-  this.msgError = '';
-
-  this.authService.isAuthenticated().pipe(
-    take(1),
-    switchMap(isAuthenticated => {
-      if (!isAuthenticated) {
-        return throwError(() => new Error('Usuario no autenticado'));
-      }
-      return this.mappingService.getMappings();
-    }),
-    map(res => {
-      if (res.success) {
-        return res.data;
-      }
-      throw new Error('La respuesta del servicio de mappings no fue exitosa');
-    }),
-    finalize(() => this.loading = false)
-
-  ).subscribe({
-    next: (mappingsData) => {
-      this.mappings = mappingsData;
-    },
-    error: (error) => {
-      console.error('Error de API al cargar mappings:', error);
-      this.msgError = error.message || 'Ocurrió un error inesperado';
-    }
-  });
-}
-
-loadBalances(): void {
+  private getEstados(): void {
     this.loading = true;
+    this.msgError = '';
+
+    this.authService.isAuthenticated().pipe(
+      take(1),
+      switchMap(isAuthenticated => {
+        if (!isAuthenticated) {
+          return throwError(() => new Error('Usuario no autenticado'));
+        }
+        return this.estadoService.getAllEstados();
+      }),
+      map(res => {
+        if (res.success && Array.isArray(res.data)) {
+          return res.data.filter(f => f.id_estado && f.desc && f.color);
+        }
+        throw new Error('Respuesta inválida del servicio FSA');
+      }),
+      finalize(() => this.loading = false)
+
+    ).subscribe({
+      next: (estadosFiltrados) => {
+        this.estados = estadosFiltrados;
+        console.log('estados data cargada:', this.estados);
+      },
+      error: (error) => {
+        console.error('Error al obtener FSA:', error);
+        this.msgError = error.message || 'Ocurrió un error inesperado';
+        this.estados = [];
+      }
+    });
+  }
+
+  private cargarMappings() {
+    this.loading = true;
+    this.msgError = '';
+
+    this.authService.isAuthenticated().pipe(
+      take(1),
+      switchMap(isAuthenticated => {
+        if (!isAuthenticated) {
+          return throwError(() => new Error('Usuario no autenticado'));
+        }
+        return this.mappingService.getMappings();
+      }),
+      map(res => {
+        if (res.success) {
+          return res.data;
+        }
+        throw new Error('La respuesta del servicio de mappings no fue exitosa');
+      }),
+      finalize(() => this.loading = false)
+
+    ).subscribe({
+      next: (mappingsData) => {
+        this.mappings = mappingsData;
+      },
+      error: (error) => {
+        console.error('Error de API al cargar mappings:', error);
+        this.msgError = error.message || 'Ocurrió un error inesperado';
+      }
+    });
+  }
+
+  /**
+   * Este método es invocado automáticamente por PrimeNG cuando:
+   * 1. La tabla se inicializa.
+   * 2. El usuario cambia de página.
+   * 3. El usuario ordena una columna.
+   */
+  onTableLazyLoad(event: TableLazyLoadEvent): void {
+    this.limit = event.rows ?? 10;
+    const first = event.first ?? 0;
+    this.page = this.limit > 0 ? (first / this.limit) + 1 : 1;
+    this.currentSortField = Array.isArray(event.sortField) ? event.sortField[0] : (event.sortField as string);
+    this.currentSortOrder = event.sortOrder ?? undefined;
+    // 3. Llamar al servicio
+    this.loadBalances();
+  }
+
+  loadBalances(): void {
+    this.loading = true;
+    // Cálculo del offset para el backend
     const offset = (this.page - 1) * this.limit;
-    const filtros = { ...this.filtersForm.value, limit: this.limit, offset };
+
+    // Preparamos los filtros incluyendo los de ordenamiento
+    const filtros = {
+      ...this.filtersForm.value,
+      limit: this.limit,
+      offset,
+      // Agregamos campos de ordenamiento por si el backend los implementa a futuro
+      sortField: this.currentSortField,
+      sortOrder: this.currentSortOrder
+    };
 
     this.balanceService.getResumen(filtros)
       .pipe(
@@ -231,7 +285,6 @@ loadBalances(): void {
             this.total = res.total;
             console.log('Balances cargados:', this.balances);
           } else {
-            // 2. REEMPLAZO: Muestra un error de negocio con Swal
             Swal.fire({
               icon: 'warning',
               title: 'Atención',
@@ -242,7 +295,6 @@ loadBalances(): void {
           }
         },
         error: (err) => {
-          // 3. REEMPLAZO: Muestra un error de conexión con Swal
           Swal.fire({
             icon: 'error',
             title: 'Error de Conexión',
@@ -252,9 +304,16 @@ loadBalances(): void {
       });
   }
 
- onApplyFilters(): void {
-    this.page = 1;
-    this.loadBalances();
+  onApplyFilters(): void {
+    // En lugar de llamar a loadBalances directamente, reseteamos la tabla.
+    // Esto hace que PrimeNG vuelva a la página 1 y dispare el evento onTableLazyLoad automáticamente.
+    if (this.table) {
+      this.table.reset();
+    }
+  }
+
+  toggleFilters() {
+    this.showAdvancedFilters = !this.showAdvancedFilters;
   }
 
   onPageChange(newPage: number): void {
@@ -264,19 +323,19 @@ loadBalances(): void {
     }
   }
 
-get totalPages(): number {
+  get totalPages(): number {
     if (this.total === 0 || this.limit === 0) return 0;
     return Math.ceil(this.total / this.limit);
   }
-  
+
 
   get pages(): number[] {
     return Array.from({ length: this.totalPages }, (_, i) => i + 1);
   }
 
- onResetFilters(): void {
-    this.filtersForm.reset(); 
-    this.onApplyFilters();    
+  onResetFilters(): void {
+    this.filtersForm.reset();
+    this.onApplyFilters();
   }
 
   ngOnDestroy(): void {
@@ -289,7 +348,7 @@ get totalPages(): number {
     const modalRef = this.modalService.open(ModalDetalle, {
       fullscreen: true,
       backdrop: 'static',
-      centered: false, 
+      centered: false,
 
     });
 
@@ -301,72 +360,72 @@ get totalPages(): number {
 
 
 
-  
-  
-private getFsaData(): void {
-  this.loading = true;
-  this.msgError = ''; // Limpiar errores previos
 
-  this.authService.isAuthenticated().pipe(
-    // toma solo el estado de autenticación actual y luego finaliza.
-    take(1), 
 
-    // encadena la llamada a la API si el usuario está autenticado.
-    switchMap(isAuthenticated => {
-      if (!isAuthenticated) {
-        // detiene el flujo y lanza un error si no está autenticado.
-        return throwError(() => new Error('Usuario no autenticado'));
+  private getFsaData(): void {
+    this.loading = true;
+    this.msgError = ''; // Limpiar errores previos
+
+    this.authService.isAuthenticated().pipe(
+      // toma solo el estado de autenticación actual y luego finaliza.
+      take(1),
+
+      // encadena la llamada a la API si el usuario está autenticado.
+      switchMap(isAuthenticated => {
+        if (!isAuthenticated) {
+          // detiene el flujo y lanza un error si no está autenticado.
+          return throwError(() => new Error('Usuario no autenticado'));
+        }
+        // continúa con la llamada para obtener los datos FSA.
+        return this.fsaService.getAllFsa();
+      }),
+
+      // transforma la respuesta exitosa.
+      map(res => {
+        if (res.success && Array.isArray(res.data)) {
+          // devuelve los datos filtrados.
+          return res.data.filter(
+            f => f.id_fsa && f.desc && f.id_cate && f.categoria
+          );
+        }
+        // lanza un error si la respuesta no es válida.
+        throw new Error('Respuesta inválida del servicio FSA');
+      }),
+
+      // se ejecuta siempre al final para ocultar el spinner.
+      finalize(() => this.loading = false)
+
+    ).subscribe({
+      next: (fsaData) => {
+        this.fsas = fsaData;
+        console.log('FSA data cargada:', this.fsas);
+      },
+      error: (error) => {
+        console.error('Error al obtener FSA:', error);
+        this.msgError = error.message || 'Ocurrió un error inesperado';
+        this.fsas = [];
       }
-      // continúa con la llamada para obtener los datos FSA.
-      return this.fsaService.getAllFsa();
-    }),
+    });
+  }
 
-    // transforma la respuesta exitosa.
-    map(res => {
-      if (res.success && Array.isArray(res.data)) {
-        // devuelve los datos filtrados.
-        return res.data.filter(
-          f => f.id_fsa && f.desc && f.id_cate && f.categoria
-        );
+  abrirModalEdicion(balanceId: string) {
+    const modalRef = this.modalService.open(EditarBalance, {
+      fullscreen: true, // ¡Clave para la pantalla completa!
+      scrollable: true
+    });
+    modalRef.componentInstance.id = balanceId;
+    modalRef.componentInstance.estados = this.estados
+
+    modalRef.result.then(
+      (result) => {
+        if (result === 'saved') {
+          console.log('Balance guardado, recargar lista.');
+          // Aquí puedes llamar a tu método para refrescar la lista de balances
+        }
+      },
+      (reason) => {
+        console.log(`Modal cerrado: ${reason}`);
       }
-      // lanza un error si la respuesta no es válida.
-      throw new Error('Respuesta inválida del servicio FSA');
-    }),
-
-    // se ejecuta siempre al final para ocultar el spinner.
-    finalize(() => this.loading = false)
-
-  ).subscribe({
-    next: (fsaData) => {
-      this.fsas = fsaData;
-      console.log('FSA data cargada:', this.fsas);
-    },
-    error: (error) => {
-      console.error('Error al obtener FSA:', error);
-      this.msgError = error.message || 'Ocurrió un error inesperado';
-      this.fsas = [];
-    }
-  });
-}
-
-abrirModalEdicion(balanceId: string) {
-  const modalRef = this.modalService.open(EditarBalance, { 
-    fullscreen: true, // ¡Clave para la pantalla completa!
-    scrollable: true 
-  });
-  modalRef.componentInstance.id = balanceId;
-  modalRef.componentInstance.estados = this.estados
-
-  modalRef.result.then(
-    (result) => {
-      if (result === 'saved') {
-        console.log('Balance guardado, recargar lista.');
-        // Aquí puedes llamar a tu método para refrescar la lista de balances
-      }
-    },
-    (reason) => {
-      console.log(`Modal cerrado: ${reason}`);
-    }
-  );
-}
+    );
+  }
 }

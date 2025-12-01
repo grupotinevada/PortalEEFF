@@ -1,94 +1,130 @@
-.file-upload-container {
-  max-width: 600px;
-  margin: 2rem auto;
-  padding: 2rem;
-  background: #f8f9fa;
-  border-radius: 12px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+/* ========================================= */
+/* 🌿 ESTILOS AMIGABLES (HOME) 🌿 */
+/* ========================================= */
+
+/* Gradiente para la barra superior */
+
+
+/* 1. ZONA DE CARGA (UPLOAD AREA) */
+.upload-area {
+  background-color: #fcfcfc;
+  border: 2px dashed #dee2e6;
+  /* Borde suave gris */
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+  cursor: pointer;
+  min-height: 320px;
 }
 
-.file-upload-container h2 {
-  text-align: center;
-  color: #333;
-  margin-bottom: 2rem;
-  font-weight: 600;
+/* Estado Hover (Mouse encima) */
+.upload-area:hover {
+  border-color: #a3cfbb;
+  /* Verde suave */
+  background-color: #f8fffb;
+  /* Fondo verde muy pálido */
 }
 
-.file-input-section {
-  position: relative;
-  margin-bottom: 1.5rem;
+/* Estado Drag Over (Arrastrando archivo encima) */
+.upload-area.drag-over {
+  border-color: #198754;
+  /* Verde fuerte */
+  border-style: solid;
+  /* Borde sólido para indicar "listo" */
+  background-color: #e6f4ea;
+  /* Verde más notorio */
+  transform: scale(1.02);
+  /* Pequeño efecto de zoom */
+  box-shadow: 0 10px 25px rgba(25, 135, 84, 0.15);
 }
 
-.file-input {
-  position: absolute;
-  opacity: 0;
-  width: 0;
-  height: 0;
-}
-
-.file-input-label {
+/* 2. ICONO FLOTANTE */
+.icon-circle {
+  width: 80px;
+  height: 80px;
+  background-color: white;
+  border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 0.5rem;
-  padding: 1rem 2rem;
-  background: #007bff;
-  color: white;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  font-weight: 500;
-  min-height: 50px;
-  border: 2px dashed transparent;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
-.file-input-label:hover {
-  background: #0056b3;
+.upload-area:hover .icon-circle {
+  transform: translateY(-5px);
+  /* Flota hacia arriba */
+  box-shadow: 0 8px 15px rgba(0, 0, 0, 0.08) !important;
+}
+
+.upload-area.drag-over .icon-circle {
+  transform: scale(1.1);
+  background-color: #fff;
+}
+
+/* 3. ZONA DE ÉXITO */
+.success-icon {
+  width: 100px;
+  height: 100px;
+  background: linear-gradient(135deg, #198754, #28a745);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto;
+  box-shadow: 0 10px 20px rgba(25, 135, 84, 0.3);
+}
+
+/* 4. ANIMACIONES DE ENTRADA */
+.animate-slide-down {
+  animation: slideDown 0.6s ease-out;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.8s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+.animate-scale-in {
+  animation: scaleIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Botones con transición suave */
+.transition-btn {
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.transition-btn:hover {
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 123, 255, 0.3);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
-
-.file-input:focus + .file-input-label {
-  outline: 2px solid #007bff;
-  outline-offset: 2px;
-}
-
-.file-icon {
-  font-size: 1.2rem;
-}
-
-.file-info {
-  background: white;
-  padding: 1.5rem;
-  border-radius: 8px;
-  border-left: 4px solid #28a745;
-  margin-bottom: 1rem;
-}
-
-.file-info p {
-  margin: 0.5rem 0;
-  color: #555;
-}
-
-.file-info strong {
-  color: #333;
-  font-weight: 600;
-}
-
-/* Responsive */
-@media (max-width: 768px) {
-  .file-upload-container {
-    margin: 1rem;
-    padding: 1rem;
-  }
-  
-  .file-input-label {
-    padding: 0.8rem 1.5rem;
-    font-size: 0.9rem;
-  }
-}
-
-.carga{
-  color:#ff0062;
-}
-

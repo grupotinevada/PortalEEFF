@@ -5,4 +5,7 @@ export interface IReportConfig {
   mostrarCuentas: boolean;
   incluirCuentasCero: boolean;
   categoriasSeleccionadas: { nombre: string; selected: boolean }[];
+  colorTheme: 'green-red' | 'green-black' | 'red-black' | 'red-red';
+  mostrarDiferencia: boolean, // Default: visible
+  mostrarVariacion: boolean   // Default: visible
 }

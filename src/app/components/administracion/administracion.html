@@ -1,128 +1,173 @@
 <app-navbar></app-navbar>
 
 <div class="container-fluid">
-  <div class="row g-0"> 
+  <div class="row g-0">
 
-    <div class="col-md-3 col-lg-2 admin-sidebar d-none d-md-block bg-success">
+    <div class="col-md-3 col-lg-2 admin-sidebar d-none d-md-block bg-success shadow-sm">
+      <div class="pt-4 px-3 mb-4">
+        <span class="text-white-50 small text-uppercase fw-bold ls-1">Menu Admin</span>
+      </div>
       <ul class="admin-sidebar-menu">
         <li class="active">
-          <a href="#">Usuarios</a> 
+          <a href="#" class="d-flex align-items-center gap-2">
+            <i class="bi bi-people-fill"></i> Usuarios
+          </a>
         </li>
       </ul>
     </div>
 
-    <div class="col-12 col-md-9 col-lg-10 admin-content">
+    <div class="col-12 col-md-9 col-lg-10 admin-content bg-light">
 
-      <div class="page-header d-flex justify-content-between align-items-center mb-4">
-        <h2 class="mb-0">Gestión de Usuarios</h2>
-        
-        <div class="d-flex align-items-center">
-          <span class="p-input-icon-left me-3">
-            <i class="pi pi-search"></i>
-            <input 
-              pInputText 
-              type="text" 
-              [(ngModel)]="globalFilter"
-              (input)="dt.filterGlobal(globalFilter, 'contains')" 
-              placeholder="Buscar en la tabla..." />
-          </span>
-          
-          <button class="btn btn-success" (click)="abrirModalCrear()">
-            <i class="pi pi-plus me-1"></i>
-            Crear Usuario
-          </button>
+      <div class="px-4 py-5">
+
+        <div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between mb-4">
+          <div>
+            <h2 class="fw-bold text-success mb-0">
+              <i class="bi bi-people me-2"></i>Gestión de Usuarios
+            </h2>
+            <p class="text-muted mb-0">Administra los accesos, roles y estados de los usuarios del sistema.</p>
+          </div>
+
+          <div
+            class="bg-white border border-success text-success px-3 py-2 rounded-pill shadow-sm d-flex align-items-center gap-2 mt-3 mt-md-0"
+            *ngIf="usuarios.length > 0">
+            <div class="bg-success rounded-circle p-1"></div>
+            <span class="small fw-semibold text-uppercase">Total:</span>
+            <strong class="fs-6">{{ usuarios.length }}</strong>
+          </div>
+        </div>
+
+        <div class="card border-0 shadow-lg rounded-4 overflow-hidden mb-5">
+
+          <div class="bg-success" style="height: 6px;"></div>
+
+          <div class="card-body p-4 border-bottom bg-white">
+            <div class="d-flex flex-column flex-md-row justify-content-between align-items-end gap-3">
+
+              <div class="w-100" style="max-width: 400px;">
+                <label class="form-label fw-semibold text-dark small mb-1">Buscar usuario</label>
+                <div class="input-group shadow-sm rounded-3 overflow-hidden border border-success-subtle">
+                  <span class="input-group-text bg-white border-0 ps-3 pe-2">
+                    <i class="bi bi-search text-success"></i>
+                  </span>
+                  <input pInputText type="text" [(ngModel)]="globalFilter"
+                    (input)="dt.filterGlobal(globalFilter, 'contains')" class="form-control border-0 shadow-none ps-1"
+                    placeholder="Nombre, email..." />
+                </div>
+              </div>
+
+              <button class="btn btn-success shadow-sm px-4 fw-semibold d-flex align-items-center gap-2 transition-btn"
+                (click)="abrirModalCrear()">
+                <i class="bi bi-person-plus-fill"></i>
+                <span>Nuevo Usuario</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="card-body p-0">
+            <p-table #dt [value]="usuarios" [paginator]="true" [rows]="10" [rowsPerPageOptions]="[5, 10, 20]"
+              [globalFilterFields]="['username', 'email']" sortField="username" [sortOrder]="1"
+              responsiveLayout="scroll" styleClass="p-datatable-hoverable-rows">
+
+              <ng-template pTemplate="header">
+                <tr class="bg-success bg-opacity-10 text-dark">
+                  <th pSortableColumn="habilitado" class="ps-4 py-3 border-bottom-0 fw-semibold text-dark">
+                    Estado <p-sortIcon field="habilitado"></p-sortIcon>
+                  </th>
+                  <th pSortableColumn="username" class="py-3 border-bottom-0 fw-semibold text-dark">
+                    Nombre <p-sortIcon field="username"></p-sortIcon>
+                  </th>
+                  <th pSortableColumn="email" class="py-3 border-bottom-0 fw-semibold text-dark">
+                    Email <p-sortIcon field="email"></p-sortIcon>
+                  </th>
+                  <th pSortableColumn="rol" class="py-3 border-bottom-0 fw-semibold text-dark">
+                    Rol <p-sortIcon field="rol"></p-sortIcon>
+                  </th>
+                  <th class="py-3 border-bottom-0 fw-semibold text-dark">Acceso</th>
+                  <th class="pe-4 py-3 border-bottom-0 fw-semibold text-dark text-end">Acciones</th>
+                </tr>
+              </ng-template>
+
+              <ng-template pTemplate="body" let-usuario>
+                <tr class="border-bottom border-light">
+
+                  <td class="ps-4">
+                    <div class="form-check form-switch pointer-events-none">
+                      <span class="badge rounded-pill border" [ngClass]="{
+                                'bg-success-subtle text-success border-success-subtle': usuario.habilitado == 1,
+                                'bg-danger-subtle text-danger border-danger-subtle': usuario.habilitado != 1
+                              }">
+                        <i class="bi"
+                          [ngClass]="usuario.habilitado == 1 ? 'bi-check-circle-fill' : 'bi-slash-circle'"></i>
+                        {{ usuario.habilitado == 1 ? 'Activo' : 'Inactivo' }}
+                      </span>
+                    </div>
+                  </td>
+
+                  <td>
+                    <div class="fw-medium text-dark">{{ usuario.username }}</div>
+                  </td>
+
+                  <td>
+                    <span class="text-muted small">{{ usuario.email }}</span>
+                  </td>
+
+                  <td>
+                    <ng-container *ngIf="usuario.roles.length > 0; else noRol">
+                      <p-tag [severity]="getRolSeverity(usuario.roles[0].id_rol)" [value]="usuario.roles[0].descripcion"
+                        [rounded]="true"></p-tag>
+                    </ng-container>
+                    <ng-template #noRol>
+                      <p-tag severity="warn" value="Sin Rol" [rounded]="true"></p-tag>
+                    </ng-template>
+                  </td>
+
+                  <td>
+                    <ng-container *ngIf="usuario.accesos && usuario.accesos.length > 0; else noAcceso">
+                      <div class="d-flex flex-wrap gap-1">
+                        <span *ngFor="let acceso of usuario.accesos">
+                          <p-tag [severity]="getAccesoSeverity(acceso.id_acceso)" [value]="acceso.descripcion"
+                            styleClass="text-xs px-2 py-1"></p-tag>
+                        </span>
+                      </div>
+                    </ng-container>
+                    <ng-template #noAcceso>
+                      <span class="text-muted small fst-italic">Sin accesos definidos</span>
+                    </ng-template>
+                  </td>
+
+                  <td class="pe-4 text-end">
+                    <button
+                      class="btn btn-sm btn-outline-primary border-0 bg-primary-subtle text-primary rounded-circle shadow-sm d-inline-flex align-items-center justify-content-center transition-btn"
+                      style="width: 32px; height: 32px;" pTooltip="Editar Usuario" tooltipPosition="left"
+                      (click)="abrirModalEditar(usuario)">
+                      <i class="bi bi-pencil-fill" style="font-size: 0.8rem;"></i>
+                    </button>
+                  </td>
+                </tr>
+              </ng-template>
+
+              <ng-template pTemplate="emptymessage">
+                <tr>
+                  <td colspan="6" class="text-center py-5">
+                    <div class="d-flex flex-column align-items-center justify-content-center text-muted opacity-50">
+                      <i class="bi bi-person-x fs-1 mb-3 text-secondary"></i>
+                      <h6 class="fw-bold">No se encontraron usuarios</h6>
+                      <p class="small mb-0">Intenta cambiar los filtros de búsqueda.</p>
+                    </div>
+                  </td>
+                </tr>
+              </ng-template>
+            </p-table>
+
+          </div>
         </div>
       </div>
 
-      <p-table 
-        #dt 
-        [value]="usuarios" 
-        [paginator]="true" 
-        [rows]="5" 
-        [rowsPerPageOptions]="[5, 10, 20]"
-        [globalFilterFields]="['username', 'email']"
-        [tableStyle]="{'min-width': '50rem'}"
-        sortField="username" [sortOrder]="1"
-        responsiveLayout="scroll"
-        styleClass="p-datatable-striped p-datatable-gridlines">
-
-        <ng-template pTemplate="header">
-          <tr>
-            <th pSortableColumn="habilitado">Habilitado <p-sortIcon field="habilitado"></p-sortIcon></th>
-            <th pSortableColumn="username">Nombre <p-sortIcon field="username"></p-sortIcon></th>
-            <th pSortableColumn="email">Email <p-sortIcon field="email"></p-sortIcon></th>
-            <th pSortableColumn="rol">Rol<p-sortIcon field="rol"></p-sortIcon></th>
-            <th>Acceso</th>
-            <th style="width: 10rem">Acciones</th>
-          </tr>
-        </ng-template>
-
-        <ng-template pTemplate="body" let-usuario>
-          <tr>
-        <td>
-            <p-checkbox 
-                [ngModel]="usuario.habilitado == 1" 
-                [disabled]="true" 
-                binary="true"
-                [ngClass]="{'is-enabled': usuario.habilitado == 1, 'is-disabled': usuario.habilitado != 1}"> 
-                
-            </p-checkbox>
-          </td>
-
-            <td>{{ usuario.username }}</td>
-            <td>{{ usuario.email }}</td>
-            <td>
-              <ng-container *ngIf="usuario.roles.length > 0; else noRol">
-                <p-tag 
-                  [severity]="getRolSeverity(usuario.roles[0].id_rol)" 
-                  [value]="usuario.roles[0].descripcion">
-                </p-tag>
-              </ng-container>
-              <ng-template #noRol>
-                <p-tag severity="warn" value="Sin Rol"></p-tag>
-              </ng-template>
-            </td>
-            
-            <td>
-              <ng-container *ngIf="usuario.accesos && usuario.accesos.length > 0; else noAcceso">
-                <span *ngFor="let acceso of usuario.accesos" class="me-1">
-                  <p-tag 
-                    [severity]="getAccesoSeverity(acceso.id_acceso)" 
-                    [value]="acceso.descripcion">
-                  </p-tag>
-                </span>
-              </ng-container>
-              <ng-template #noAcceso>
-                <p-tag severity="danger" value="Sin Acceso"></p-tag>
-              </ng-template>
-            </td>
-
-            <td > 
-              <button 
-                class="btn btn-outline-info"
-                pTooltip="Editar Usuario" tooltipPosition="top"
-                (click)="abrirModalEditar(usuario)">
-                <i class="bi bi-pencil-fill"></i>
-              </button>
-            </td>
-          </tr>
-        </ng-template>
-
-        <ng-template pTemplate="emptymessage">
-          <tr>
-            <td colspan="6" class="text-center">No se encontraron usuarios.</td>
-          </tr>
-        </ng-template>
-      </p-table>
-
     </div>
-  </div> 
-</div> 
+  </div>
+</div>
 
-<app-user-form-modal
-  [(display)]="displayModal"
-  [mode]="modalMode"
-  [userToEdit]="selectedUser"
-  [isLoading]="isLoading"
+<app-user-form-modal [(display)]="displayModal" [mode]="modalMode" [userToEdit]="selectedUser" [isLoading]="isLoading"
   (save)="handleSave($event)">
 </app-user-form-modal>
