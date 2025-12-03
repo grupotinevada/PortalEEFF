@@ -9,14 +9,14 @@ const bcrypt = require('bcryptjs');
  */
 class AuthService {
 
-/**################################################################################################# */
-/**############################  FUNCIONES AUXILIARES  ############################################# */
-/**################################################################################################# */
-  
- 
-/**################################################################################################# */
-/**############################ FIN FUNCIONES AUXILIARES  ########################################## */
-/**################################################################################################# */
+  /**################################################################################################# */
+  /**############################  FUNCIONES AUXILIARES  ############################################# */
+  /**################################################################################################# */
+
+
+  /**################################################################################################# */
+  /**############################ FIN FUNCIONES AUXILIARES  ########################################## */
+  /**################################################################################################# */
 
 
   /**
@@ -25,15 +25,15 @@ class AuthService {
    * @param {string} password
    * @returns {Object} Resultado con token o error
    */
-static async login(email, password) {
-    try {
-      const user = await UserModel.findByEmail(email);
+  static async login(email, password) {
+    try {
+      const user = await UserModel.findByEmail(email);
 
-      if (!user) {
-        Logger.warn(`Login fallido - usuario no encontrado: ${email}`);
+      if (!user) {
+        Logger.warn(`Login fallido - usuario no encontrado: ${email}`);
         // ⚠️ Nota de seguridad: Es mejor usar un mensaje genérico
-        return { success: false, message: 'Credenciales inválidas' };
-      }
+        return { success: false, message: 'Credenciales inválidas' };
+      }
 
       // 1. Verificar si el usuario está habilitado ANTES de chequear la contraseña
       if (user.habilitado !== 1) {
@@ -42,52 +42,52 @@ static async login(email, password) {
       }
 
 
-      const isValidPassword = await UserModel.validatePassword(password, user.password_hash);
-      if (!isValidPassword) {
-        Logger.warn(`Login fallido - contraseña incorrecta: ${email}`);
+      const isValidPassword = await UserModel.validatePassword(password, user.password_hash);
+      if (!isValidPassword) {
+        Logger.warn(`Login fallido - contraseña incorrecta: ${email}`);
         // ⚠️ Usamos el mismo mensaje genérico para evitar enumeración de usuarios
-        return { success: false, message: 'Credenciales inválidas' };
-      }
-      
-      const permissions = await UserModel.getPermissionsByUserId(user.id_user);
-      const roles = this.processRoles(permissions);
-      
-      const token = jwt.sign(
-        { 
-          userId: user.id_user, 
-          email: user.email,
-          username: user.username,
-          roles: roles,
+        return { success: false, message: 'Credenciales inválidas' };
+      }
+
+      const permissions = await UserModel.getPermissionsByUserId(user.id_user);
+      const roles = this.processRoles(permissions);
+
+      const token = jwt.sign(
+        {
+          userId: user.id_user,
+          email: user.email,
+          username: user.username,
+          roles: roles,
           // 'hablitado' ya no es necesario en el token
           // El middleware 'authenticateToken' lo validará en cada request
-        },
-        JWT_SECRET,
-        { expiresIn: '8h' }
-      );
+        },
+        JWT_SECRET,
+        { expiresIn: '8h' }
+      );
 
       // --- Log de éxito y auditoría ---
-      Logger.info(`Login exitoso para: ${email}. Roles: [${roles.join(', ')}]`);
-      Logger.userAction(user.id_user, 'LOGIN', `Usuario ${email} (${user.username}) inició sesión.`);
-      
-      return {
-        success: true,
-        message: 'Login exitoso',
-        token,
-        user: {
-          id: user.id_user,
-          email: user.email,
-          roles: roles,
-          username: user.username,
-          habilitado: user.habilitado // Es útil enviar esto al frontend
-        }
-      };
-      
-    } catch (error) {
+      Logger.info(`Login exitoso para: ${email}. Roles: [${roles}]`);
+      Logger.userAction(user.id_user, 'LOGIN', `Usuario ${email} (${user.username}) inició sesión.`);
+
+      return {
+        success: true,
+        message: 'Login exitoso',
+        token,
+        user: {
+          id: user.id_user,
+          email: user.email,
+          roles: roles,
+          username: user.username,
+          habilitado: user.habilitado // Es útil enviar esto al frontend
+        }
+      };
+
+    } catch (error) {
       // --- Log de error mejorado ---
-      Logger.error(`Error en AuthService.login para ${email}: ${error.message}`, error.stack);
-      return { success: false, message: 'Error interno, contacta con el administrador' };
-    }
-  }
+      Logger.error(`Error en AuthService.login para ${email}: ${error.message}`, error.stack);
+      return { success: false, message: 'Error interno, contacta con el administrador' };
+    }
+  }
 
 
   /**
@@ -125,17 +125,17 @@ static async login(email, password) {
 
 
 
-/*##################################################################**/
-//CREACION DE USUARIOS
-/*##################################################################**/
+  /*##################################################################**/
+  //CREACION DE USUARIOS
+  /*##################################################################**/
 
-/**
-   * Procesa la lógica de permisos
-   * (Adaptador para la nueva estructura de BBDD)
-   * @param {object} permissionData - Objeto con { roles: [], accesos: [] }
-   */
+  /**
+     * Procesa la lógica de permisos
+     * (Adaptador para la nueva estructura de BBDD)
+     * @param {object} permissionData - Objeto con { roles: [], accesos: [] }
+     */
   static processRoles(permissionData) {
-        // permissionData tiene la forma:
+    // permissionData tiene la forma:
     // { 
     //   roles: [{ id_rol: '2', descripcion: 'Operador' }], 
     //   accesos: [{ id_acceso: '4', descripcion: 'Savisa' }]
@@ -144,14 +144,14 @@ static async login(email, password) {
 
     const permisoRol = permissionData.roles.length > 0
       ? parseInt(permissionData.roles[0].id_rol, 10)
-      : undefined; 
+      : undefined;
 
     const accesoRol = permissionData.accesos.length > 0
       ? parseInt(permissionData.accesos[0].id_acceso, 10)
-      : undefined; 
-      
-      const empresasSource = permissionData.empresas || permissionData.empresa || [];
-      const empresas = empresasSource.map(e => e.id_empresa);
+      : undefined;
+
+    const empresasSource = permissionData.empresas || permissionData.empresa || [];
+    const empresas = empresasSource.map(e => e.id_empresa);
 
 
     const rawIds = [
@@ -160,10 +160,10 @@ static async login(email, password) {
     ];
 
     return {
-      permiso: permisoRol, 
-      acceso: accesoRol, 
+      permiso: permisoRol,
+      acceso: accesoRol,
       empresas,
-      raw: rawIds         
+      raw: rawIds
     };
   }
 
@@ -188,7 +188,7 @@ static async login(email, password) {
 
       // 3. Preparar los datos del usuario
       const userData = { email, username, password_hash, habilitado: 1 };
-      
+
       // 4. Llamar al modelo para crear el usuario DENTRO de la transacción
       const newUserId = await UserModel.createWithPermissions(userData, permiso, accesos);
 
@@ -206,17 +206,17 @@ static async login(email, password) {
     }
   }
 
-   /**
-   * Obtiene una lista de todos los usuarios con sus roles y accesos.
-   */
+  /**
+  * Obtiene una lista de todos los usuarios con sus roles y accesos.
+  */
   static async getAllUsers() {
     try {
       const users = await UserModel.getAllUsersWithPermissions();
-      
+
       // La data ya viene lista del modelo
-      return { 
-        success: true, 
-        users: users 
+      return {
+        success: true,
+        users: users
       };
 
     } catch (error) {
@@ -242,7 +242,7 @@ static async login(email, password) {
       if (password) {
         fieldsToUpdate.password_hash = await bcrypt.hash(password, 10);
       }
-      
+
       // 3. Añadimos los otros campos si fueron proporcionados
       // (Si 'habilitado' es 0 o 'false', '!== undefined' lo captura bien)
       if (permiso !== undefined) {
@@ -260,13 +260,13 @@ static async login(email, password) {
         Logger.warn(`Intento de actualización vacío para usuario ${userId}`);
         return { success: false, message: 'No se proporcionaron datos para actualizar.', statusCode: 400 };
       }
-      
+
       // 5. Llamar al modelo para actualizar al usuario DENTRO de la transacción
       const affectedRows = await UserModel.updateUserWithPermissions(userId, fieldsToUpdate);
 
       if (affectedRows === 0) {
-         Logger.warn(`Intento de actualización para usuario ${userId} no encontrado.`);
-         return { success: false, message: 'Usuario no encontrado.', statusCode: 404 };
+        Logger.warn(`Intento de actualización para usuario ${userId} no encontrado.`);
+        return { success: false, message: 'Usuario no encontrado.', statusCode: 404 };
       }
 
       Logger.userAction(userId, 'UPDATE', `Usuario ${userId} actualizado. Datos: ${JSON.stringify(Object.keys(fieldsToUpdate))}`);

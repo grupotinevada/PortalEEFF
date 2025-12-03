@@ -1,0 +1,160 @@
+/* ================================================= */
+/* 🛠️ ESTILOS GLOBALES COMPONENTE COMPARATIVO 🛠️   */
+/* ================================================= */
+
+/* --- Animaciones --- */
+.animate-fade-in {
+    animation: fadeIn 0.6s ease-out;
+}
+
+.animate-slide-up {
+    animation: slideUp 0.5s ease-out forwards;
+}
+
+.fade-in {
+    animation: fadeIn 0.4s ease-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* --- Utilidades Texto --- */
+.ls-tight {
+    letter-spacing: -0.5px;
+}
+
+.letter-spacing-1 {
+    letter-spacing: 1px;
+}
+
+/* ================================================= */
+/* 🛠️ TARJETAS DE SLOTS (A y B) 🛠️                 */
+/* ================================================= */
+.slot-container {
+    border-radius: 12px;
+    padding: 1rem;
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+.empty-slot {
+    background-color: #f8f9fa;
+    border: 2px dashed #dee2e6;
+}
+
+.empty-slot:hover {
+    background-color: #fff;
+    border-color: #adb5bd;
+    transform: translateY(-2px);
+}
+
+.active-slot {
+    border: 1px solid;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+}
+
+/* Botón Intercambio */
+.swap-btn {
+    transition: transform 0.3s ease;
+}
+
+.swap-btn:hover:not(:disabled) {
+    transform: rotate(180deg) scale(1.1);
+    background-color: #f8f9fa;
+}
+
+/* ================================================= */
+/* 🛠️ INPUTS Y SELECTS (COHERENCIA CON BALANCES) 🛠️ */
+/* ================================================= */
+
+/* Forzar altura de inputs PrimeNG */
+:host ::ng-deep .p-inputtext,
+:host ::ng-deep .p-select {
+    height: 36px !important;
+    min-height: 36px !important;
+    font-size: 0.9rem !important;
+    display: flex;
+    align-items: center;
+}
+
+/* Ajuste texto dropdowns */
+:host ::ng-deep .p-select .p-select-label {
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+    line-height: 34px !important;
+}
+
+/* Input personalizado (Buscador) */
+.custom-input {
+    transition: all 0.2s;
+}
+
+.custom-input:focus {
+    box-shadow: 0 0 0 3px rgba(25, 135, 84, 0.1) !important;
+}
+
+/* Centrado vertical de iconos en inputs */
+:host ::ng-deep .p-input-icon-left>i {
+    margin-top: -0.55rem !important;
+}
+
+/* ================================================= */
+/* 🛠️ ESTILOS TABLA (COHERENCIA CON BALANCES) 🛠️    */
+/* ================================================= */
+
+/* Ajuste de Padding en celdas */
+:host ::ng-deep .p-datatable-sm .p-datatable-tbody>tr>td {
+    padding: 0.6rem 0.5rem;
+    font-size: 0.9rem;
+}
+
+/* Iconos de ordenamiento */
+:host ::ng-deep .p-datatable .p-sortable-column .p-sortable-column-icon {
+    width: 12px;
+    height: 12px;
+    margin-left: 0.5rem;
+    color: #adb5bd;
+}
+
+:host ::ng-deep .p-datatable .p-sortable-column:hover .p-sortable-column-icon,
+:host ::ng-deep .p-datatable .p-sortable-column.p-highlight .p-sortable-column-icon {
+    color: var(--bs-dark);
+}
+
+/* Header Tabla Transparente (para usar el de la card) */
+:host ::ng-deep .p-datatable .p-datatable-header {
+    background: transparent;
+    border: none;
+    padding: 0;
+}
+
+/* Hover Filas */
+:host ::ng-deep .p-datatable-hoverable-rows .p-datatable-tbody>tr:not(.p-highlight):hover {
+    background-color: #f8fff9 !important;
+}
+
+/* Botón Seleccionar */
+.hover-fill:hover {
+    background-color: var(--bs-success) !important;
+    color: white !important;
+    border-color: var(--bs-success) !important;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}

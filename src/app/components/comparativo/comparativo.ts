@@ -1,6 +1,6 @@
 import { AuthService } from './../../services/auth.service';
 import { EmpresaService } from './../../services/empresa.service';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { Navbar } from '../navbar/navbar';
 import { IEmpresa } from '../../models/empresa.model';
 import { UsuarioLogin } from '../../models/usuario-login';
@@ -16,11 +16,18 @@ import { FsaService } from '../../services/fsa.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ModalComparativo } from '../modal-comparativo/modal-comparativo';
 import { SelectModule } from 'primeng/select';
+import { Table, TableModule } from 'primeng/table';
 
 
 @Component({
   selector: 'app-comparativo',
-  imports: [Navbar, CommonModule, ReactiveFormsModule, Spinner, SelectModule],
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    Spinner,
+    SelectModule,
+    TableModule
+  ],
   templateUrl: './comparativo.html',
   styleUrl: './comparativo.css',
 })
@@ -30,6 +37,7 @@ export class Comparativo implements OnInit {
 
   empresas: IEmpresa[] = [];
   msgError = '';
+  @ViewChild('dt') dt!: Table;
 
   // --- PROPIEDADES PARA FILTROS Y BALANCES
   filtersForm!: FormGroup; // Formulario para filtros (incluida la empresa)
@@ -217,6 +225,14 @@ export class Comparativo implements OnInit {
           this.total = 0;
         }
       });
+  }
+
+  applyFilterGlobal($event: any, stringVal: string) {
+    const value = ($event.target as HTMLInputElement).value;
+    // Verificamos que la tabla exista antes de llamar al método
+    if (this.dt) {
+      this.dt.filterGlobal(value, stringVal);
+    }
   }
 
   // Reutiliza onApplyFilters

@@ -1,7 +1,7 @@
 <div class="modal d-flex flex-column modal-balance-detalle fs-custom" style="height: 90vh; min-height: 500px">
-  
+
   <div class="modal-header flex-column align-items-start bg-success text-white shadow-sm border-0 flex-shrink-0">
-    
+
     <div class="w-100 d-flex justify-content-between align-items-start mb-2">
       <div>
         <h5 class="modal-title mb-1">
@@ -13,11 +13,13 @@
           {{ balance[0]?.empresaDesc || "Empresa" }}
         </span>
       </div>
-      <button type="button" class="btn-close btn-close-white ms-3" aria-label="Close" (click)="activeModal.dismiss()"></button>
+      <button type="button" class="btn-close btn-close-white ms-3" aria-label="Close"
+        (click)="activeModal.dismiss()"></button>
     </div>
-    
-    <div class="w-100 d-flex flex-wrap align-items-center gap-4 mt-2 small border-top border-success border-opacity-25 pt-2">
-      
+
+    <div
+      class="w-100 d-flex flex-wrap align-items-center gap-4 mt-2 small border-top border-success border-opacity-25 pt-2">
+
       <div class="d-flex align-items-center" title="Ejercicio Fiscal">
         <i class="bi bi-calendar-check me-2 fs-6 text-white-75"></i>
         <strong class="me-1 text-white-75">Ejercicio:</strong>
@@ -36,41 +38,92 @@
         <strong class="me-1 text-white-75">Mapping:</strong>
         <span class="text-white opacity-75">{{ balance[0]?.id_mapping }}</span>
       </div>
-      
+
       <div class="d-flex align-items-center ms-md-auto text-white-50 small" title="ID Interno">
         <i class="bi bi-hash me-1"></i> {{ balance[0]?.id_blce }}
       </div>
     </div>
   </div>
 
-  <div class="py-2 px-3 bg-white border-bottom d-flex align-items-center gap-3 flex-shrink-0">
-    <div class="form-check form-switch focus-ring focus-ring-success m-0 d-flex align-items-center gap-2">
-      <input 
-        class="form-check-input" 
-        type="checkbox" 
-        role="switch" 
-        id="switchSinMapping"
-        style="cursor: pointer;"
-        [checked]="this.filtrosActivos"
-        (change)="toggleFiltro()">
-      <label class="form-check-label small fw-semibold text-secondary cursor-pointer" for="switchSinMapping">
-        Mostrar cuentas con saldo cero
-      </label>
+  <div class="py-2 px-3 bg-white border-bottom flex-shrink-0">
+
+    <div class="d-flex align-items-center gap-4">
+
+      <div class="form-check form-switch focus-ring focus-ring-info m-0 d-flex align-items-center gap-2">
+        <input class="form-check-input" type="checkbox" role="switch" id="switchSinMapping" style="cursor: pointer;"
+          [checked]="this.filtrosActivos" (change)="toggleFiltro()">
+        <label class="form-check-label small fw-semibold text-secondary cursor-pointer" for="switchSinMapping">
+          Mostrar cuentas en cero
+        </label>
+      </div>
+
+      <div class="vr h-100 mx-2"></div>
+
+      <div class="form-check form-switch focus-ring focus-ring-info m-0 d-flex align-items-center gap-2">
+        <input class="form-check-input" type="checkbox" role="switch" id="switchMiles" style="cursor: pointer;"
+          [checked]="verEnMiles" (change)="toggleMiles()">
+        <label class="form-check-label small fw-semibold text-secondary cursor-pointer" for="switchMiles">
+          Ver en Miles (M$)
+        </label>
+      </div>
     </div>
+
+    @if (verEnMiles) {
+    <div class="alert alert-warning py-2 px-3 mt-2 mb-0 small border-warning text-warning-emphasis">
+
+      <div class="d-flex align-items-center">
+        <i class="bi bi-exclamation-triangle-fill me-2 fs-5"></i>
+        <div>
+          <strong>Atención:</strong> Se están ocultando
+          <span class="font-monospace fw-bold">{{ dineroOculto | currency:'CLP' }}</span>
+          en residuos decimales no visibles.
+        </div>
+      </div>
+
+      @if (residuosPorCategoria.length > 0) {
+      <details class="mt-2">
+        <summary class="fw-semibold cursor-pointer text-decoration-underline" style="list-style: none;">
+          <i class="bi bi-caret-down-fill me-1" style="font-size: 0.7rem;"></i>Ver desglose por categoría
+        </summary>
+
+        <div class="mt-2 bg-white bg-opacity-50 rounded border border-warning-subtle p-0 overflow-hidden">
+          <div class="table-responsive" style="max-height: 150px; overflow-y: auto;">
+            <table class="table table-sm table-borderless table-striped mb-0 smaller-text">
+              <tbody>
+                @for (item of residuosPorCategoria; track item.nombre) {
+                <tr>
+                  <td class="ps-3 text-truncate" style="max-width: 250px;">{{ item.nombre }}</td>
+                  <td class="text-end pe-3 font-monospace fw-bold text-muted">
+                    {{ item.valor | currency:'CLP' }}
+                  </td>
+                </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </details>
+      }
+
+    </div>
+    }
+
   </div>
-  
+
   <app-spinner [showSpinner]="showSpinner"></app-spinner>
 
   @if (vistaParaMostrar.length > 0) {
 
   <div class="modal-body flex-grow-1 overflow-auto p-0 bg-white custom-scrollbar">
-    
+
     <div class="sticky-top bg-white border-bottom shadow-sm z-3">
-       <div class="row mx-0 py-2 px-3 fw-bold text-secondary text-uppercase ls-1 small align-items-center">
-          <div class="col-9 ps-2">Concepto / Cuenta</div>
-          <div class="col-3 text-end">Saldo Actual</div>
-          <div class="col-auto" style="width: 20px;"></div>
-       </div>
+      <div class="row mx-0 py-2 px-3 fw-bold text-secondary text-uppercase ls-1 small align-items-center">
+        <div class="col-9 ps-2">Concepto / Cuenta</div>
+        <div class="col-3 text-end">
+          @if (verEnMiles) { Saldo Actual ($M) } @else { Saldo Actual }
+        </div>
+        <div class="col-auto" style="width: 20px;"></div>
+      </div>
     </div>
 
     <div ngbAccordion class="accordion-flush">
@@ -79,20 +132,24 @@
         <h2 ngbAccordionHeader>
           <button ngbAccordionButton class="p-0 bg-light-subtle focus-ring focus-ring-success shadow-none">
             <div class="w-100 py-2 px-3">
-                <div class="row mx-0 align-items-center">
-                  <div class="col-9 text-uppercase text-dark fw-bold fs-6 text-truncate pe-2">
-                    {{ macro.nombre }}
-                  </div>
-                  <div class="col-3 text-end text-dark fw-bold font-monospace small">
-                    <span *ngIf="macro.nombre !== 'ESTADO DE RESULTADOS'">
-                       $ {{ macro.saldo | number:'1.0-0' }}
-                    </span>
-                  </div>
+              <div class="row mx-0 align-items-center">
+                <div class="col-9 text-uppercase text-dark fw-bold fs-6 text-truncate pe-2">
+                  {{ macro.nombre }}
                 </div>
+
+                <div class="col-3 text-end text-dark fw-bold font-monospace small"
+                  [pTooltip]="verEnMiles ? 'Valor Real: ' + (macro.saldo | currency:'CLP') : undefined"
+                  tooltipPosition="left" [style.cursor]="verEnMiles ? 'help' : 'default'">
+                  <span *ngIf="macro.nombre !== 'ESTADO DE RESULTADOS'">
+                    $ {{ getValorVisual(macro.saldo) | number:'1.0-0' }}
+                  </span>
+                </div>
+
+              </div>
             </div>
           </button>
         </h2>
-        
+
         <div ngbAccordionCollapse>
           <div ngbAccordionBody class="p-0">
             <ng-template>
@@ -101,19 +158,23 @@
                 <div ngbAccordionItem [collapsed]="true" class="border-bottom border-light">
                   <h2 ngbAccordionHeader>
                     <button ngbAccordionButton class="p-0 bg-white focus-ring focus-ring-success shadow-none">
-                       <div class="w-100 py-2 px-3">
-                          <div class="row mx-0 align-items-center">
-                            <div class="col-9 text-uppercase text-success fw-bold text-truncate pe-2 small">
-                              {{ grupo.categoria }}
-                            </div>
-                            <div class="col-3 text-end text-dark font-monospace smaller-text">
-                               $ {{ grupo.saldo | number:'1.0-0' }}
-                            </div>
+                      <div class="w-100 py-2 px-3">
+                        <div class="row mx-0 align-items-center">
+                          <div class="col-9 text-uppercase text-success fw-bold text-truncate pe-2 small">
+                            {{ grupo.categoria }}
                           </div>
-                       </div>
+
+                          <div class="col-3 text-end text-dark font-monospace smaller-text"
+                            [pTooltip]="verEnMiles ? 'Valor Real: ' + (grupo.saldo | currency:'CLP') : undefined"
+                            tooltipPosition="left" [style.cursor]="verEnMiles ? 'help' : 'default'">
+                            $ {{ getValorVisual(grupo.saldo) | number:'1.0-0' }}
+                          </div>
+
+                        </div>
+                      </div>
                     </button>
                   </h2>
-                  
+
                   <div ngbAccordionCollapse>
                     <div ngbAccordionBody class="p-0">
                       <ng-template>
@@ -122,41 +183,54 @@
                           <div ngbAccordionItem [collapsed]="true" class="border-bottom border-light-subtle">
                             <h2 ngbAccordionHeader>
                               <button ngbAccordionButton class="p-0 bg-white focus-ring focus-ring-success shadow-none">
-                                 <div class="w-100 py-1 px-3">
-                                    <div class="row mx-0 align-items-center">
-                                      <div class="col-9 d-flex align-items-center gap-2 pe-2 overflow-hidden">
-                                        <span class="badge bg-light text-dark border border-secondary-subtle fw-normal" style="font-size: 0.7rem;">{{ sub.id_fsa }}</span>
-                                        <span class="fw-semibold text-dark text-truncate small">{{ sub.descripcion }}</span>
-                                      </div>
-                                      <div class="col-3 text-end text-dark font-monospace smaller-text">
-                                        $ {{ sub.saldo | number:'1.0-0' }}
-                                      </div>
+                                <div class="w-100 py-1 px-3">
+                                  <div class="row mx-0 align-items-center">
+                                    <div class="col-9 d-flex align-items-center gap-2 pe-2 overflow-hidden">
+                                      <span class="badge bg-light text-dark border border-secondary-subtle fw-normal"
+                                        style="font-size: 0.7rem;">{{ sub.id_fsa }}</span>
+                                      <span class="fw-semibold text-dark text-truncate small">{{ sub.descripcion
+                                        }}</span>
                                     </div>
-                                 </div>
+
+                                    <div class="col-3 text-end text-dark font-monospace smaller-text"
+                                      [pTooltip]="verEnMiles ? 'Valor Real: ' + (sub.saldo | currency:'CLP') : undefined"
+                                      tooltipPosition="left" [style.cursor]="verEnMiles ? 'help' : 'default'">
+                                      $ {{ getValorVisual(sub.saldo) | number:'1.0-0' }}
+                                    </div>
+
+                                  </div>
+                                </div>
                               </button>
                             </h2>
-                            
+
                             <div ngbAccordionCollapse>
                               <div ngbAccordionBody class="p-0">
                                 <ng-template>
                                   <div class="bg-light p-2">
                                     <div class="bg-white rounded shadow-sm p-0">
-                                      <div class="row mx-0 py-1 px-3 border-bottom bg-light text-muted smaller-text text-uppercase">
-                                          <div class="col-2">FSA</div>
-                                          <div class="col-2">Cuenta</div>
-                                          <div class="col-5">Nombre</div>
-                                          <div class="col-3 text-end">Saldo</div>
-                                          <div class="col-auto" style="width: 20px;"></div>
+                                      <div
+                                        class="row mx-0 py-1 px-3 border-bottom bg-light text-muted smaller-text text-uppercase">
+                                        <div class="col-2">FSA</div>
+                                        <div class="col-2">Cuenta</div>
+                                        <div class="col-5">Nombre</div>
+                                        <div class="col-3 text-end">Saldo</div>
+                                        <div class="col-auto" style="width: 20px;"></div>
                                       </div>
 
                                       @for (cuenta of sub.cuentas; track cuenta.num_cuenta) {
-                                      <div class="row mx-0 py-1 px-3 border-bottom border-light align-items-center hover-bg-gray-50">
+                                      <div
+                                        class="row mx-0 py-1 px-3 border-bottom border-light align-items-center hover-bg-gray-50">
                                         <div class="col-2 smaller-text text-muted">{{ cuenta.id_fsa }}</div>
                                         <div class="col-2 smaller-text fw-bold text-dark">{{ cuenta.num_cuenta }}</div>
-                                        <div class="col-5 smaller-text text-truncate" title="{{ cuenta.nombre }}">{{ cuenta.nombre }}</div>
-                                        <div class="col-3 text-end font-monospace smaller-text fw-bold text-dark">
-                                          $ {{ cuenta.saldo | number:'1.0-0' }}
+                                        <div class="col-5 smaller-text text-truncate" title="{{ cuenta.nombre }}">{{
+                                          cuenta.nombre }}</div>
+
+                                        <div class="col-3 text-end font-monospace smaller-text fw-bold text-dark"
+                                          [pTooltip]="verEnMiles ? 'Valor Real: ' + (cuenta.saldo | currency:'CLP') : undefined"
+                                          tooltipPosition="left" [style.cursor]="verEnMiles ? 'help' : 'default'">
+                                          $ {{ getValorVisual(cuenta.saldo) | number:'1.0-0' }}
                                         </div>
+
                                         <div class="col-auto" style="width: 20px;"></div>
                                       </div>
                                       }
@@ -183,21 +257,22 @@
   </div>
   } @else {
   <div class="modal-body flex-grow-1 d-flex flex-column align-items-center justify-content-center text-muted bg-light">
-     <i class="bi bi-inbox fs-1 opacity-50 mb-2"></i>
-     <p>No hay datos disponibles.</p>
+    <i class="bi bi-inbox fs-1 opacity-50 mb-2"></i>
+    <p>No hay datos disponibles.</p>
   </div>
   }
 
   <div class="modal-footer bg-white border-top py-2 px-3 flex-shrink-0 z-3 justify-content-end gap-2">
-    
+
     <button class="btn btn-warning btn-sm shadow-sm" (click)="abrirModalImpresion()">
       <i class="bi bi-printer me-2"></i> Imprimir
     </button>
-    
-    <button class="btn btn-teal btn-sm text-white shadow-sm" style="background-color: #20c997; border-color: #20c997;" (click)="abrirModalExcel()">
+
+    <button class="btn btn-teal btn-sm text-white shadow-sm" style="background-color: #20c997; border-color: #20c997;"
+      (click)="abrirModalExcel()">
       <i class="bi bi-file-earmark-spreadsheet me-2"></i> Exportar Excel
     </button>
-    
+
     <button class="btn btn-danger btn-sm shadow-sm" (click)="activeModal.close()">
       <i class="bi bi-x-lg me-2"></i> Cerrar
     </button>

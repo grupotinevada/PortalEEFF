@@ -24,7 +24,6 @@ import { UserFormModal } from '../user-form-modal/user-form-modal';
     CommonModule,
     ReactiveFormsModule,
     FormsModule,
-    Navbar,
     TableModule,
     ButtonModule,
     InputTextModule,
@@ -41,7 +40,7 @@ import { UserFormModal } from '../user-form-modal/user-form-modal';
   styleUrl: './administracion.css',
 })
 export class Administracion {
-// --- Para la Tabla ---
+  // --- Para la Tabla ---
   usuarios: UsuarioCompleto[] = [];
   globalFilter: string = '';
 
@@ -53,9 +52,9 @@ export class Administracion {
   constructor(
 
     private adminService: AdministracionService
-  ) {}
-  
-  
+  ) { }
+
+
   ngOnInit(): void {
     this.cargarUsuarios();
   }
@@ -79,17 +78,17 @@ export class Administracion {
     );
   }
 
- 
+
   /**
    * Abre el modal de creación y resetea el formulario
    */
   abrirModalCrear(): void {
-      this.modalMode = 'create';
-      this.selectedUser = null;
-      this.displayModal = true;
-    }
+    this.modalMode = 'create';
+    this.selectedUser = null;
+    this.displayModal = true;
+  }
 
-  
+
 
   confirmarEliminar(usuario: UsuarioCompleto): void {
     Swal.fire({
@@ -107,19 +106,19 @@ export class Administracion {
       }
     });
   }
-  
+
   /**
    * Abre el modal de edición y carga los datos del usuario
    */
   abrirModalEditar(usuario: UsuarioCompleto): void {
-      this.modalMode = 'edit';
-      this.selectedUser = usuario;
-      this.displayModal = true;
-    }
+    this.modalMode = 'edit';
+    this.selectedUser = usuario;
+    this.displayModal = true;
+  }
 
-handleSave(formData: any): void {
+  handleSave(formData: any): void {
     this.isLoading = true;
-    
+
     // Procesar los 'accesos' desde el sub-formulario
     const selectedAccesos = Object.keys(formData.accesos)
       .filter(key => formData.accesos[key] === true)
@@ -134,7 +133,7 @@ handleSave(formData: any): void {
         accesos: selectedAccesos
       };
       this.llamarServicioCrear(payload);
-    } 
+    }
     else if (this.modalMode === 'edit' && this.selectedUser) {
       const payload: UpdateUserPayload = {
         permiso: formData.permiso,

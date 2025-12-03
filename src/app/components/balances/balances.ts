@@ -34,7 +34,6 @@ import { TagModule } from 'primeng/tag';
   selector: 'app-balances',
   imports: [
     CommonModule,
-    Navbar,
     Spinner,
     ReactiveFormsModule,
     DatePickerModule,

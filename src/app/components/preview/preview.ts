@@ -41,7 +41,6 @@ import { TooltipModule } from 'primeng/tooltip';
     CommonModule,
     FormsModule,
     Spinner,
-    Navbar,
     TableModule,
     SelectModule,
     TooltipModule,

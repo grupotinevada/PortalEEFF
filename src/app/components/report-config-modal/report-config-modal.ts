@@ -22,76 +22,66 @@ import { TooltipModule } from 'primeng/tooltip';
 
 export class ReportConfigModal implements OnInit {
 
-  // PROPIEDADES INICIALES (Inputs del Padre)
   @Input() type: 'print' | 'excel' = 'print';
   @Input() title: string = '';
-  @Input() reportData: IMacroCategoria[] = []; // Data agrupada con saldos originales
-  @Input() balanceData!: IBalanceGet; // Data de cabecera
-  // --- MODO COMPARATIVO ---
+  @Input() reportData: IMacroCategoria[] = [];
+  @Input() balanceData!: IBalanceGet;
   @Input() mode: 'standard' | 'comparative' = 'standard';
   @Input() comparativeData: IMacroCategoriaComparativa[] = [];
   @Input() balanceAnteriorData!: IBalanceGet;
 
-
-  // html previsulizacion
   previewHtml: SafeHtml | null = null;
   rawPreviewHtml: string = '';
   showSpinner = false;
 
-  // 💡 PROPIEDAD DE CONFIGURACIÓN ÚNICA (Reemplaza a printConfig y excelConfig)
   config: IReportConfig = {
-    // Opciones: 'absoluto' (todo +), 'todo_negativo' (todo original), 'auditoria' (Balance +, ER -)
     alcanceNegativos: 'auditoria',
-    // Opciones: 'signo' (-100), 'parentesis' (100)
     estiloNegativo: 'parentesis',
     mostrarFsa: false,
     mostrarCuentas: false,
     incluirCuentasCero: false,
     categoriasSeleccionadas: [] as { nombre: string; selected: boolean }[],
     colorTheme: 'green-black',
-    mostrarDiferencia: true, // Default: visible
-    mostrarVariacion: true   // Default: visible
+    mostrarDiferencia: true,
+    mostrarVariacion: true,
+    // NUEVO FLAG
+    verEnMiles: false
   };
 
   constructor(
-    public activeModal: NgbActiveModal, // Para cerrar el modal
-    private sanitizer: DomSanitizer // Para la previsualización
+    public activeModal: NgbActiveModal,
+    private sanitizer: DomSanitizer
   ) {
   }
 
+  //HELPER CENTRAL PARA TRUNCAMIENTO
+  private _getValor(valor: number): number {
+    if (!valor && valor !== 0) return 0;
+    if (this.config.verEnMiles) {
+      // Truncamiento estricto (no redondeo)
+      return Math.trunc(valor / 1000);
+    }
+    return valor;
+  }
+
   private getPaletteColors() {
-    // Definimos los colores base
-    const GREEN = '#198754'; // Verde Bootstrap (Success)
-    const RED = '#dc3545';   // Rojo Bootstrap (Danger)
-    const BLACK = '#000000'; // Negro
+    const GREEN = '#198754';
+    const RED = '#dc3545';
+    const BLACK = '#000000';
 
     let detailColor = GREEN;
     let negativeColor = RED;
 
     switch (this.config.colorTheme) {
-      case 'green-black':
-        detailColor = GREEN;
-        negativeColor = BLACK;
-        break;
-      case 'green-red':
-        detailColor = GREEN;
-        negativeColor = RED;
-        break;
-      case 'red-black':
-        detailColor = RED;
-        negativeColor = BLACK;
-        break;
-      case 'red-red':
-        detailColor = RED;
-        negativeColor = RED;
-        break;
+      case 'green-black': detailColor = GREEN; negativeColor = BLACK; break;
+      case 'green-red': detailColor = GREEN; negativeColor = RED; break;
+      case 'red-black': detailColor = RED; negativeColor = BLACK; break;
+      case 'red-red': detailColor = RED; negativeColor = RED; break;
     }
-
     return { detailColor, negativeColor };
   }
 
   ngOnInit(): void {
-    // 1. Inicializar categorías según el modo
     if (this.mode === 'standard') {
       if (this.reportData && this.reportData.length > 0) {
         this.config.categoriasSeleccionadas = this.reportData.map(macro => ({
@@ -100,24 +90,18 @@ export class ReportConfigModal implements OnInit {
         }));
       }
     } else {
-      // MODO COMPARATIVO
       if (this.comparativeData && this.comparativeData.length > 0) {
         this.config.categoriasSeleccionadas = this.comparativeData.map(macro => ({
           nombre: macro.nombre,
           selected: true
         }));
       }
-      // Forzamos ver negativos reales, ya que en variaciones el signo es vital
-      //this.config.alcanceNegativos = 'todo_negativo';
     }
-
-    // Generar preview inicial si es modal de impresión
     if (this.type === 'print') {
       this.actualizarPreview();
     }
   }
 
-  // --- GETTERS PARA HTML ---
   get themeClass(): string {
     return this.type === 'print' ? 'success' : 'teal';
   }
@@ -126,19 +110,16 @@ export class ReportConfigModal implements OnInit {
     return this.type === 'print' ? 'btn-success' : 'btn-teal';
   }
 
-  // 💡 Llama a generar preview si estamos en modo impresión
   emitChange(): void {
     if (this.type === 'print') {
       this.actualizarPreview();
     }
   }
 
-  // 💡Ejecuta la acción final y cierra el modal
   confirm(): void {
     if (this.type === 'print') {
       this.ejecutarImpresion();
     } else {
-      // Derivar según el modo
       if (this.mode === 'standard') {
         this.exportarExcel();
       } else {
@@ -153,9 +134,6 @@ export class ReportConfigModal implements OnInit {
       Swal.fire('Error', 'No se ha podido generar la previsualización para imprimir.', 'error');
       return;
     }
-
-    // Ya no se necesita this.modalService.dismissAll();
-
     const printWindow = window.open('', '_blank');
     if (printWindow) {
       printWindow.document.write(this.rawPreviewHtml);
@@ -163,43 +141,30 @@ export class ReportConfigModal implements OnInit {
       setTimeout(() => {
         printWindow.focus();
         printWindow.print();
+        printWindow.close();
       }, 250);
     } else {
       Swal.fire('Error', 'Por favor permite las ventanas emergentes.', 'error');
     }
   }
 
-  // Helper para convertir todo un árbol a positivo
   private hacerPositivoRecursivo(item: any) {
     if (item.saldo) item.saldo = Math.abs(item.saldo);
-
-    // Navegar hacia abajo
-    if (item.categorias) {
-      item.categorias.forEach((cat: any) => this.hacerPositivoRecursivo(cat));
-    }
-    if (item.subcategorias) {
-      item.subcategorias.forEach((sub: any) => this.hacerPositivoRecursivo(sub));
-    }
+    if (item.categorias) item.categorias.forEach((cat: any) => this.hacerPositivoRecursivo(cat));
+    if (item.subcategorias) item.subcategorias.forEach((sub: any) => this.hacerPositivoRecursivo(sub));
   }
 
 
   actualizarPreview(): void {
-    // 1. Delegar si es modo comparativo
     if (this.mode === 'comparative') {
       this._generarPreviewComparativo();
       return;
     }
-
-    // 2. Validación básica
     if (this.reportData.length === 0) return;
 
-    // A. COLORES
     const { detailColor, negativeColor } = this.getPaletteColors();
-
-    // B. PROCESAMIENTO
     let dataParaImprimir: IMacroCategoria[] = JSON.parse(JSON.stringify(this.reportData));
 
-    // Lógica de negativos
     dataParaImprimir.forEach(macro => {
       const esEstadoResultados = macro.nombre.toUpperCase().includes('RESULTADO') ||
         macro.nombre.toUpperCase().includes('GANANCIA') ||
@@ -207,11 +172,9 @@ export class ReportConfigModal implements OnInit {
       let debeSerAbsoluto = false;
       if (this.config.alcanceNegativos === 'absoluto') debeSerAbsoluto = true;
       else if (this.config.alcanceNegativos === 'auditoria' && !esEstadoResultados) debeSerAbsoluto = true;
-
       if (debeSerAbsoluto) this.hacerPositivoRecursivo(macro);
     });
 
-    // Filtro
     const categoriasActivas = this.config.categoriasSeleccionadas.filter(c => c.selected).map(c => c.nombre);
     dataParaImprimir = dataParaImprimir.filter(macro => categoriasActivas.includes(macro.nombre));
 
@@ -222,7 +185,43 @@ export class ReportConfigModal implements OnInit {
       return;
     }
 
-    // C. GENERACIÓN HTML
+    let residuosHtml = '';
+    if (this.config.verEnMiles) {
+      const { desglose, totalActual } = this._calcularResiduosParaReporte(dataParaImprimir, 'standard');
+      if (totalActual > 0) {
+        let filasResiduos = '';
+        desglose.forEach(item => {
+          filasResiduos += `
+            <tr>
+              <td style="border-bottom: 1px solid #eee; color: #555;">${item.nombre}</td>
+              <td class="text-end" style="border-bottom: 1px solid #eee; font-family: monospace;">${new Intl.NumberFormat('es-CL').format(item.actual)}</td>
+            </tr>`;
+        });
+        residuosHtml = `
+          <div style="margin-top: 5px; page-break-inside: avoid;">
+            <h4 style="font-size: 10px; text-transform: uppercase; border-bottom: 1px solid #ccc; margin-bottom: 5px;">Control de Residuos (M$)</h4>
+            <table style="width: 70%; font-size: 9px;">
+              <thead>
+                <tr>
+                  <th style="text-align: left; background: #f9f9f9; padding:2px;">Categoría</th>
+                  <th class="text-end" style="background: #f9f9f9; padding:2px;">Res. Actual ($)</th>
+
+                </tr>
+              </thead>
+              <tbody>
+                ${filasResiduos}
+                <tr>
+                  <td style="font-weight: bold; border-top: 1px solid #333;">TOTAL OCULTO</td>
+                  <td class="text-end" style="font-weight: bold; border-top: 1px solid #333; font-family: monospace;">${new Intl.NumberFormat('es-CL').format(totalActual)}</td>
+                </tr>
+              </tbody>
+            </table>
+            <p style="font-size: 9px; color: #777; margin-top: 5px;">* Estos montos son la suma de los decimales (cientos de pesos) no visualizados en el reporte principal.</p>
+          </div>
+        `;
+      }
+    }
+
     const nombreConjunto = this.balanceData?.nombre_conjunto || 'Balance';
     const ejercicio = this.balanceData?.ejercicio || '';
     const fechaInicio = new Date(this.balanceData?.fecha_inicio).toLocaleDateString('es-CL');
@@ -241,99 +240,102 @@ export class ReportConfigModal implements OnInit {
       return numStr;
     };
 
+    // Estilos CSS
     const styles = `
     <style>
-      body { margin: 20px; font-family: 'Segoe UI', sans-serif; color: #333; }
-      .report-header { text-align: center; margin-bottom: 25px; border-bottom: 2px solid ${detailColor}; padding-bottom: 10px; }
-      .report-header h1 { margin: 0; font-size: 22px; text-transform: uppercase; }
-      .report-header p { margin: 2px 0; font-size: 12px; color: #555; }
-      
-      table { width: 100%; border-collapse: collapse; font-size: 11px; }
-      th { background-color: #f0f0f0; border-bottom: 2px solid ${detailColor}; text-transform: uppercase; font-size: 10px; padding: 8px; }
-      td { padding: 4px 8px; vertical-align: middle; }
+      @page { size: auto; margin: 10mm; }
+      body { font-family: 'Segoe UI', sans-serif; color: #333; margin: 0; padding: 0; }
+      .report-header { text-align: center; margin-bottom: 15px; border-bottom: 2px solid ${detailColor}; padding-bottom: 5px; }
+      .report-header h1 { margin: 0; font-size: 18px; text-transform: uppercase; }
+      .report-header p { margin: 0; font-size: 11px; color: #555; }
+      table { width: 100%; border-collapse: collapse; font-size: 10px; }
+      th { background-color: #f0f0f0; border-bottom: 1px solid ${detailColor}; text-transform: uppercase; font-size: 9px; padding: 4px; }
+      td { padding: 2px 4px; vertical-align: middle; }
+      tr { page-break-inside: avoid; }
       .text-end { text-align: right; }
-
-      /* JERARQUÍA DE CABECERAS (Solo Títulos) */
-      .header-macro td { font-size: 13px; font-weight: 800; color: ${detailColor}; text-transform: uppercase; padding-top: 15px; border-bottom: 1px solid #ccc; }
-      .header-cat td { font-size: 11px; font-weight: 700; color: #444; padding-top: 10px; padding-left: 10px; font-style: italic; }
-      .header-subcat td { font-size: 11px; font-weight: 600; color: #666; padding-left: 20px; }
-
-      /* FILAS DE CUENTAS */
-      .row-cuenta td { font-size: 10px; color: #777; padding-left: 40px; background-color: #fafafa; border-bottom: 1px solid #f0f0f0; }
-
-      /* JERARQUÍA DE TOTALES (Pie de grupo) */
-      .total-subcat td { font-weight: 600; color: #555; border-top: 1px solid #ddd; padding-left: 20px; font-style: italic; }
-      .total-cat td { font-weight: 700; color: #333; border-top: 1px solid #999; background-color: #fcfcfc; padding-left: 10px; }
-      .total-macro td { font-size: 12px; font-weight: 800; color: #000; border-top: 2px solid #000; border-bottom: 3px double #000; background-color: #f0f0f0; }
-
-      /* Línea simple si no hay desglose de cuentas */
-      .row-simple-subcat td { padding-left: 20px; font-weight: normal; }
-
-      .footer { text-align: right; font-size: 9px; color: #999; margin-top: 30px; border-top: 1px solid #eee; }
+      .header-macro td { font-size: 11px; font-weight: 800; color: ${detailColor}; text-transform: uppercase; padding-top: 10px; border-bottom: 1px solid #ccc; background-color: #fff; }
+      .header-cat td { font-size: 10px; font-weight: 700; color: #444; padding-top: 6px; padding-left: 8px; font-style: italic; }
+      .header-subcat td { font-size: 10px; font-weight: 600; color: #666; padding-left: 16px; }
+      .row-cuenta td { font-size: 9px; color: #777; padding-left: 30px; background-color: #fafafa; border-bottom: 1px solid #f8f8f8; }
+      .total-subcat td { font-weight: 600; color: #555; border-top: 1px solid #ddd; padding-left: 16px; font-style: italic; background-color: #fff; }
+      .total-cat td { font-weight: 700; color: #333; border-top: 1px solid #999; background-color: #fcfcfc; padding-left: 8px; }
+      .total-macro td { font-size: 11px; font-weight: 800; color: #000; border-top: 1px solid #000; border-bottom: 3px double #000; background-color: #f0f0f0; padding-top: 4px; padding-bottom: 4px; }
+      .row-simple-subcat td { padding-left: 16px; font-weight: normal; }
+      .footer { text-align: right; font-size: 8px; color: #999; margin-top: 10px; border-top: 1px solid #eee; }
+      .page-break { page-break-after: always; display: block; height: 1px; width: 100%; border: none; }
     </style>
-  `;
+    `;
 
-    let tableContent = '';
+    // HEADER DE LA TABLA (Lo guardamos para repetirlo)
+    const tituloSufijo = this.config.verEnMiles ? '(Valores en M$)' : '($)';
+    const tableHeaderHtml = `
+      <thead>
+        <tr>
+          <th style="text-align:left;">Concepto</th>
+          <th class="text-end" style="width: 140px;">Saldo ${tituloSufijo}</th>
+        </tr>
+      </thead>`;
 
-    dataParaImprimir.forEach((macro) => {
-      // 1. Título Macro
-      tableContent += `<tr class="header-macro"><td colspan="2">${macro.nombre.toUpperCase()}</td></tr>`;
+    // Construcción del contenido
+    let fullContent = `<table>${tableHeaderHtml}<tbody>`;
+
+    dataParaImprimir.forEach((macro, index) => {
+      fullContent += `<tr class="header-macro"><td colspan="2">${macro.nombre.toUpperCase()}</td></tr>`;
 
       macro.categorias.forEach((cat) => {
-        // 2. Título Categoría
-        tableContent += `<tr class="header-cat"><td colspan="2">${cat.categoria}</td></tr>`;
-
+        fullContent += `<tr class="header-cat"><td colspan="2">${cat.categoria}</td></tr>`;
         cat.subcategorias.forEach((sub) => {
           const nombreSub = this.config.mostrarFsa ? `${sub.id_fsa} - ${sub.descripcion}` : sub.descripcion;
-
           if (this.config.mostrarCuentas) {
-            // A. MODO DETALLADO: Título Subcat -> Cuentas -> Total Subcat
-            tableContent += `<tr class="header-subcat"><td colspan="2">${nombreSub}</td></tr>`;
-
-            // Filtrar cuentas
+            fullContent += `<tr class="header-subcat"><td colspan="2">${nombreSub}</td></tr>`;
             let cuentasVisibles = sub.cuentas;
             if (!this.config.incluirCuentasCero) cuentasVisibles = cuentasVisibles.filter(c => c.saldo !== 0);
 
             cuentasVisibles.forEach(cuenta => {
-              tableContent += `
+              fullContent += `
               <tr class="row-cuenta">
                 <td>${cuenta.num_cuenta} - ${cuenta.nombre}</td>
-                <td class="text-end">${formatearNumero(cuenta.saldo)}</td>
+                <td class="text-end">${formatearNumero(this._getValor(cuenta.saldo))}</td>
               </tr>`;
             });
 
-            // Total Subcategoría
-            tableContent += `
+            fullContent += `
             <tr class="total-subcat">
               <td>Total ${sub.descripcion}</td>
-              <td class="text-end">${formatearNumero(sub.saldo)}</td>
+              <td class="text-end">${formatearNumero(this._getValor(sub.saldo))}</td>
             </tr>`;
           } else {
-            // B. MODO RESUMIDO: Subcategoría es una línea simple
-            tableContent += `
+            fullContent += `
             <tr class="row-simple-subcat">
               <td>${nombreSub}</td>
-              <td class="text-end">${formatearNumero(sub.saldo)}</td>
+              <td class="text-end">${formatearNumero(this._getValor(sub.saldo))}</td>
             </tr>`;
           }
         });
-
-        // 3. Total Categoría
-        tableContent += `
+        fullContent += `
         <tr class="total-cat">
           <td>TOTAL ${cat.categoria.toUpperCase()}</td>
-          <td class="text-end">${formatearNumero(cat.saldo)}</td>
+          <td class="text-end">${formatearNumero(this._getValor(cat.saldo))}</td>
         </tr>`;
       });
 
-      // 4. Total Macro
-      tableContent += `
+      fullContent += `
       <tr class="total-macro">
         <td>TOTAL ${macro.nombre.toUpperCase()}</td>
-        <td class="text-end">${formatearNumero(macro.saldo)}</td>
+        <td class="text-end">${formatearNumero(this._getValor(macro.saldo))}</td>
       </tr>
-      <tr><td colspan="2" style="height: 15px;"></td></tr>`; // Espaciador
+      <tr><td colspan="2" style="height: 30px;"></td></tr>`; // <-- AUMENTADO A 30PX
+
+      // 🛑 LÓGICA DE CORTE DE PÁGINA (CORREGIDA) 🛑
+      if (macro.nombre.toUpperCase().includes('PASIVO') && !macro.nombre.toUpperCase().includes('PATRIMONIO')) {
+        fullContent += `</tbody></table>`;
+        fullContent += `<div class="page-break"></div>`;
+        fullContent += `<div style="margin-top:20px"></div><table>${tableHeaderHtml}<tbody>`;
+      }
+
     });
+
+    fullContent += `</tbody></table>`;
 
     const printHtml = `
     <html>
@@ -344,13 +346,10 @@ export class ReportConfigModal implements OnInit {
           <p><strong>${nombreConjunto}</strong></p>
           <p>${ejercicio} | ${fechaInicio} al ${fechaFin}</p>
         </div>
-        <table>
-          <thead>
-            <tr><th style="text-align:left;">Concepto</th><th class="text-end" style="width: 150px;">Saldo ($)</th></tr>
-          </thead>
-          <tbody>${tableContent}</tbody>
-        </table>
-        <div class="footer"><p>Generado: ${fechaImpresion}</p></div>
+        
+        ${fullContent}
+        
+        ${residuosHtml}<div class="footer"><p>Generado: ${fechaImpresion}</p></div>
       </body>
     </html>`;
 
@@ -358,21 +357,11 @@ export class ReportConfigModal implements OnInit {
     this.previewHtml = this.sanitizer.bypassSecurityTrustHtml(printHtml);
   }
 
-
-
-
   public exportarExcel(): void {
     this.showSpinner = true;
-
     try {
-      // 1. OBTENER COLORES Y FORMATOS
       const { detailColor } = this.getPaletteColors();
-
-      // CORRECCIÓN 1: Lógica de negativos (usar endsWith en lugar de includes)
-      // Si el tema es 'red-black', NO queremos rojos. Solo si es 'green-red' o 'red-red'.
       const usarRojo = this.config.colorTheme.endsWith('red');
-
-      // Construir formato Excel personalizado
       let excelNumFormat = '#,##0';
       if (this.config.estiloNegativo === 'parentesis') {
         excelNumFormat = usarRojo ? '#,##0;[Red](#,##0)' : '#,##0;(#,##0)';
@@ -380,7 +369,6 @@ export class ReportConfigModal implements OnInit {
         excelNumFormat = usarRojo ? '#,##0;[Red]-#,##0' : '#,##0;-#,##0';
       }
 
-      // 2. PROCESAR DATOS (Clonado y Signos)
       let dataProcesada: IMacroCategoria[] = JSON.parse(JSON.stringify(this.reportData));
 
       dataProcesada.forEach(macro => {
@@ -388,21 +376,15 @@ export class ReportConfigModal implements OnInit {
           macro.nombre.toUpperCase().includes('GANANCIA') ||
           macro.nombre.toUpperCase().includes('PERDIDA');
         let debeSerAbsoluto = false;
-
         if (this.config.alcanceNegativos === 'absoluto') debeSerAbsoluto = true;
         else if (this.config.alcanceNegativos === 'auditoria' && !esEstadoResultados) debeSerAbsoluto = true;
-
         if (debeSerAbsoluto) this.hacerPositivoRecursivo(macro);
       });
 
-      // Filtro Categorías
       const categoriasActivas = this.config.categoriasSeleccionadas.filter(c => c.selected).map(c => c.nombre);
       dataProcesada = dataProcesada.filter(macro => categoriasActivas.includes(macro.nombre));
 
-      // 3. GENERAR HOJAS
       const ws_bi = this._crearHojaPowerBI(dataProcesada, this.config);
-
-      // Pasamos el color sin el #
       const detailColorHex = detailColor.replace('#', '');
       const ws_design = this._crearHojaDisenoFinal(dataProcesada, this.config, excelNumFormat, detailColorHex);
 
@@ -422,16 +404,11 @@ export class ReportConfigModal implements OnInit {
     }
   }
 
-  /**
-   * [HELPER] Crea la Hoja 1: Datos planos para Power BI.
-   */
   private _crearHojaPowerBI(data: IMacroCategoria[], config: IReportConfig): XLSX.WorkSheet {
     const flatData: any[] = [];
-
     data.forEach(macro => {
       macro.categorias.forEach(categoria => {
         categoria.subcategorias.forEach(sub => {
-
           if (!config.mostrarCuentas) {
             flatData.push({
               "MacroCategoria": macro.nombre,
@@ -440,14 +417,11 @@ export class ReportConfigModal implements OnInit {
               "Subcategoria_Desc": sub.descripcion,
               "Cuenta_Num": null,
               "Cuenta_Nombre": null,
-              "Saldo": sub.saldo
+              "Saldo": this._getValor(sub.saldo) // APLICAR _getValor
             });
           } else {
             let cuentasParaMostrar = sub.cuentas;
-            if (!config.incluirCuentasCero) {
-              cuentasParaMostrar = cuentasParaMostrar.filter(c => c.saldo !== 0);
-            }
-
+            if (!config.incluirCuentasCero) cuentasParaMostrar = cuentasParaMostrar.filter(c => c.saldo !== 0);
             if (cuentasParaMostrar.length > 0) {
               cuentasParaMostrar.forEach(cuenta => {
                 flatData.push({
@@ -457,7 +431,7 @@ export class ReportConfigModal implements OnInit {
                   "Subcategoria_Desc": sub.descripcion,
                   "Cuenta_Num": cuenta.num_cuenta,
                   "Cuenta_Nombre": cuenta.nombre,
-                  "Saldo": cuenta.saldo
+                  "Saldo": this._getValor(cuenta.saldo) // APLICAR _getValor
                 });
               });
             } else {
@@ -468,21 +442,16 @@ export class ReportConfigModal implements OnInit {
                 "Subcategoria_Desc": sub.descripcion,
                 "Cuenta_Num": null,
                 "Cuenta_Nombre": null,
-                "Saldo": sub.saldo
+                "Saldo": this._getValor(sub.saldo) // APLICAR _getValor
               });
             }
           }
         });
       });
     });
-
     return XLSX.utils.json_to_sheet(flatData);
   }
 
-  /**
-    * [HELPER] Crea la Hoja 2: Diseño similar a la impresión.
-    * CORREGIDO: Ahora aplica estilos (s) a todas las filas para consistencia visual.
-    */
   private _crearHojaDisenoFinal(
     data: IMacroCategoria[],
     config: IReportConfig,
@@ -491,94 +460,102 @@ export class ReportConfigModal implements OnInit {
   ): XLSX.WorkSheet {
 
     const sheetData: any[] = [];
-
-    // --- DEFINICIÓN DE ESTILOS (Igualando la calidad del modo comparativo) ---
     const styleHeader = { font: { bold: true, color: { rgb: colorHex } }, border: { bottom: { style: 'medium', color: { rgb: colorHex } } } };
-    const styleMacro = { font: { bold: true, color: { rgb: colorHex } } }; // Título Macro con color del tema
-    const styleCat = { font: { bold: true, color: { rgb: "444444" } } };   // Título Categoría (Gris oscuro)
-    const styleCatTotal = { font: { bold: true }, border: { top: { style: 'thin' } } }; // Total Categoría
-
-    // Estilos para Subcategorías y Cuentas (Usamos 'alignment' en vez de espacios en blanco en el string)
+    const styleMacro = { font: { bold: true, color: { rgb: colorHex } } };
+    const styleCat = { font: { bold: true, color: { rgb: "444444" } } };
+    const styleCatTotal = { font: { bold: true }, border: { top: { style: 'thin' } } };
     const styleSubNombre = { alignment: { indent: 1 } };
-    const styleSubNum = { font: { italic: false } }; // Saldo normal
-
-    const styleSubNombreItalic = { alignment: { indent: 1 }, font: { italic: true } }; // Cuando hay desglose
+    const styleSubNum = { font: { italic: false } };
+    const styleSubNombreItalic = { alignment: { indent: 1 }, font: { italic: true } };
     const styleSubTotal = { alignment: { indent: 1 }, font: { italic: true }, border: { top: { style: 'thin' } } };
-
-    const styleCtaNombre = { alignment: { indent: 3 }, font: { color: { rgb: "777777" } } }; // Gris claro
+    const styleCtaNombre = { alignment: { indent: 3 }, font: { color: { rgb: "777777" } } };
     const styleCtaNum = { font: { color: { rgb: "777777" } } };
-
     const styleMacroTotal = { font: { bold: true }, border: { top: { style: 'thin' }, bottom: { style: 'double' } } };
 
+    const tituloSaldo = this.config.verEnMiles ? 'Saldo (M$)' : 'Saldo';
 
-    // Encabezado Tabla
+    if (config.verEnMiles) {
+      const { desglose, totalActual } = this._calcularResiduosParaReporte(data, 'standard');
+
+      if (totalActual > 0) {
+        // Estilos básicos para la tabla de control
+        const sHeaderCtrl = { font: { bold: true, color: { rgb: "333333" } }, fill: { fgColor: { rgb: "F2F2F2" } }, border: { bottom: { style: 'thin' } } };
+        const sRowCtrl = { font: { color: { rgb: "555555" } } };
+        const sTotalCtrl = { font: { bold: true }, border: { top: { style: 'thin' } } };
+        const fmtMoney = '#,##0';
+
+        sheetData.push([]); // Espacio vacío
+        sheetData.push([]);
+        sheetData.push([{ v: 'CONTROL DE RESIDUOS (MILES)', s: { font: { bold: true, underline: true } } }]);
+        sheetData.push([
+          { v: 'Categoría', s: sHeaderCtrl },
+          { v: 'Residuo ($)', s: sHeaderCtrl }
+        ]);
+
+        desglose.forEach(item => {
+          sheetData.push([
+            { v: item.nombre, s: sRowCtrl },
+            { v: item.actual, t: 'n', z: fmtMoney, s: sRowCtrl }
+          ]);
+        });
+
+        sheetData.push([
+          { v: 'TOTAL OCULTO', s: sTotalCtrl },
+          { v: totalActual, t: 'n', z: fmtMoney, s: sTotalCtrl }
+        ]);
+      }
+    }
+
     sheetData.push([
       { v: 'Concepto', s: styleHeader } as any,
-      { v: 'Saldo', s: styleHeader } as any
+      { v: tituloSaldo, s: styleHeader } as any
     ]);
 
     data.forEach(macro => {
-      // 1. MACRO
-      sheetData.push([
-        { v: macro.nombre.toUpperCase(), s: styleMacro } as any
-      ]);
-
+      sheetData.push([{ v: macro.nombre.toUpperCase(), s: styleMacro } as any]);
       macro.categorias.forEach(categoria => {
-        // 2. CATEGORÍA
         sheetData.push([
           { v: categoria.categoria, s: styleCat } as any,
-          // Nota: Las categorías generalmente no llevan saldo en la cabecera, pero si lo deseas, descomenta abajo:
-          // { v: categoria.saldo, t: 'n', z: numFormat, s: styleCat } as any
           { v: '', s: styleCat } as any
         ]);
 
         categoria.subcategorias.forEach(sub => {
           const nombreSub = config.mostrarFsa ? `${sub.id_fsa} - ${sub.descripcion}` : sub.descripcion;
-
           if (!config.mostrarCuentas) {
-            // A. MODO RESUMIDO (Linea simple)
             sheetData.push([
               { v: nombreSub, s: styleSubNombre },
-              { v: sub.saldo, t: 'n', z: numFormat, s: styleSubNum } // Se agrega 's' para consistencia
+              { v: this._getValor(sub.saldo), t: 'n', z: numFormat, s: styleSubNum } // APLICAR _getValor
             ]);
           } else {
-            // B. MODO DETALLADO
-            // Título Subcategoría
             sheetData.push([{ v: nombreSub, s: styleSubNombreItalic } as any]);
-
             let cuentasParaMostrar = sub.cuentas;
             if (!config.incluirCuentasCero) cuentasParaMostrar = cuentasParaMostrar.filter(c => c.saldo !== 0);
 
-            // Cuentas
             cuentasParaMostrar.forEach(cuenta => {
               sheetData.push([
                 { v: `${cuenta.num_cuenta} - ${cuenta.nombre}`, s: styleCtaNombre },
-                { v: cuenta.saldo, t: 'n', z: numFormat, s: styleCtaNum }
+                { v: this._getValor(cuenta.saldo), t: 'n', z: numFormat, s: styleCtaNum } // APLICAR _getValor
               ]);
             });
-
-            // Total Subcategoria
             sheetData.push([
               { v: `Total ${sub.descripcion}`, s: styleSubTotal } as any,
-              { v: sub.saldo, t: 'n', z: numFormat, s: styleSubTotal } as any
+              { v: this._getValor(sub.saldo), t: 'n', z: numFormat, s: styleSubTotal } as any // APLICAR _getValor
             ]);
           }
         });
-
-        // 3. TOTAL CATEGORÍA
         sheetData.push([
           { v: `TOTAL ${categoria.categoria.toUpperCase()}`, s: styleCatTotal } as any,
-          { v: categoria.saldo, t: 'n', z: numFormat, s: styleCatTotal } as any
+          { v: this._getValor(categoria.saldo), t: 'n', z: numFormat, s: styleCatTotal } as any // APLICAR _getValor
         ]);
       });
-
-      // 4. TOTAL MACRO
       sheetData.push([
         { v: `TOTAL ${macro.nombre.toUpperCase()}`, s: styleMacroTotal } as any,
-        { v: macro.saldo, t: 'n', z: numFormat, s: styleMacroTotal } as any
+        { v: this._getValor(macro.saldo), t: 'n', z: numFormat, s: styleMacroTotal } as any // APLICAR _getValor
       ]);
-      sheetData.push([]); // Espacio
+      sheetData.push([]);
     });
+
+
 
     const ws = XLSX.utils.aoa_to_sheet(sheetData);
     ws['!cols'] = [{ wch: 60 }, { wch: 20 }];
@@ -593,14 +570,11 @@ export class ReportConfigModal implements OnInit {
   }
 
   // ==========================================
-  // 🔄 LÓGICA COMPARATIVA (NUEVA)
+  // 🔄 LÓGICA COMPARATIVA
   // ==========================================
 
   private _generarPreviewComparativo(): void {
-    // A. COLORES
     const { detailColor, negativeColor } = this.getPaletteColors();
-
-    // B. PROCESAMIENTO
     const categoriasActivas = this.config.categoriasSeleccionadas.filter(c => c.selected).map(c => c.nombre);
     let dataClonada = JSON.parse(JSON.stringify(this.comparativeData));
     let dataFiltrada = dataClonada.filter((m: any) => categoriasActivas.includes(m.nombre));
@@ -612,18 +586,54 @@ export class ReportConfigModal implements OnInit {
       return;
     }
 
-    // Lógica Negativos
     dataFiltrada.forEach((macro: any) => {
       const esER = macro.nombre.toUpperCase().includes('RESULTADO') || macro.nombre.toUpperCase().includes('GANANCIA') || macro.nombre.toUpperCase().includes('PERDIDA');
       let abs = this.config.alcanceNegativos === 'absoluto' || (this.config.alcanceNegativos === 'auditoria' && !esER);
       if (abs) this.hacerPositivoComparativoRecursivo(macro);
     });
 
-    // C. HELPERS FORMATO & VISIBILIDAD
+    // Residuos
+    let residuosHtml = '';
+    if (this.config.verEnMiles) {
+      const { desglose, totalActual, totalAnterior } = this._calcularResiduosParaReporte(dataFiltrada, 'comparative');
+      if (totalActual > 0 || totalAnterior > 0) {
+        let filas = '';
+        desglose.forEach(item => {
+          filas += `
+            <tr>
+              <td style="border-bottom: 1px solid #eee;">${item.nombre}</td>
+              <td class="text-end" style="border-bottom: 1px solid #eee; font-family: monospace;">${new Intl.NumberFormat('es-CL').format(item.actual)}</td>
+              <td class="text-end text-muted" style="border-bottom: 1px solid #eee; font-family: monospace;">${new Intl.NumberFormat('es-CL').format(item.anterior)}</td>
+            </tr>`;
+        });
+        residuosHtml = `
+          <div style="margin-top: 25px; page-break-inside: avoid;">
+            <h4 style="font-size: 10px; text-transform: uppercase; border-bottom: 1px solid #ccc; margin-bottom: 5px;">Control de Residuos (M$)</h4>
+            <table style="width: 70%; font-size: 9px;">
+              <thead>
+                <tr>
+                  <th style="text-align: left; background: #f9f9f9; padding:2px;">Categoría</th>
+                  <th class="text-end" style="background: #f9f9f9; padding:2px;">Res. Actual ($)</th>
+                  <th class="text-end" style="background: #f9f9f9; padding:2px;">Res. Ant. ($)</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${filas}
+                <tr>
+                  <td style="font-weight: bold; border-top: 1px solid #333;">TOTAL OCULTO</td>
+                  <td class="text-end" style="font-weight: bold; border-top: 1px solid #333; font-family: monospace;">${new Intl.NumberFormat('es-CL').format(totalActual)}</td>
+                  <td class="text-end" style="font-weight: bold; border-top: 1px solid #333; font-family: monospace; color: #777;">${new Intl.NumberFormat('es-CL').format(totalAnterior)}</td>
+                </tr>
+              </tbody>
+            </table>
+            <p style="font-size: 9px; color: #777; margin-top: 5px;">* Estos montos son la suma de los decimales (cientos de pesos) no visualizados en el reporte principal.</p>
+          </div>
+        `;
+      }
+    }
+
     const showDiff = this.config.mostrarDiferencia;
     const showVar = this.config.mostrarVariacion;
-
-    // Cálculo dinámico de columnas (Concepto + Año1 + Año2 + [Diff] + [Var])
     let colSpan = 3;
     if (showDiff) colSpan++;
     if (showVar) colSpan++;
@@ -637,126 +647,107 @@ export class ReportConfigModal implements OnInit {
     const fmtVar = (v: number) => Math.abs(v) > 9999 ? '>>' : `${v > 0 ? '+' : ''}${v.toLocaleString('es-CL', { maximumFractionDigits: 1 })}%`;
     const colorVar = (v: number) => v > 0 ? 'color:#198754' : (v < 0 ? `color:${negativeColor}` : 'color:#666');
 
-    // D. ESTILOS
+    // Estilos CSS
     const styles = `
     <style>
-      body { font-family: 'Segoe UI', sans-serif; font-size: 11px; margin: 20px; color: #333; }
-      .header { text-align: center; border-bottom: 2px solid ${detailColor}; padding-bottom: 10px; margin-bottom: 20px; }
-      table { width: 100%; border-collapse: collapse; }
-      th { background-color: #f0f0f0; border-bottom: 2px solid ${detailColor}; text-transform: uppercase; font-size: 10px; padding: 6px; }
-      td { padding: 5px; vertical-align: middle; }
+      @page { size: auto; margin: 8mm; }
+      body { font-family: 'Segoe UI', sans-serif; font-size: 9px; margin: 0; color: #333; }
+      .header { text-align: center; border-bottom: 2px solid ${detailColor}; padding-bottom: 5px; margin-bottom: 10px; }
+      .header h2 { margin: 0; font-size: 16px; }
+      .header p { margin: 0; font-size: 10px; }
+      table { width: 100%; border-collapse: collapse; table-layout: auto; }
+      th { background-color: #f0f0f0; border-bottom: 2px solid ${detailColor}; text-transform: uppercase; font-size: 8px; padding: 3px; }
+      td { padding: 2px 3px; vertical-align: middle; }
+      tr { page-break-inside: avoid; }
       .text-end { text-align: right; }
-      
-      /* CABECERAS (Solo Título) */
-      .head-macro td { font-size: 12px; font-weight: 800; color: ${detailColor}; background-color: #fdfdfd; padding-top: 15px; border-bottom: 1px solid #ddd; }
-      .head-cat td { font-weight: 700; color: #555; padding-left: 15px; background-color: #fff; font-style: italic; padding-top: 8px; }
-      .head-sub td { font-weight: 600; color: #666; padding-left: 25px; }
-
-      /* CUENTAS */
-      .row-cta td { font-size: 10px; color: #777; padding-left: 45px; background-color: #fafafa; border-bottom: 1px solid #f0f0f0; }
-
-      /* TOTALES */
-      .tot-sub td { font-weight: 600; font-style: italic; color: #555; border-top: 1px solid #eee; padding-left: 25px; }
-      .tot-cat td { font-weight: 700; color: #333; background-color: #f8f9fa; border-top: 1px solid #999; padding-left: 15px; }
-      .tot-macro td { font-weight: 800; color: #000; background-color: #f0f0f0; border-top: 2px solid #000; border-bottom: 3px double #000; }
-      
-      /* ROW SIMPLE */
-      .row-simple td { padding-left: 25px; }
+      .head-macro td { font-size: 10px; font-weight: 800; color: ${detailColor}; background-color: #fdfdfd; padding-top: 8px; border-bottom: 1px solid #ddd; }
+      .head-cat td { font-weight: 700; color: #555; padding-left: 10px; background-color: #fff; font-style: italic; padding-top: 5px; }
+      .head-sub td { font-weight: 600; color: #666; padding-left: 15px; }
+      .row-cta td { font-size: 8.5px; color: #777; padding-left: 30px; background-color: #fafafa; border-bottom: 1px solid #f0f0f0; }
+      .tot-sub td { font-weight: 600; font-style: italic; color: #555; border-top: 1px solid #eee; padding-left: 15px; background-color: #fff; }
+      .tot-cat td { font-weight: 700; color: #333; background-color: #f8f9fa; border-top: 1px solid #999; padding-left: 10px; }
+      .tot-macro td { font-weight: 800; color: #000; background-color: #f0f0f0; border-top: 1px solid #000; border-bottom: 3px double #000; padding-top: 4px; padding-bottom: 4px; }
+      .row-simple td { padding-left: 20px; }
+      /* CLASE PARA SALTO DE PÁGINA FORZADO */
+      .page-break { page-break-after: always; display: block; height: 1px; width: 100%; border: none; }
     </style>
   `;
 
-    let rows = '';
+    // HEADER DE LA TABLA (Lo guardamos para repetirlo)
+    const tituloSufijo = this.config.verEnMiles ? '(M$)' : '($)';
+    let headerHtml = `
+      <thead>
+        <tr>
+          <th style="text-align:left">Concepto</th>
+          <th class="text-end">${this.balanceData?.ejercicio} ${tituloSufijo}</th>
+          <th class="text-end">${this.balanceAnteriorData?.ejercicio || 'Ant'} ${tituloSufijo}</th>`;
+    if (showDiff) headerHtml += `<th class="text-end">Dif ${tituloSufijo}</th>`;
+    if (showVar) headerHtml += `<th class="text-end">Var (%)</th>`;
+    headerHtml += `</tr></thead>`;
+
+    // Construcción del contenido
+    let fullContent = `<table>${headerHtml}<tbody>`;
 
     dataFiltrada.forEach((macro: any) => {
-      // 1. Cabecera Macro
-      rows += `<tr class="head-macro"><td colspan="${colSpan}">${macro.nombre.toUpperCase()}</td></tr>`;
-
+      fullContent += `<tr class="head-macro"><td colspan="${colSpan}">${macro.nombre.toUpperCase()}</td></tr>`;
       macro.categorias.forEach((cat: any) => {
-        // 2. Cabecera Categoría
-        rows += `<tr class="head-cat"><td colspan="${colSpan}">${cat.categoria}</td></tr>`;
-
+        fullContent += `<tr class="head-cat"><td colspan="${colSpan}">${cat.categoria}</td></tr>`;
         cat.subcategorias.forEach((sub: any) => {
           const nomSub = this.config.mostrarFsa ? `${sub.id_fsa} - ${sub.descripcion}` : sub.descripcion;
-
           if (this.config.mostrarCuentas) {
-            // Detallado: Header -> Cuentas -> Total
-            rows += `<tr class="head-sub"><td colspan="${colSpan}">${nomSub}</td></tr>`;
-
+            fullContent += `<tr class="head-sub"><td colspan="${colSpan}">${nomSub}</td></tr>`;
             sub.cuentas.forEach((cta: any) => {
               if (!this.config.incluirCuentasCero && cta.saldo === 0 && cta.saldoAnterior === 0) return;
-
-              // Construcción fila cuenta
-              rows += `<tr class="row-cta">
+              fullContent += `<tr class="row-cta">
                 <td>${cta.num_cuenta} - ${cta.nombre}</td>
-                <td class="text-end">${fmtNum(cta.saldo)}</td>
-                <td class="text-end text-muted">${fmtNum(cta.saldoAnterior)}</td>`;
-
-              if (showDiff) rows += `<td class="text-end">${fmtNum(cta.diferencia)}</td>`;
-              if (showVar) rows += `<td class="text-end" style="${colorVar(cta.variacion)}">${fmtVar(cta.variacion)}</td>`;
-
-              rows += `</tr>`;
+                <td class="text-end">${fmtNum(this._getValor(cta.saldo))}</td>
+                <td class="text-end text-muted">${fmtNum(this._getValor(cta.saldoAnterior))}</td>`;
+              if (showDiff) fullContent += `<td class="text-end">${fmtNum(this._getValor(cta.diferencia))}</td>`;
+              if (showVar) fullContent += `<td class="text-end" style="${colorVar(cta.variacion)}">${fmtVar(cta.variacion)}</td>`;
+              fullContent += `</tr>`;
             });
-
-            // Total Subcategoría
-            rows += `<tr class="tot-sub">
+            fullContent += `<tr class="tot-sub">
               <td>Total ${sub.descripcion}</td>
-              <td class="text-end">${fmtNum(sub.saldo)}</td>
-              <td class="text-end text-muted">${fmtNum(sub.saldoAnterior)}</td>`;
-
-            if (showDiff) rows += `<td class="text-end">${fmtNum(sub.diferencia)}</td>`;
-            if (showVar) rows += `<td class="text-end" style="${colorVar(sub.variacion)}">${fmtVar(sub.variacion)}</td>`;
-
-            rows += `</tr>`;
-
+              <td class="text-end">${fmtNum(this._getValor(sub.saldo))}</td>
+              <td class="text-end text-muted">${fmtNum(this._getValor(sub.saldoAnterior))}</td>`;
+            if (showDiff) fullContent += `<td class="text-end">${fmtNum(this._getValor(sub.diferencia))}</td>`;
+            if (showVar) fullContent += `<td class="text-end" style="${colorVar(sub.variacion)}">${fmtVar(sub.variacion)}</td>`;
+            fullContent += `</tr>`;
           } else {
-            // Resumido: Línea simple
-            rows += `<tr class="row-simple">
+            fullContent += `<tr class="row-simple">
               <td>${nomSub}</td>
-              <td class="text-end">${fmtNum(sub.saldo)}</td>
-              <td class="text-end text-muted">${fmtNum(sub.saldoAnterior)}</td>`;
-
-            if (showDiff) rows += `<td class="text-end">${fmtNum(sub.diferencia)}</td>`;
-            if (showVar) rows += `<td class="text-end" style="${colorVar(sub.variacion)}">${fmtVar(sub.variacion)}</td>`;
-
-            rows += `</tr>`;
+              <td class="text-end">${fmtNum(this._getValor(sub.saldo))}</td>
+              <td class="text-end text-muted">${fmtNum(this._getValor(sub.saldoAnterior))}</td>`;
+            if (showDiff) fullContent += `<td class="text-end">${fmtNum(this._getValor(sub.diferencia))}</td>`;
+            if (showVar) fullContent += `<td class="text-end" style="${colorVar(sub.variacion)}">${fmtVar(sub.variacion)}</td>`;
+            fullContent += `</tr>`;
           }
         });
-
-        // 3. Total Categoría
-        rows += `<tr class="tot-cat">
+        fullContent += `<tr class="tot-cat">
           <td>TOTAL ${cat.categoria.toUpperCase()}</td>
-          <td class="text-end">${fmtNum(cat.saldo)}</td>
-          <td class="text-end text-muted">${fmtNum(cat.saldoAnterior)}</td>`;
-
-        if (showDiff) rows += `<td class="text-end">${fmtNum(cat.diferencia)}</td>`;
-        if (showVar) rows += `<td class="text-end" style="${colorVar(cat.variacion)}">${fmtVar(cat.variacion)}</td>`;
-
-        rows += `</tr>`;
+          <td class="text-end">${fmtNum(this._getValor(cat.saldo))}</td>
+          <td class="text-end text-muted">${fmtNum(this._getValor(cat.saldoAnterior))}</td>`;
+        if (showDiff) fullContent += `<td class="text-end">${fmtNum(this._getValor(cat.diferencia))}</td>`;
+        if (showVar) fullContent += `<td class="text-end" style="${colorVar(cat.variacion)}">${fmtVar(cat.variacion)}</td>`;
+        fullContent += `</tr>`;
       });
-
-      // 4. Total Macro
-      rows += `<tr class="tot-macro">
+      fullContent += `<tr class="tot-macro">
         <td>TOTAL ${macro.nombre.toUpperCase()}</td>
-        <td class="text-end">${fmtNum(macro.saldo)}</td>
-        <td class="text-end text-muted">${fmtNum(macro.saldoAnterior)}</td>`;
+        <td class="text-end">${fmtNum(this._getValor(macro.saldo))}</td>
+        <td class="text-end text-muted">${fmtNum(this._getValor(macro.saldoAnterior))}</td>`;
+      if (showDiff) fullContent += `<td class="text-end">${fmtNum(this._getValor(macro.diferencia))}</td>`;
+      if (showVar) fullContent += `<td class="text-end" style="${colorVar(macro.variacion)}">${fmtVar(macro.variacion)}</td>`;
+      fullContent += `</tr><tr><td colspan="${colSpan}" style="height:30px"></td></tr>`; // <-- AUMENTADO A 30PX
 
-      if (showDiff) rows += `<td class="text-end">${fmtNum(macro.diferencia)}</td>`;
-      if (showVar) rows += `<td class="text-end" style="${colorVar(macro.variacion)}">${fmtVar(macro.variacion)}</td>`;
-
-      rows += `</tr><tr><td colspan="${colSpan}" style="height:15px"></td></tr>`;
+      // 🛑 LÓGICA DE CORTE DE PÁGINA (CORREGIDA) 🛑
+      if (macro.nombre.toUpperCase().includes('PASIVO') && !macro.nombre.toUpperCase().includes('PATRIMONIO')) {
+        fullContent += `</tbody></table>`;
+        fullContent += `<div class="page-break"></div>`;
+        fullContent += `<div style="margin-top:20px"></div><table>${headerHtml}<tbody>`;
+      }
     });
 
-    // Construcción Header Table
-    let headerHtml = `
-      <tr>
-        <th style="text-align:left">Concepto</th>
-        <th class="text-end">${this.balanceData?.ejercicio}</th>
-        <th class="text-end">${this.balanceAnteriorData?.ejercicio}</th>`;
-
-    if (showDiff) headerHtml += `<th class="text-end">Dif ($)</th>`;
-    if (showVar) headerHtml += `<th class="text-end">Var (%)</th>`;
-
-    headerHtml += `</tr>`;
+    fullContent += `</tbody></table>`;
 
     const printHtml = `
     <html>
@@ -767,11 +758,8 @@ export class ReportConfigModal implements OnInit {
           <p>${this.balanceData?.empresaDesc || ''}</p>
           <p>Comparando: <strong>${this.balanceData?.ejercicio}</strong> vs <strong>${this.balanceAnteriorData?.ejercicio || 'Anterior'}</strong></p>
         </div>
-        <table>
-          <thead>${headerHtml}</thead>
-          <tbody>${rows}</tbody>
-        </table>
-        <div style="margin-top:20px; font-size:9px; color:#999; text-align:right;">Generado: ${new Date().toLocaleString('es-CL')}</div>
+        ${fullContent}
+        ${residuosHtml}<div style="margin-top:20px; font-size:9px; color:#999; text-align:right;">Generado: ${new Date().toLocaleString('es-CL')}</div>
       </body>
     </html>`;
 
@@ -782,122 +770,130 @@ export class ReportConfigModal implements OnInit {
   private _exportarExcelComparativo(): void {
     this.showSpinner = true;
     try {
-      // 1. CONFIGURACIÓN VISUAL
       const { detailColor } = this.getPaletteColors();
       const detailColorHex = detailColor.replace('#', '');
       const usarRojo = this.config.colorTheme.includes('red');
-
-      // Formato de número ($)
       let excelNumFormat = '#,##0';
       if (this.config.estiloNegativo === 'parentesis') {
         excelNumFormat = usarRojo ? '#,##0;[Red](#,##0)' : '#,##0;(#,##0)';
       } else {
         excelNumFormat = usarRojo ? '#,##0;[Red]-#,##0' : '#,##0;-#,##0';
       }
-
-      // Formato de porcentaje (%)
       const percentFormat = '0.0%';
 
-      // 2. PROCESAMIENTO DE DATOS
       const categoriasActivas = this.config.categoriasSeleccionadas.filter(c => c.selected).map(c => c.nombre);
       let dataClonada = JSON.parse(JSON.stringify(this.comparativeData));
       let dataFiltrada = dataClonada.filter((m: any) => categoriasActivas.includes(m.nombre));
 
-      // Aplicar lógica de signos (Auditoría/Absoluto)
       dataFiltrada.forEach((macro: any) => {
         const esER = macro.nombre.toUpperCase().includes('RESULTADO') ||
           macro.nombre.toUpperCase().includes('GANANCIA') ||
           macro.nombre.toUpperCase().includes('PERDIDA');
         let abs = this.config.alcanceNegativos === 'absoluto' || (this.config.alcanceNegativos === 'auditoria' && !esER);
-
         if (abs) this.hacerPositivoComparativoRecursivo(macro);
       });
 
-      // 3. CONSTRUCCIÓN DE COLUMNAS
+
+
       const anioActual = this.balanceData?.ejercicio || 'Actual';
       const anioAnt = this.balanceAnteriorData?.ejercicio || 'Anterior';
+      const tituloSufijo = this.config.verEnMiles ? '(M$)' : '($)';
 
-      // Headers Dinámicos
       const headerRow = [
         { v: 'Concepto', s: { font: { bold: true, color: { rgb: detailColorHex } }, border: { bottom: { style: 'medium', color: { rgb: detailColorHex } } } } },
         { v: 'Tipo', s: { font: { bold: true } } },
-        { v: `Saldo ${anioActual}`, s: { font: { bold: true } } },
-        { v: `Saldo ${anioAnt}`, s: { font: { bold: true } } }
+        { v: `Saldo ${anioActual} ${tituloSufijo}`, s: { font: { bold: true } } },
+        { v: `Saldo ${anioAnt} ${tituloSufijo}`, s: { font: { bold: true } } }
       ];
 
-      if (this.config.mostrarDiferencia) {
-        headerRow.push({ v: 'Diferencia $', s: { font: { bold: true } } });
-      }
-      if (this.config.mostrarVariacion) {
-        headerRow.push({ v: 'Variación %', s: { font: { bold: true } } });
-      }
+      if (this.config.mostrarDiferencia) headerRow.push({ v: `Diferencia ${tituloSufijo}`, s: { font: { bold: true } } });
+      if (this.config.mostrarVariacion) headerRow.push({ v: 'Variación %', s: { font: { bold: true } } });
 
       const dataRows: any[] = [];
       dataRows.push(headerRow);
 
-      // Helper para pushear filas respetando las columnas activas
       const addRow = (nombre: string, tipo: string, saldo: number, ant: number, dif: number, vari: number, styleName: any) => {
-
-        // CORRECCIÓN AQUÍ: Definimos explícitamente 'row' como 'any[]' para permitir la mezcla de estilos
+        // APLICAR _getValor en saldo, ant, dif
         const row: any[] = [
           { v: nombre, s: styleName },
           { v: tipo },
-          { v: saldo, t: 'n', z: excelNumFormat },
-          { v: ant, t: 'n', z: excelNumFormat }
+          { v: this._getValor(saldo), t: 'n', z: excelNumFormat },
+          { v: this._getValor(ant), t: 'n', z: excelNumFormat }
         ];
 
         if (this.config.mostrarDiferencia) {
-          row.push({ v: dif, t: 'n', z: excelNumFormat });
+          row.push({ v: this._getValor(dif), t: 'n', z: excelNumFormat });
         }
         if (this.config.mostrarVariacion) {
           const colorVar = vari > 0 ? '008000' : (vari < 0 ? (usarRojo ? 'FF0000' : '000000') : '000000');
-          // Ahora TypeScript permitirá este push sin errores gracias al 'any[]'
           row.push({ v: vari / 100, t: 'n', z: percentFormat, s: { font: { color: { rgb: colorVar } } } });
         }
         dataRows.push(row);
       };
 
-      // 4. ITERACIÓN DE DATOS
       const styleMacro = { font: { bold: true, color: { rgb: detailColorHex } } };
       const styleCat = { font: { bold: true } };
       const styleSub = { alignment: { indent: 1 } };
       const styleCta = { alignment: { indent: 2 }, font: { color: { rgb: "777777" } } };
 
       dataFiltrada.forEach((macro: any) => {
-        // Macro
         addRow(macro.nombre.toUpperCase(), 'MACRO', macro.saldo, macro.saldoAnterior, macro.diferencia, macro.variacion, styleMacro);
-
         macro.categorias.forEach((cat: any) => {
-          // Categoría
           addRow(`  ${cat.categoria}`, 'CATEGORIA', cat.saldo, cat.saldoAnterior, cat.diferencia, cat.variacion, styleCat);
-
           cat.subcategorias.forEach((sub: any) => {
             const nombreSub = this.config.mostrarFsa ? `(${sub.id_fsa}) ${sub.descripcion}` : sub.descripcion;
-
             if (!this.config.mostrarCuentas) {
               addRow(`    ${nombreSub}`, 'RUBRO', sub.saldo, sub.saldoAnterior, sub.diferencia, sub.variacion, styleSub);
             } else {
-              // Título Rubro
               dataRows.push([{ v: `    ${nombreSub}`, s: { font: { italic: true } } }]);
-
-              // Cuentas
               sub.cuentas.forEach((cta: any) => {
                 if (!this.config.incluirCuentasCero && cta.saldo === 0 && cta.saldoAnterior === 0) return;
                 addRow(`      ${cta.num_cuenta} - ${cta.nombre}`, 'CUENTA', cta.saldo, cta.saldoAnterior, cta.diferencia, cta.variacion, styleCta);
               });
-
-              // Total Rubro
               addRow(`      Total ${sub.descripcion}`, 'TOTAL RUBRO', sub.saldo, sub.saldoAnterior, sub.diferencia, sub.variacion, { font: { italic: true }, border: { top: { style: 'thin' } } });
             }
           });
         });
-        dataRows.push([]); // Espacio vacío entre macros
+        dataRows.push([]);
       });
+      if (this.config.verEnMiles) {
+        const { desglose, totalActual, totalAnterior } = this._calcularResiduosParaReporte(dataFiltrada, 'comparative');
 
-      // 5. GENERAR ARCHIVO
+        if (totalActual > 0 || totalAnterior > 0) {
+          const sHead = { font: { bold: true }, fill: { fgColor: { rgb: "F2F2F2" } } };
+          const sTot = { font: { bold: true }, border: { top: { style: 'thin' } } };
+          const fmt = '#,##0';
+
+          dataRows.push([]);
+          dataRows.push([]);
+          dataRows.push([{ v: 'CONTROL DE RESIDUOS (MILES)', s: { font: { bold: true } } }]);
+
+          dataRows.push([
+            { v: 'Categoría', s: sHead },
+            { v: '', s: sHead }, // Columna Tipo vacía
+            { v: 'Res. Actual ($)', s: sHead },
+            { v: 'Res. Ant. ($)', s: sHead }
+          ]);
+
+          desglose.forEach(item => {
+            dataRows.push([
+              { v: item.nombre },
+              { v: '' },
+              { v: item.actual, t: 'n', z: fmt },
+              { v: item.anterior, t: 'n', z: fmt }
+            ]);
+          });
+
+          dataRows.push([
+            { v: 'TOTAL OCULTO', s: sTot },
+            { v: '', s: sTot },
+            { v: totalActual, t: 'n', z: fmt, s: sTot },
+            { v: totalAnterior, t: 'n', z: fmt, s: sTot }
+          ]);
+        }
+      }
+
       const ws: XLSX.WorkSheet = XLSX.utils.aoa_to_sheet(dataRows);
-
-      // Anchos de columna
       const cols = [{ wch: 60 }, { wch: 10 }, { wch: 15 }, { wch: 15 }];
       if (this.config.mostrarDiferencia) cols.push({ wch: 15 });
       if (this.config.mostrarVariacion) cols.push({ wch: 10 });
@@ -905,7 +901,6 @@ export class ReportConfigModal implements OnInit {
 
       const wb: XLSX.WorkBook = XLSX.utils.book_new();
       XLSX.utils.book_append_sheet(wb, ws, 'Comparativo');
-
       const excelBuffer: any = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
       const nombreArchivo = `Comparativo_${anioActual}_vs_${anioAnt}.xlsx`;
       this._guardarArchivoExcel(excelBuffer, nombreArchivo);
@@ -918,26 +913,63 @@ export class ReportConfigModal implements OnInit {
     }
   }
 
-  // Agrega esto junto a tus otros métodos privados
   private hacerPositivoComparativoRecursivo(item: any) {
-    // Invertir Saldo Actual
     if (item.saldo) item.saldo = Math.abs(item.saldo);
-    // Invertir Saldo Anterior
     if (item.saldoAnterior) item.saldoAnterior = Math.abs(item.saldoAnterior);
-    // Invertir Diferencia (para consistencia visual)
     if (item.diferencia) item.diferencia = Math.abs(item.diferencia);
+    if (item.categorias) item.categorias.forEach((cat: any) => this.hacerPositivoComparativoRecursivo(cat));
+    if (item.subcategorias) item.subcategorias.forEach((sub: any) => this.hacerPositivoComparativoRecursivo(sub));
+    if (item.cuentas) item.cuentas.forEach((cta: any) => this.hacerPositivoComparativoRecursivo(cta));
+  }
 
-    // La variación (%) no se toca, matemáticamente la proporción se mantiene.
 
-    // Navegar hacia abajo
-    if (item.categorias) {
-      item.categorias.forEach((cat: any) => this.hacerPositivoComparativoRecursivo(cat));
-    }
-    if (item.subcategorias) {
-      item.subcategorias.forEach((sub: any) => this.hacerPositivoComparativoRecursivo(sub));
-    }
-    if (item.cuentas) {
-      item.cuentas.forEach((cta: any) => this.hacerPositivoComparativoRecursivo(cta));
-    }
+  private _calcularResiduosParaReporte(dataFiltrada: any[], mode: 'standard' | 'comparative') {
+    const desglose: { nombre: string; actual: number; anterior: number }[] = [];
+    let totalActual = 0;
+    let totalAnterior = 0;
+
+    dataFiltrada.forEach(macro => {
+      macro.categorias.forEach((grupo: any) => {
+        let catResActual = 0;
+        let catResAnterior = 0;
+
+        grupo.subcategorias.forEach((sub: any) => {
+          sub.cuentas.forEach((cuenta: any) => {
+            // MODO STANDARD (Solo Actual)
+            if (mode === 'standard') {
+              const saldoAbs = Math.abs(cuenta.saldo);
+              const visual = Math.trunc(saldoAbs / 1000);
+              catResActual += (saldoAbs - (visual * 1000));
+            }
+            // MODO COMPARATIVE (Actual + Anterior)
+            else {
+              const saldoActualAbs = Math.abs(cuenta.saldo);
+              const visualActual = Math.trunc(saldoActualAbs / 1000);
+              catResActual += (saldoActualAbs - (visualActual * 1000));
+
+              const saldoAntAbs = Math.abs(cuenta.saldoAnterior || 0);
+              const visualAnt = Math.trunc(saldoAntAbs / 1000);
+              catResAnterior += (saldoAntAbs - (visualAnt * 1000));
+            }
+          });
+        });
+
+        // Si hay residuo, lo agregamos al desglose
+        if (catResActual > 0 || catResAnterior > 0) {
+          desglose.push({
+            nombre: grupo.categoria,
+            actual: catResActual,
+            anterior: catResAnterior
+          });
+        }
+        totalActual += catResActual;
+        totalAnterior += catResAnterior;
+      });
+    });
+
+    // Ordenar por mayor residuo actual
+    desglose.sort((a, b) => b.actual - a.actual);
+
+    return { desglose, totalActual, totalAnterior };
   }
 }

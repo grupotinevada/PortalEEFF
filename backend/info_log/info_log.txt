@@ -100,3 +100,13 @@
 [ERROR] 2025-11-14T17:48:35.198Z - Error crítico en acquireTokenByCode: roles.join is not a function. Stack: TypeError: roles.join is not a function
     at microsoftCallback (C:\Users\ignac\Desktop\PortalEEFF\backend\controllers\auth.controller.js:140:80)
     at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+[ERROR] 2025-12-02T14:22:15.312Z - Error en AuthService.login para admin@inevada.cl: roles.join is not a function
+[WARN] 2025-12-02T14:22:15.312Z - Intento de login (local) fallido para: admin@inevada.cl. Razón: Error interno, contacta con el administrador
+[WARN] 2025-12-02T14:22:18.420Z - Login fallido - contraseña incorrecta: admin@inevada.cl
+[WARN] 2025-12-02T14:22:18.421Z - Intento de login (local) fallido para: admin@inevada.cl. Razón: Credenciales inválidas
+[WARN] 2025-12-02T14:22:24.750Z - Login fallido - contraseña incorrecta: admin@inevada.cl
+[WARN] 2025-12-02T14:22:24.751Z - Intento de login (local) fallido para: admin@inevada.cl. Razón: Credenciales inválidas
+[ERROR] 2025-12-02T14:22:28.006Z - Error en AuthService.login para admin@inevada.cl: roles.join is not a function
+[WARN] 2025-12-02T14:22:28.007Z - Intento de login (local) fallido para: admin@inevada.cl. Razón: Error interno, contacta con el administrador
+[ERROR] 2025-12-02T14:22:54.560Z - Error en AuthService.login para admin@inevada.cl: roles.join is not a function
+[WARN] 2025-12-02T14:22:54.561Z - Intento de login (local) fallido para: admin@inevada.cl. Razón: Error interno, contacta con el administrador

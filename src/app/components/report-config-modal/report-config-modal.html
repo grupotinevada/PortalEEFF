@@ -37,6 +37,16 @@
               <option value="parentesis">(1.500) Paréntesis</option>
             </select>
           </div>
+
+          <div class="col-12 mt-2">
+            <div class="form-check form-switch bg-light border rounded p-2 d-flex align-items-center">
+              <input class="form-check-input ms-0 me-2" type="checkbox" role="switch" id="switchMilesConfig"
+                [(ngModel)]="config.verEnMiles" (ngModelChange)="emitChange()">
+              <label class="form-check-label small fw-semibold cursor-pointer text-primary" for="switchMilesConfig">
+                Visualizar y Exportar en Miles (M$)
+              </label>
+            </div>
+          </div>
         </div>
 
         <hr class="text-muted opacity-25 my-2">

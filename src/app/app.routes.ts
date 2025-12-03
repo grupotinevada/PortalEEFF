@@ -1,6 +1,7 @@
 import { Routes } from '@angular/router';
 import { authGuard } from './guards/auth-guard';
 import { loginGuard } from './guards/login-guard';
+import { adminGuard } from './guards/admin-guard';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
@@ -10,10 +11,10 @@ export const routes: Routes = [
       import('./components/login/login').then((m) => m.Login),
     canActivate: [loginGuard],
   },
-    {
+  {
     path: 'test',
     loadComponent: () => import('./components/test/test').then((m) => m.Test),
-    
+
   },
   {
     path: 'home',
@@ -38,11 +39,11 @@ export const routes: Routes = [
       import('./components/preview/preview').then((m) => m.Preview),
     canActivate: [authGuard],
   },
-  
-    {
+
+  {
     path: 'admin', loadComponent: () =>
       import('./components/administracion/administracion').then(m => m.Administracion),
-    canActivate: [authGuard],
+    canActivate: [adminGuard],
   },
   {
     path: 'balances',

@@ -8,7 +8,7 @@ import { MappingService } from '../../services/mapping.service';
 
 @Component({
   selector: 'app-home',
-  imports: [CommonModule, Navbar, RouterLink],
+  imports: [CommonModule, RouterLink],
   templateUrl: './home.html',
   styleUrl: './home.css',
 })

@@ -1,27 +1,54 @@
-import { Component, HostBinding, OnInit } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { ChangeDetectorRef, Component, HostBinding, OnInit } from '@angular/core';
+import { NavigationEnd, Router, RouterOutlet } from '@angular/router';
 import { SwUpdate } from '@angular/service-worker';
 import { AuthService } from '../../services/auth.service';
 import { UsuarioLogin } from '../../models/usuario-login';
+import { Navbar } from '../navbar/navbar';
+import { filter } from 'rxjs';
+import { CommonModule } from '@angular/common';
 
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet],
+  imports: [RouterOutlet, Navbar, CommonModule],
   templateUrl: './app.html',
   styleUrl: './app.css',
 })
-export class App implements OnInit{
+export class App implements OnInit {
   @HostBinding('class.theme-danger') isDangerTheme = false;
 
-  constructor(private swUpdate: SwUpdate,
-    private authService: AuthService) { }
+  showNavbar: boolean = true;
 
-ngOnInit() {
-  this.authService.currentUser$.subscribe((user: UsuarioLogin | null) => {
+  constructor(
+    private swUpdate: SwUpdate,
+    private authService: AuthService,
+    private router: Router,
+    private cd: ChangeDetectorRef // <--- 2. INYECTAR AQUÍ
+  ) {
+    // Suscripción a eventos de navegación
+    this.router.events.pipe(
+      filter(event => event instanceof NavigationEnd)
+    ).subscribe((event: NavigationEnd) => {
+
+      // Lógica de detección
+      // Si la URL tiene '/login' (o es la raíz '/'), ocultamos la barra
+      const isLoginPage = event.urlAfterRedirects.includes('/login') || event.urlAfterRedirects === '/';
+
+      this.showNavbar = !isLoginPage;
+
+      console.log('Ruta:', event.urlAfterRedirects, '| Mostrar Navbar:', this.showNavbar);
+
+      // 3. FORZAR LA ACTUALIZACIÓN DE LA VISTA
+      // Esto es obligatorio porque el cambio ocurre dentro de una suscripción
+      this.cd.detectChanges();
+    });
+  }
+
+  ngOnInit() {
+    this.authService.currentUser$.subscribe((user: UsuarioLogin | null) => {
       this.checkUserTheme(user);
     });
-    
+
     if (this.swUpdate.isEnabled) {
       this.swUpdate.versionUpdates.subscribe(evt => {
         switch (evt.type) {
@@ -48,7 +75,7 @@ ngOnInit() {
    * Revisa el usuario y activa o desactiva el tema "danger"
    */
   private checkUserTheme(user: UsuarioLogin | null): void {
-    
+
     // Asumiendo que 'acceso: 4' es el que detona el color rojo
     if (user && user.roles.acceso === 4) {
       this.isDangerTheme = true;

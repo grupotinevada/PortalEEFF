@@ -1972,3 +1972,302 @@
 [INFO] 2025-11-24T17:04:33.922Z - Usuario Ignacio Salazar (undefined) solicitó balance con ID: 8f1d93cf46c246d7a26c82aa9bd8fb6d
 [INFO] 2025-11-24T17:04:33.923Z - Iniciando búsqueda de balance con ID: 8f1d93cf46c246d7a26c82aa9bd8fb6d por usuario 10
 [INFO] 2025-11-24T17:04:33.938Z - Balance encontrado con ID: 8f1d93cf46c246d7a26c82aa9bd8fb6d
+[INFO] 2025-12-01T19:43:43.902Z - Usuario Ignacio Salazar (undefined) solicitó balance con ID: eb33c56509044ed78c6492fa77f0c1f4
+[INFO] 2025-12-01T19:43:43.903Z - Iniciando búsqueda de balance con ID: eb33c56509044ed78c6492fa77f0c1f4 por usuario 10
+[INFO] 2025-12-01T19:43:43.907Z - Balance encontrado con ID: eb33c56509044ed78c6492fa77f0c1f4
+[INFO] 2025-12-01T19:44:11.253Z - Usuario 10 solicitó getAllUsers.
+[INFO] 2025-12-01T19:44:11.256Z - getAllUsers completado exitosamente para 10.
+[INFO] 2025-12-01T19:44:14.044Z - Usuario Ignacio Salazar (undefined) solicitó balance con ID: eb33c56509044ed78c6492fa77f0c1f4
+[INFO] 2025-12-01T19:44:14.045Z - Iniciando búsqueda de balance con ID: eb33c56509044ed78c6492fa77f0c1f4 por usuario 10
+[INFO] 2025-12-01T19:44:14.050Z - Balance encontrado con ID: eb33c56509044ed78c6492fa77f0c1f4
+[INFO] 2025-12-01T19:44:48.455Z - Usuario 10 solicitó getAllUsers.
+[INFO] 2025-12-01T19:44:48.457Z - getAllUsers completado exitosamente para 10.
+[INFO] 2025-12-01T19:44:50.846Z - Usuario Ignacio Salazar (undefined) solicitó balance con ID: eb33c56509044ed78c6492fa77f0c1f4
+[INFO] 2025-12-01T19:44:50.858Z - Iniciando búsqueda de balance con ID: eb33c56509044ed78c6492fa77f0c1f4 por usuario 10
+[INFO] 2025-12-01T19:44:50.863Z - Balance encontrado con ID: eb33c56509044ed78c6492fa77f0c1f4
+[INFO] 2025-12-01T19:45:59.192Z - Usuario 10 solicitó getAllUsers.
+[INFO] 2025-12-01T19:45:59.195Z - getAllUsers completado exitosamente para 10.
+[INFO] 2025-12-01T19:46:01.615Z - Usuario Ignacio Salazar (undefined) solicitó balance con ID: eb33c56509044ed78c6492fa77f0c1f4
+[INFO] 2025-12-01T19:46:01.616Z - Iniciando búsqueda de balance con ID: eb33c56509044ed78c6492fa77f0c1f4 por usuario 10
+[INFO] 2025-12-01T19:46:01.620Z - Balance encontrado con ID: eb33c56509044ed78c6492fa77f0c1f4
+[INFO] 2025-12-01T19:59:09.676Z - Usuario Ignacio Salazar (undefined) solicitó balance con ID: eb33c56509044ed78c6492fa77f0c1f4
+[INFO] 2025-12-01T19:59:09.677Z - Iniciando búsqueda de balance con ID: eb33c56509044ed78c6492fa77f0c1f4 por usuario 10
+[INFO] 2025-12-01T19:59:09.681Z - Balance encontrado con ID: eb33c56509044ed78c6492fa77f0c1f4
+[INFO] 2025-12-01T20:33:22.610Z - Usuario Ignacio Salazar (undefined) solicitó balance con ID: eb33c56509044ed78c6492fa77f0c1f4
+[INFO] 2025-12-01T20:33:22.611Z - Iniciando búsqueda de balance con ID: eb33c56509044ed78c6492fa77f0c1f4 por usuario 10
+[INFO] 2025-12-01T20:33:22.614Z - Balance encontrado con ID: eb33c56509044ed78c6492fa77f0c1f4
+[INFO] 2025-12-01T20:37:30.157Z - Usuario Ignacio Salazar (undefined) solicitó balance con ID: 3012633c5e1e45baa61a002e0967b15f
+[INFO] 2025-12-01T20:37:30.158Z - Iniciando búsqueda de balance con ID: 3012633c5e1e45baa61a002e0967b15f por usuario 10
+[INFO] 2025-12-01T20:37:30.162Z - Balance encontrado con ID: 3012633c5e1e45baa61a002e0967b15f
+[INFO] 2025-12-02T14:16:25.640Z - Recibido callback de Microsoft.
+[INFO] 2025-12-02T14:16:26.237Z - Email extraído de MSAL: isalazar@inevada.cl
+[INFO] 2025-12-02T14:16:26.268Z - Usuario isalazar@inevada.cl autenticado exitosamente. Generando JWT...
+[INFO] 2025-12-02T14:16:26.268Z - Generando token para [Ignacio Salazar] 
+[INFO] 2025-12-02T14:16:26.272Z - Cookie de sesión establecida para isalazar@inevada.cl. Redirigiendo al frontend.
+[INFO] 2025-12-02T14:21:48.826Z - Usuario 10 solicitó getAllUsers.
+[INFO] 2025-12-02T14:21:48.829Z - getAllUsers completado exitosamente para 10.
+[INFO] 2025-12-02T14:21:54.777Z - Intento de actualización (por Actor: 10) en Usuario ID: 1. Campos: [permiso, accesos, habilitado]
+[ACTION] 2025-12-02T14:21:54.809Z - User 1 - UPDATE - Usuario 1 actualizado. Datos: ["permiso","accesos","habilitado"]
+[INFO] 2025-12-02T14:21:54.810Z - Usuario ID: 1 actualizado exitosamente por 10.
+[ACTION] 2025-12-02T14:21:54.810Z - User 10 - UPDATE_USER - Usuario ID: 1. Campos actualizados: [permiso, accesos, habilitado]
+[INFO] 2025-12-02T14:21:54.819Z - Usuario 10 solicitó getAllUsers.
+[INFO] 2025-12-02T14:21:54.821Z - getAllUsers completado exitosamente para 10.
+[INFO] 2025-12-02T14:24:37.796Z - Login exitoso para: admin@inevada.cl. Roles: [[object Object]]
+[ACTION] 2025-12-02T14:24:37.797Z - User 1 - LOGIN - Usuario admin@inevada.cl (Administrador) inició sesión.
+[INFO] 2025-12-02T14:24:37.799Z - Login exitoso (local) para: admin@inevada.cl
+[INFO] 2025-12-02T14:50:19.023Z - Login exitoso para: admin@inevada.cl. Roles: [[object Object]]
+[ACTION] 2025-12-02T14:50:19.025Z - User 1 - LOGIN - Usuario admin@inevada.cl (Administrador) inició sesión.
+[INFO] 2025-12-02T14:50:19.026Z - Login exitoso (local) para: admin@inevada.cl
+[INFO] 2025-12-02T15:02:05.726Z - Usuario Administrador (undefined) solicitó balance con ID: eb33c56509044ed78c6492fa77f0c1f4
+[INFO] 2025-12-02T15:02:05.727Z - Iniciando búsqueda de balance con ID: eb33c56509044ed78c6492fa77f0c1f4 por usuario 1
+[INFO] 2025-12-02T15:02:05.734Z - Balance encontrado con ID: eb33c56509044ed78c6492fa77f0c1f4
+[INFO] 2025-12-02T15:12:03.503Z - Usuario Administrador (undefined) solicitó balance con ID: 435673fe7a3b4a08bfa1d61090da852c
+[INFO] 2025-12-02T15:12:03.504Z - Iniciando búsqueda de balance con ID: 435673fe7a3b4a08bfa1d61090da852c por usuario 1
+[INFO] 2025-12-02T15:12:03.507Z - Usuario Administrador (undefined) solicitó balance con ID: 8027efe8fc164d1197535fba55bb1307
+[INFO] 2025-12-02T15:12:03.508Z - Iniciando búsqueda de balance con ID: 8027efe8fc164d1197535fba55bb1307 por usuario 1
+[INFO] 2025-12-02T15:12:03.514Z - Balance encontrado con ID: 435673fe7a3b4a08bfa1d61090da852c
+[INFO] 2025-12-02T15:12:03.529Z - Balance encontrado con ID: 8027efe8fc164d1197535fba55bb1307
+[INFO] 2025-12-02T15:16:25.179Z - Usuario Administrador (undefined) solicitó balance con ID: 8027efe8fc164d1197535fba55bb1307
+[INFO] 2025-12-02T15:16:25.180Z - Iniciando búsqueda de balance con ID: 8027efe8fc164d1197535fba55bb1307 por usuario 1
+[INFO] 2025-12-02T15:16:25.182Z - Usuario Administrador (undefined) solicitó balance con ID: 435673fe7a3b4a08bfa1d61090da852c
+[INFO] 2025-12-02T15:16:25.183Z - Iniciando búsqueda de balance con ID: 435673fe7a3b4a08bfa1d61090da852c por usuario 1
+[INFO] 2025-12-02T15:16:25.187Z - Balance encontrado con ID: 8027efe8fc164d1197535fba55bb1307
+[INFO] 2025-12-02T15:16:25.196Z - Balance encontrado con ID: 435673fe7a3b4a08bfa1d61090da852c
+[INFO] 2025-12-02T15:29:51.076Z - Usuario Administrador (undefined) solicitó balance con ID: 435673fe7a3b4a08bfa1d61090da852c
+[INFO] 2025-12-02T15:29:51.078Z - Iniciando búsqueda de balance con ID: 435673fe7a3b4a08bfa1d61090da852c por usuario 1
+[INFO] 2025-12-02T15:29:51.083Z - Usuario Administrador (undefined) solicitó balance con ID: 8027efe8fc164d1197535fba55bb1307
+[INFO] 2025-12-02T15:29:51.084Z - Iniciando búsqueda de balance con ID: 8027efe8fc164d1197535fba55bb1307 por usuario 1
+[INFO] 2025-12-02T15:29:51.089Z - Balance encontrado con ID: 435673fe7a3b4a08bfa1d61090da852c
+[INFO] 2025-12-02T15:29:51.100Z - Balance encontrado con ID: 8027efe8fc164d1197535fba55bb1307
+[INFO] 2025-12-02T17:21:14.724Z - Usuario Administrador (undefined) solicitó balance con ID: eb33c56509044ed78c6492fa77f0c1f4
+[INFO] 2025-12-02T17:21:14.725Z - Iniciando búsqueda de balance con ID: eb33c56509044ed78c6492fa77f0c1f4 por usuario 1
+[INFO] 2025-12-02T17:21:14.730Z - Balance encontrado con ID: eb33c56509044ed78c6492fa77f0c1f4
+[INFO] 2025-12-02T17:21:43.692Z - Usuario Administrador (undefined) solicitó balance con ID: eb33c56509044ed78c6492fa77f0c1f4
+[INFO] 2025-12-02T17:21:43.693Z - Iniciando búsqueda de balance con ID: eb33c56509044ed78c6492fa77f0c1f4 por usuario 1
+[INFO] 2025-12-02T17:21:43.695Z - Usuario Administrador (undefined) solicitó balance con ID: 8027efe8fc164d1197535fba55bb1307
+[INFO] 2025-12-02T17:21:43.695Z - Iniciando búsqueda de balance con ID: 8027efe8fc164d1197535fba55bb1307 por usuario 1
+[INFO] 2025-12-02T17:21:43.698Z - Balance encontrado con ID: eb33c56509044ed78c6492fa77f0c1f4
+[INFO] 2025-12-02T17:21:43.708Z - Balance encontrado con ID: 8027efe8fc164d1197535fba55bb1307
+[INFO] 2025-12-02T17:22:20.334Z - Usuario Administrador (undefined) solicitó balance con ID: eb33c56509044ed78c6492fa77f0c1f4
+[INFO] 2025-12-02T17:22:20.334Z - Iniciando búsqueda de balance con ID: eb33c56509044ed78c6492fa77f0c1f4 por usuario 1
+[INFO] 2025-12-02T17:22:20.336Z - Usuario Administrador (undefined) solicitó balance con ID: 435673fe7a3b4a08bfa1d61090da852c
+[INFO] 2025-12-02T17:22:20.337Z - Iniciando búsqueda de balance con ID: 435673fe7a3b4a08bfa1d61090da852c por usuario 1
+[INFO] 2025-12-02T17:22:20.340Z - Balance encontrado con ID: 435673fe7a3b4a08bfa1d61090da852c
+[INFO] 2025-12-02T17:22:20.346Z - Balance encontrado con ID: eb33c56509044ed78c6492fa77f0c1f4
+[INFO] 2025-12-02T17:22:40.428Z - Usuario Administrador (undefined) solicitó balance con ID: eb33c56509044ed78c6492fa77f0c1f4
+[INFO] 2025-12-02T17:22:40.429Z - Iniciando búsqueda de balance con ID: eb33c56509044ed78c6492fa77f0c1f4 por usuario 1
+[INFO] 2025-12-02T17:22:40.430Z - Usuario Administrador (undefined) solicitó balance con ID: 435673fe7a3b4a08bfa1d61090da852c
+[INFO] 2025-12-02T17:22:40.431Z - Iniciando búsqueda de balance con ID: 435673fe7a3b4a08bfa1d61090da852c por usuario 1
+[INFO] 2025-12-02T17:22:40.435Z - Balance encontrado con ID: 435673fe7a3b4a08bfa1d61090da852c
+[INFO] 2025-12-02T17:22:40.442Z - Balance encontrado con ID: eb33c56509044ed78c6492fa77f0c1f4
+[INFO] 2025-12-02T17:22:51.301Z - Usuario Administrador (undefined) solicitó balance con ID: eb33c56509044ed78c6492fa77f0c1f4
+[INFO] 2025-12-02T17:22:51.302Z - Iniciando búsqueda de balance con ID: eb33c56509044ed78c6492fa77f0c1f4 por usuario 1
+[INFO] 2025-12-02T17:22:51.306Z - Balance encontrado con ID: eb33c56509044ed78c6492fa77f0c1f4
+[INFO] 2025-12-02T17:43:00.766Z - Usuario Administrador (undefined) solicitó balance con ID: eb33c56509044ed78c6492fa77f0c1f4
+[INFO] 2025-12-02T17:43:00.767Z - Iniciando búsqueda de balance con ID: eb33c56509044ed78c6492fa77f0c1f4 por usuario 1
+[INFO] 2025-12-02T17:43:00.771Z - Balance encontrado con ID: eb33c56509044ed78c6492fa77f0c1f4
+[INFO] 2025-12-02T17:43:09.287Z - Usuario Administrador (undefined) solicitó balance con ID: eb33c56509044ed78c6492fa77f0c1f4
+[INFO] 2025-12-02T17:43:09.287Z - Iniciando búsqueda de balance con ID: eb33c56509044ed78c6492fa77f0c1f4 por usuario 1
+[INFO] 2025-12-02T17:43:09.289Z - Usuario Administrador (undefined) solicitó balance con ID: 435673fe7a3b4a08bfa1d61090da852c
+[INFO] 2025-12-02T17:43:09.290Z - Iniciando búsqueda de balance con ID: 435673fe7a3b4a08bfa1d61090da852c por usuario 1
+[INFO] 2025-12-02T17:43:09.293Z - Balance encontrado con ID: eb33c56509044ed78c6492fa77f0c1f4
+[INFO] 2025-12-02T17:43:09.301Z - Balance encontrado con ID: 435673fe7a3b4a08bfa1d61090da852c
+[INFO] 2025-12-02T18:05:20.089Z - Usuario Administrador (undefined) solicitó balance con ID: 8027efe8fc164d1197535fba55bb1307
+[INFO] 2025-12-02T18:05:20.090Z - Iniciando búsqueda de balance con ID: 8027efe8fc164d1197535fba55bb1307 por usuario 1
+[INFO] 2025-12-02T18:05:20.092Z - Usuario Administrador (undefined) solicitó balance con ID: 435673fe7a3b4a08bfa1d61090da852c
+[INFO] 2025-12-02T18:05:20.093Z - Iniciando búsqueda de balance con ID: 435673fe7a3b4a08bfa1d61090da852c por usuario 1
+[INFO] 2025-12-02T18:05:20.097Z - Balance encontrado con ID: 435673fe7a3b4a08bfa1d61090da852c
+[INFO] 2025-12-02T18:05:20.105Z - Balance encontrado con ID: 8027efe8fc164d1197535fba55bb1307
+[INFO] 2025-12-02T18:10:52.734Z - Usuario Administrador (undefined) solicitó balance con ID: eb33c56509044ed78c6492fa77f0c1f4
+[INFO] 2025-12-02T18:10:52.735Z - Iniciando búsqueda de balance con ID: eb33c56509044ed78c6492fa77f0c1f4 por usuario 1
+[INFO] 2025-12-02T18:10:52.739Z - Balance encontrado con ID: eb33c56509044ed78c6492fa77f0c1f4
+[INFO] 2025-12-02T18:11:57.776Z - Usuario Administrador (undefined) solicitó balance con ID: eb33c56509044ed78c6492fa77f0c1f4
+[INFO] 2025-12-02T18:11:57.777Z - Iniciando búsqueda de balance con ID: eb33c56509044ed78c6492fa77f0c1f4 por usuario 1
+[INFO] 2025-12-02T18:11:57.781Z - Balance encontrado con ID: eb33c56509044ed78c6492fa77f0c1f4
+[INFO] 2025-12-02T18:19:30.436Z - Usuario Administrador (undefined) solicitó balance con ID: eb33c56509044ed78c6492fa77f0c1f4
+[INFO] 2025-12-02T18:19:30.437Z - Iniciando búsqueda de balance con ID: eb33c56509044ed78c6492fa77f0c1f4 por usuario 1
+[INFO] 2025-12-02T18:19:30.441Z - Balance encontrado con ID: eb33c56509044ed78c6492fa77f0c1f4
+[INFO] 2025-12-02T18:20:27.601Z - Usuario Administrador (undefined) solicitó balance con ID: eb33c56509044ed78c6492fa77f0c1f4
+[INFO] 2025-12-02T18:20:27.602Z - Iniciando búsqueda de balance con ID: eb33c56509044ed78c6492fa77f0c1f4 por usuario 1
+[INFO] 2025-12-02T18:20:27.604Z - Usuario Administrador (undefined) solicitó balance con ID: 435673fe7a3b4a08bfa1d61090da852c
+[INFO] 2025-12-02T18:20:27.605Z - Iniciando búsqueda de balance con ID: 435673fe7a3b4a08bfa1d61090da852c por usuario 1
+[INFO] 2025-12-02T18:20:27.608Z - Balance encontrado con ID: eb33c56509044ed78c6492fa77f0c1f4
+[INFO] 2025-12-02T18:20:27.615Z - Balance encontrado con ID: 435673fe7a3b4a08bfa1d61090da852c
+[INFO] 2025-12-02T18:30:30.464Z - Usuario Administrador (undefined) solicitó balance con ID: eb33c56509044ed78c6492fa77f0c1f4
+[INFO] 2025-12-02T18:30:30.465Z - Iniciando búsqueda de balance con ID: eb33c56509044ed78c6492fa77f0c1f4 por usuario 1
+[INFO] 2025-12-02T18:30:30.468Z - Balance encontrado con ID: eb33c56509044ed78c6492fa77f0c1f4
+[INFO] 2025-12-02T18:40:21.428Z - Usuario Administrador (undefined) solicitó balance con ID: eb33c56509044ed78c6492fa77f0c1f4
+[INFO] 2025-12-02T18:40:21.429Z - Iniciando búsqueda de balance con ID: eb33c56509044ed78c6492fa77f0c1f4 por usuario 1
+[INFO] 2025-12-02T18:40:21.434Z - Balance encontrado con ID: eb33c56509044ed78c6492fa77f0c1f4
+[INFO] 2025-12-02T18:57:29.468Z - Usuario Administrador (undefined) solicitó balance con ID: eb33c56509044ed78c6492fa77f0c1f4
+[INFO] 2025-12-02T18:57:29.469Z - Iniciando búsqueda de balance con ID: eb33c56509044ed78c6492fa77f0c1f4 por usuario 1
+[INFO] 2025-12-02T18:57:29.475Z - Balance encontrado con ID: eb33c56509044ed78c6492fa77f0c1f4
+[INFO] 2025-12-02T19:11:06.672Z - Usuario Administrador (undefined) solicitó balance con ID: eb33c56509044ed78c6492fa77f0c1f4
+[INFO] 2025-12-02T19:11:06.673Z - Iniciando búsqueda de balance con ID: eb33c56509044ed78c6492fa77f0c1f4 por usuario 1
+[INFO] 2025-12-02T19:11:06.677Z - Balance encontrado con ID: eb33c56509044ed78c6492fa77f0c1f4
+[INFO] 2025-12-02T19:35:58.701Z - Usuario Administrador (undefined) solicitó balance con ID: eb33c56509044ed78c6492fa77f0c1f4
+[INFO] 2025-12-02T19:35:58.702Z - Iniciando búsqueda de balance con ID: eb33c56509044ed78c6492fa77f0c1f4 por usuario 1
+[INFO] 2025-12-02T19:35:58.708Z - Balance encontrado con ID: eb33c56509044ed78c6492fa77f0c1f4
+[INFO] 2025-12-02T19:50:34.936Z - Usuario Administrador (undefined) solicitó balance con ID: eb33c56509044ed78c6492fa77f0c1f4
+[INFO] 2025-12-02T19:50:34.937Z - Iniciando búsqueda de balance con ID: eb33c56509044ed78c6492fa77f0c1f4 por usuario 1
+[INFO] 2025-12-02T19:50:34.940Z - Balance encontrado con ID: eb33c56509044ed78c6492fa77f0c1f4
+[INFO] 2025-12-02T19:54:53.280Z - Usuario Administrador (undefined) solicitó balance con ID: eb33c56509044ed78c6492fa77f0c1f4
+[INFO] 2025-12-02T19:54:53.280Z - Iniciando búsqueda de balance con ID: eb33c56509044ed78c6492fa77f0c1f4 por usuario 1
+[INFO] 2025-12-02T19:54:53.285Z - Balance encontrado con ID: eb33c56509044ed78c6492fa77f0c1f4
+[INFO] 2025-12-02T19:55:21.306Z - Usuario Administrador (undefined) solicitó balance con ID: eb33c56509044ed78c6492fa77f0c1f4
+[INFO] 2025-12-02T19:55:21.310Z - Iniciando búsqueda de balance con ID: eb33c56509044ed78c6492fa77f0c1f4 por usuario 1
+[INFO] 2025-12-02T19:55:21.314Z - Balance encontrado con ID: eb33c56509044ed78c6492fa77f0c1f4
+[INFO] 2025-12-02T19:56:03.135Z - Usuario Administrador (undefined) solicitó balance con ID: eb33c56509044ed78c6492fa77f0c1f4
+[INFO] 2025-12-02T19:56:03.136Z - Iniciando búsqueda de balance con ID: eb33c56509044ed78c6492fa77f0c1f4 por usuario 1
+[INFO] 2025-12-02T19:56:03.140Z - Balance encontrado con ID: eb33c56509044ed78c6492fa77f0c1f4
+[INFO] 2025-12-02T19:57:40.451Z - Usuario Administrador (undefined) solicitó balance con ID: eb33c56509044ed78c6492fa77f0c1f4
+[INFO] 2025-12-02T19:57:40.469Z - Iniciando búsqueda de balance con ID: eb33c56509044ed78c6492fa77f0c1f4 por usuario 1
+[INFO] 2025-12-02T19:57:40.476Z - Balance encontrado con ID: eb33c56509044ed78c6492fa77f0c1f4
+[INFO] 2025-12-02T20:01:28.941Z - Usuario Administrador (undefined) solicitó balance con ID: eb33c56509044ed78c6492fa77f0c1f4
+[INFO] 2025-12-02T20:01:28.951Z - Iniciando búsqueda de balance con ID: eb33c56509044ed78c6492fa77f0c1f4 por usuario 1
+[INFO] 2025-12-02T20:01:28.954Z - Balance encontrado con ID: eb33c56509044ed78c6492fa77f0c1f4
+[INFO] 2025-12-02T20:08:39.167Z - Usuario Administrador (undefined) solicitó balance con ID: 8027efe8fc164d1197535fba55bb1307
+[INFO] 2025-12-02T20:08:39.168Z - Iniciando búsqueda de balance con ID: 8027efe8fc164d1197535fba55bb1307 por usuario 1
+[INFO] 2025-12-02T20:08:39.169Z - Usuario Administrador (undefined) solicitó balance con ID: 435673fe7a3b4a08bfa1d61090da852c
+[INFO] 2025-12-02T20:08:39.170Z - Iniciando búsqueda de balance con ID: 435673fe7a3b4a08bfa1d61090da852c por usuario 1
+[INFO] 2025-12-02T20:08:39.173Z - Balance encontrado con ID: 8027efe8fc164d1197535fba55bb1307
+[INFO] 2025-12-02T20:08:39.181Z - Balance encontrado con ID: 435673fe7a3b4a08bfa1d61090da852c
+[INFO] 2025-12-02T20:30:42.861Z - Usuario Administrador (undefined) solicitó balance con ID: 435673fe7a3b4a08bfa1d61090da852c
+[INFO] 2025-12-02T20:30:42.862Z - Iniciando búsqueda de balance con ID: 435673fe7a3b4a08bfa1d61090da852c por usuario 1
+[INFO] 2025-12-02T20:30:42.863Z - Usuario Administrador (undefined) solicitó balance con ID: 8027efe8fc164d1197535fba55bb1307
+[INFO] 2025-12-02T20:30:42.864Z - Iniciando búsqueda de balance con ID: 8027efe8fc164d1197535fba55bb1307 por usuario 1
+[INFO] 2025-12-02T20:30:42.869Z - Balance encontrado con ID: 435673fe7a3b4a08bfa1d61090da852c
+[INFO] 2025-12-02T20:30:42.879Z - Balance encontrado con ID: 8027efe8fc164d1197535fba55bb1307
+[INFO] 2025-12-03T01:54:19.039Z - Recibido callback de Microsoft.
+[INFO] 2025-12-03T01:54:19.717Z - Email extraído de MSAL: isalazar@inevada.cl
+[INFO] 2025-12-03T01:54:19.735Z - Usuario isalazar@inevada.cl autenticado exitosamente. Generando JWT...
+[INFO] 2025-12-03T01:54:19.737Z - Generando token para [Ignacio Salazar] 
+[INFO] 2025-12-03T01:54:19.742Z - Cookie de sesión establecida para isalazar@inevada.cl. Redirigiendo al frontend.
+[INFO] 2025-12-03T01:54:27.208Z - Usuario 10 solicitó getAllUsers.
+[INFO] 2025-12-03T01:54:27.216Z - getAllUsers completado exitosamente para 10.
+[INFO] 2025-12-03T12:47:55.370Z - Recibido callback de Microsoft.
+[INFO] 2025-12-03T12:47:55.881Z - Email extraído de MSAL: isalazar@inevada.cl
+[INFO] 2025-12-03T12:47:55.896Z - Usuario isalazar@inevada.cl autenticado exitosamente. Generando JWT...
+[INFO] 2025-12-03T12:47:55.896Z - Generando token para [Ignacio Salazar] 
+[INFO] 2025-12-03T12:47:55.897Z - Cookie de sesión establecida para isalazar@inevada.cl. Redirigiendo al frontend.
+[INFO] 2025-12-03T12:48:25.828Z - Usuario 10 solicitó getAllUsers.
+[INFO] 2025-12-03T12:48:25.834Z - getAllUsers completado exitosamente para 10.
+[INFO] 2025-12-03T12:49:21.545Z - Usuario 10 solicitó getAllUsers.
+[INFO] 2025-12-03T12:49:21.551Z - getAllUsers completado exitosamente para 10.
+[INFO] 2025-12-03T12:50:16.899Z - Usuario 10 solicitó getAllUsers.
+[INFO] 2025-12-03T12:50:16.903Z - getAllUsers completado exitosamente para 10.
+[INFO] 2025-12-03T12:50:24.975Z - Usuario Ignacio Salazar (undefined) solicitó balance con ID: 435673fe7a3b4a08bfa1d61090da852c
+[INFO] 2025-12-03T12:50:24.976Z - Iniciando búsqueda de balance con ID: 435673fe7a3b4a08bfa1d61090da852c por usuario 10
+[INFO] 2025-12-03T12:50:24.977Z - Usuario Ignacio Salazar (undefined) solicitó balance con ID: 8027efe8fc164d1197535fba55bb1307
+[INFO] 2025-12-03T12:50:24.978Z - Iniciando búsqueda de balance con ID: 8027efe8fc164d1197535fba55bb1307 por usuario 10
+[INFO] 2025-12-03T12:50:24.982Z - Balance encontrado con ID: 435673fe7a3b4a08bfa1d61090da852c
+[INFO] 2025-12-03T12:50:24.992Z - Balance encontrado con ID: 8027efe8fc164d1197535fba55bb1307
+[INFO] 2025-12-03T12:50:55.822Z - Usuario 10 solicitó getAllUsers.
+[INFO] 2025-12-03T12:50:55.826Z - getAllUsers completado exitosamente para 10.
+[INFO] 2025-12-03T13:13:33.861Z - Usuario Ignacio Salazar (undefined) solicitó balance con ID: eb33c56509044ed78c6492fa77f0c1f4
+[INFO] 2025-12-03T13:13:33.862Z - Iniciando búsqueda de balance con ID: eb33c56509044ed78c6492fa77f0c1f4 por usuario 10
+[INFO] 2025-12-03T13:13:33.866Z - Balance encontrado con ID: eb33c56509044ed78c6492fa77f0c1f4
+[INFO] 2025-12-03T14:18:53.880Z - Verificando disponibilidad del nombre de balance: Balance CV 19 2022 comp 2023 test
+[INFO] 2025-12-03T14:18:53.885Z - El nombre "Balance CV 19 2022 comp 2023 test" ya existe.
+[INFO] 2025-12-03T14:18:54.774Z - Verificando disponibilidad del nombre de balance: Balance CV 19 2022 comp 2023 testq
+[INFO] 2025-12-03T14:18:54.777Z - El nombre "Balance CV 19 2022 comp 2023 testq" está disponible.
+[INFO] 2025-12-03T14:19:22.254Z - Clonando mapping 'MP-994' a 'MP-657' con 87 filas
+[INFO] 2025-12-03T14:19:22.270Z - Mapping 'MP-657' creado con 87 filas clonadas de 'MP-994'
+[ACTION] 2025-12-03T14:19:22.349Z - User 10 - CREAR_BALANCE_BULK - Insertados: 50 con id_blce: c30da13c7055495db9366e967bd0ce62
+[INFO] 2025-12-03T14:35:01.024Z - Verificando disponibilidad del nombre de balance: Balance CV 19 2022 comp 2023 testq
+[INFO] 2025-12-03T14:35:01.027Z - El nombre "Balance CV 19 2022 comp 2023 testq" ya existe.
+[INFO] 2025-12-03T14:35:01.981Z - Verificando disponibilidad del nombre de balance: Balance CV 19 2022 comp 2023 testqasaA
+[INFO] 2025-12-03T14:35:01.984Z - El nombre "Balance CV 19 2022 comp 2023 testqasaA" está disponible.
+[ACTION] 2025-12-03T14:35:17.736Z - User 10 - CREAR_BALANCE_BULK - Insertados: 57 con id_blce: 7dce4fa269e1433ea439cde7edfad921
+[INFO] 2025-12-03T14:58:44.854Z - Usuario Ignacio Salazar (undefined) solicitó balance con ID: 7dce4fa269e1433ea439cde7edfad921
+[INFO] 2025-12-03T14:58:44.854Z - Iniciando búsqueda de balance con ID: 7dce4fa269e1433ea439cde7edfad921 por usuario 10
+[INFO] 2025-12-03T14:58:44.855Z - Usuario Ignacio Salazar (undefined) solicitó balance con ID: c30da13c7055495db9366e967bd0ce62
+[INFO] 2025-12-03T14:58:44.856Z - Iniciando búsqueda de balance con ID: c30da13c7055495db9366e967bd0ce62 por usuario 10
+[INFO] 2025-12-03T14:58:44.860Z - Balance encontrado con ID: 7dce4fa269e1433ea439cde7edfad921
+[INFO] 2025-12-03T14:58:44.876Z - Balance encontrado con ID: c30da13c7055495db9366e967bd0ce62
+[INFO] 2025-12-03T14:59:04.806Z - Usuario Ignacio Salazar (undefined) solicitó balance con ID: c30da13c7055495db9366e967bd0ce62
+[INFO] 2025-12-03T14:59:04.807Z - Iniciando búsqueda de balance con ID: c30da13c7055495db9366e967bd0ce62 por usuario 10
+[INFO] 2025-12-03T14:59:04.809Z - Usuario Ignacio Salazar (undefined) solicitó balance con ID: 7dce4fa269e1433ea439cde7edfad921
+[INFO] 2025-12-03T14:59:04.809Z - Iniciando búsqueda de balance con ID: 7dce4fa269e1433ea439cde7edfad921 por usuario 10
+[INFO] 2025-12-03T14:59:04.813Z - Balance encontrado con ID: c30da13c7055495db9366e967bd0ce62
+[INFO] 2025-12-03T14:59:04.819Z - Balance encontrado con ID: 7dce4fa269e1433ea439cde7edfad921
+[INFO] 2025-12-03T15:10:48.079Z - Usuario 10 solicitó getAllUsers.
+[INFO] 2025-12-03T15:10:48.084Z - getAllUsers completado exitosamente para 10.
+[INFO] 2025-12-03T15:17:44.764Z - Usuario Ignacio Salazar (undefined) solicitó balance con ID: eb33c56509044ed78c6492fa77f0c1f4
+[INFO] 2025-12-03T15:17:44.765Z - Iniciando búsqueda de balance con ID: eb33c56509044ed78c6492fa77f0c1f4 por usuario 10
+[INFO] 2025-12-03T15:17:44.771Z - Balance encontrado con ID: eb33c56509044ed78c6492fa77f0c1f4
+[INFO] 2025-12-03T15:27:35.861Z - Usuario 10 solicitó getAllUsers.
+[INFO] 2025-12-03T15:27:35.865Z - getAllUsers completado exitosamente para 10.
+[INFO] 2025-12-03T15:28:45.528Z - Usuario Ignacio Salazar (undefined) solicitó balance con ID: eb33c56509044ed78c6492fa77f0c1f4
+[INFO] 2025-12-03T15:28:45.529Z - Iniciando búsqueda de balance con ID: eb33c56509044ed78c6492fa77f0c1f4 por usuario 10
+[INFO] 2025-12-03T15:28:45.536Z - Balance encontrado con ID: eb33c56509044ed78c6492fa77f0c1f4
+[INFO] 2025-12-03T15:33:45.787Z - Usuario Ignacio Salazar (undefined) solicitó balance con ID: eb33c56509044ed78c6492fa77f0c1f4
+[INFO] 2025-12-03T15:33:45.788Z - Iniciando búsqueda de balance con ID: eb33c56509044ed78c6492fa77f0c1f4 por usuario 10
+[INFO] 2025-12-03T15:33:45.793Z - Balance encontrado con ID: eb33c56509044ed78c6492fa77f0c1f4
+[INFO] 2025-12-03T15:33:50.463Z - Usuario Ignacio Salazar (undefined) solicitó balance con ID: eb33c56509044ed78c6492fa77f0c1f4
+[INFO] 2025-12-03T15:33:50.464Z - Iniciando búsqueda de balance con ID: eb33c56509044ed78c6492fa77f0c1f4 por usuario 10
+[INFO] 2025-12-03T15:33:50.471Z - Balance encontrado con ID: eb33c56509044ed78c6492fa77f0c1f4
+[INFO] 2025-12-03T15:34:02.618Z - Usuario 10 solicitó getAllUsers.
+[INFO] 2025-12-03T15:34:02.622Z - getAllUsers completado exitosamente para 10.
+[INFO] 2025-12-03T15:36:10.835Z - Usuario Ignacio Salazar (undefined) solicitó balance con ID: eb33c56509044ed78c6492fa77f0c1f4
+[INFO] 2025-12-03T15:36:10.837Z - Iniciando búsqueda de balance con ID: eb33c56509044ed78c6492fa77f0c1f4 por usuario 10
+[INFO] 2025-12-03T15:36:10.845Z - Balance encontrado con ID: eb33c56509044ed78c6492fa77f0c1f4
+[INFO] 2025-12-03T15:36:14.832Z - Usuario Ignacio Salazar (undefined) solicitó balance con ID: eb33c56509044ed78c6492fa77f0c1f4
+[INFO] 2025-12-03T15:36:14.834Z - Iniciando búsqueda de balance con ID: eb33c56509044ed78c6492fa77f0c1f4 por usuario 10
+[INFO] 2025-12-03T15:36:14.839Z - Balance encontrado con ID: eb33c56509044ed78c6492fa77f0c1f4
+[INFO] 2025-12-03T15:46:44.264Z - Usuario 10 solicitó getAllUsers.
+[INFO] 2025-12-03T15:46:44.268Z - getAllUsers completado exitosamente para 10.
+[INFO] 2025-12-03T15:46:48.488Z - Usuario 10 solicitó getAllUsers.
+[INFO] 2025-12-03T15:46:48.491Z - getAllUsers completado exitosamente para 10.
+[INFO] 2025-12-03T15:49:14.253Z - Usuario 10 solicitó getAllUsers.
+[INFO] 2025-12-03T15:49:14.256Z - getAllUsers completado exitosamente para 10.
+[INFO] 2025-12-03T19:21:56.289Z - Usuario 10 solicitó getAllUsers.
+[INFO] 2025-12-03T19:21:56.307Z - getAllUsers completado exitosamente para 10.
+[INFO] 2025-12-03T19:22:08.801Z - Intento de actualización (por Actor: 10) en Usuario ID: 1. Campos: [permiso, accesos, habilitado, password(***)]
+[ACTION] 2025-12-03T19:22:08.911Z - User 1 - UPDATE - Usuario 1 actualizado. Datos: ["password_hash","permiso","accesos","habilitado"]
+[INFO] 2025-12-03T19:22:08.912Z - Usuario ID: 1 actualizado exitosamente por 10.
+[ACTION] 2025-12-03T19:22:08.912Z - User 10 - UPDATE_USER - Usuario ID: 1. Campos actualizados: [permiso, accesos, habilitado, password(***)]
+[INFO] 2025-12-03T19:22:08.922Z - Usuario 10 solicitó getAllUsers.
+[INFO] 2025-12-03T19:22:08.923Z - getAllUsers completado exitosamente para 10.
+[INFO] 2025-12-03T19:23:04.985Z - Login exitoso para: admin@inevada.cl. Roles: [[object Object]]
+[ACTION] 2025-12-03T19:23:04.986Z - User 1 - LOGIN - Usuario admin@inevada.cl (Administrador) inició sesión.
+[INFO] 2025-12-03T19:23:04.986Z - Login exitoso (local) para: admin@inevada.cl
+[INFO] 2025-12-03T19:23:10.430Z - Usuario Administrador (undefined) solicitó balance con ID: 3012633c5e1e45baa61a002e0967b15f
+[INFO] 2025-12-03T19:23:10.430Z - Iniciando búsqueda de balance con ID: 3012633c5e1e45baa61a002e0967b15f por usuario 1
+[INFO] 2025-12-03T19:23:10.438Z - Balance encontrado con ID: 3012633c5e1e45baa61a002e0967b15f
+[INFO] 2025-12-03T19:23:13.748Z - Usuario Administrador (undefined) solicitó balance con ID: 3012633c5e1e45baa61a002e0967b15f
+[INFO] 2025-12-03T19:23:13.749Z - Iniciando búsqueda de balance con ID: 3012633c5e1e45baa61a002e0967b15f por usuario 1
+[INFO] 2025-12-03T19:23:13.754Z - Balance encontrado con ID: 3012633c5e1e45baa61a002e0967b15f
+[INFO] 2025-12-03T19:29:08.663Z - Usuario Administrador (undefined) solicitó balance con ID: 3012633c5e1e45baa61a002e0967b15f
+[INFO] 2025-12-03T19:29:08.664Z - Iniciando búsqueda de balance con ID: 3012633c5e1e45baa61a002e0967b15f por usuario 1
+[INFO] 2025-12-03T19:29:08.669Z - Balance encontrado con ID: 3012633c5e1e45baa61a002e0967b15f
+[INFO] 2025-12-03T19:29:25.268Z - Usuario Administrador (undefined) solicitó balance con ID: 3012633c5e1e45baa61a002e0967b15f
+[INFO] 2025-12-03T19:29:25.269Z - Iniciando búsqueda de balance con ID: 3012633c5e1e45baa61a002e0967b15f por usuario 1
+[INFO] 2025-12-03T19:29:25.274Z - Balance encontrado con ID: 3012633c5e1e45baa61a002e0967b15f
+[INFO] 2025-12-03T19:29:39.122Z - Recibido callback de Microsoft.
+[INFO] 2025-12-03T19:29:39.666Z - Email extraído de MSAL: isalazar@inevada.cl
+[INFO] 2025-12-03T19:29:39.669Z - Usuario isalazar@inevada.cl autenticado exitosamente. Generando JWT...
+[INFO] 2025-12-03T19:29:39.670Z - Generando token para [Ignacio Salazar] 
+[INFO] 2025-12-03T19:29:39.671Z - Cookie de sesión establecida para isalazar@inevada.cl. Redirigiendo al frontend.
+[INFO] 2025-12-03T19:56:09.206Z - Usuario 10 solicitó getAllUsers.
+[INFO] 2025-12-03T19:56:09.209Z - getAllUsers completado exitosamente para 10.
+[INFO] 2025-12-03T20:07:45.353Z - Usuario 10 solicitó getAllUsers.
+[INFO] 2025-12-03T20:07:45.356Z - getAllUsers completado exitosamente para 10.
+[INFO] 2025-12-03T20:08:18.975Z - Usuario 10 solicitó getAllUsers.
+[INFO] 2025-12-03T20:08:18.977Z - getAllUsers completado exitosamente para 10.
+[INFO] 2025-12-03T20:10:27.429Z - Usuario 10 solicitó getAllUsers.
+[INFO] 2025-12-03T20:10:27.431Z - getAllUsers completado exitosamente para 10.
+[INFO] 2025-12-03T20:19:49.796Z - Usuario 10 solicitó getAllUsers.
+[INFO] 2025-12-03T20:19:49.802Z - getAllUsers completado exitosamente para 10.
+[INFO] 2025-12-03T20:20:22.751Z - Usuario 10 solicitó getAllUsers.
+[INFO] 2025-12-03T20:20:22.753Z - getAllUsers completado exitosamente para 10.
+[INFO] 2025-12-03T20:31:49.952Z - Recibido callback de Microsoft.
+[INFO] 2025-12-03T20:31:50.460Z - Email extraído de MSAL: isalazar@inevada.cl
+[INFO] 2025-12-03T20:31:50.464Z - Usuario isalazar@inevada.cl autenticado exitosamente. Generando JWT...
+[INFO] 2025-12-03T20:31:50.465Z - Generando token para [Ignacio Salazar] 
+[INFO] 2025-12-03T20:31:50.468Z - Cookie de sesión establecida para isalazar@inevada.cl. Redirigiendo al frontend.
+[INFO] 2025-12-03T20:47:12.092Z - Recibido callback de Microsoft.
+[INFO] 2025-12-03T20:47:12.601Z - Email extraído de MSAL: isalazar@inevada.cl
+[INFO] 2025-12-03T20:47:12.606Z - Usuario isalazar@inevada.cl autenticado exitosamente. Generando JWT...
+[INFO] 2025-12-03T20:47:12.607Z - Generando token para [Ignacio Salazar] 
+[INFO] 2025-12-03T20:47:12.609Z - Cookie de sesión establecida para isalazar@inevada.cl. Redirigiendo al frontend.
