@@ -1,20 +1,17 @@
-import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { IReportConfig } from '../../models/report-config-modal';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import * as XLSX from 'xlsx';
 import { saveAs } from 'file-saver';
-import { BalanceService } from '../../services/balance.service';
-import { EEFFService } from '../../services/eeff.service';
 import Swal from 'sweetalert2';
 import { IBalanceGet, IMacroCategoria, IMacroCategoriaComparativa } from '../../models/balance.model';
 import { TooltipModule } from 'primeng/tooltip';
 
 @Component({
   selector: 'app-report-config-modal',
-  standalone: true,
   imports: [CommonModule, FormsModule, TooltipModule],
   templateUrl: './report-config-modal.html',
   styles: []
@@ -44,7 +41,6 @@ export class ReportConfigModal implements OnInit {
     colorTheme: 'green-black',
     mostrarDiferencia: true,
     mostrarVariacion: true,
-    // NUEVO FLAG
     verEnMiles: false
   };
 
@@ -54,14 +50,8 @@ export class ReportConfigModal implements OnInit {
   ) {
   }
 
-  //HELPER CENTRAL PARA TRUNCAMIENTO
   private _getValor(valor: number): number {
-    if (!valor && valor !== 0) return 0;
-    if (this.config.verEnMiles) {
-      // Truncamiento estricto (no redondeo)
-      return Math.trunc(valor / 1000);
-    }
-    return valor;
+    return valor || 0;
   }
 
   private getPaletteColors() {
@@ -77,6 +67,7 @@ export class ReportConfigModal implements OnInit {
       case 'green-red': detailColor = GREEN; negativeColor = RED; break;
       case 'red-black': detailColor = RED; negativeColor = BLACK; break;
       case 'red-red': detailColor = RED; negativeColor = RED; break;
+      case 'black-black': detailColor = BLACK; negativeColor = BLACK; break;
     }
     return { detailColor, negativeColor };
   }
@@ -103,11 +94,8 @@ export class ReportConfigModal implements OnInit {
   }
 
   get themeClass(): string {
+    // Si es blanco y negro, usamos 'dark' para el header del modal, o lo dejamos en success/teal
     return this.type === 'print' ? 'success' : 'teal';
-  }
-
-  get btnConfirmClass(): string {
-    return this.type === 'print' ? 'btn-success' : 'btn-teal';
   }
 
   emitChange(): void {
@@ -148,10 +136,34 @@ export class ReportConfigModal implements OnInit {
     }
   }
 
-  private hacerPositivoRecursivo(item: any) {
-    if (item.saldo) item.saldo = Math.abs(item.saldo);
-    if (item.categorias) item.categorias.forEach((cat: any) => this.hacerPositivoRecursivo(cat));
-    if (item.subcategorias) item.subcategorias.forEach((sub: any) => this.hacerPositivoRecursivo(sub));
+  private prepararDatosParaReporte(dataOrigen: any[], mode: 'standard' | 'comparative'): any[] {
+    let dataProcesada = JSON.parse(JSON.stringify(dataOrigen));
+    const categoriasActivas = this.config.categoriasSeleccionadas.filter(c => c.selected).map(c => c.nombre);
+    dataProcesada = dataProcesada.filter((macro: any) => categoriasActivas.includes(macro.nombre));
+
+    dataProcesada.forEach((macro: any) => {
+      const esER = macro.nombre.toUpperCase().includes('RESULTADO') ||
+        macro.nombre.toUpperCase().includes('GANANCIA') ||
+        macro.nombre.toUpperCase().includes('PERDIDA');
+      let debeSerAbsoluto = false;
+      if (this.config.alcanceNegativos === 'absoluto') debeSerAbsoluto = true;
+      else if (this.config.alcanceNegativos === 'auditoria' && !esER) debeSerAbsoluto = true;
+
+      if (debeSerAbsoluto) {
+        if (mode === 'standard') this.hacerPositivoRecursivo(macro);
+        else this.hacerPositivoComparativoRecursivo(macro);
+      }
+    });
+
+    if (this.config.verEnMiles) {
+      if (mode === 'standard') {
+        this.aplicarTransformacionMilesStandard(dataProcesada);
+      } else {
+        this.aplicarTransformacionMilesComparativa(dataProcesada);
+      }
+    }
+
+    return dataProcesada;
   }
 
 
@@ -162,21 +174,7 @@ export class ReportConfigModal implements OnInit {
     }
     if (this.reportData.length === 0) return;
 
-    const { detailColor, negativeColor } = this.getPaletteColors();
-    let dataParaImprimir: IMacroCategoria[] = JSON.parse(JSON.stringify(this.reportData));
-
-    dataParaImprimir.forEach(macro => {
-      const esEstadoResultados = macro.nombre.toUpperCase().includes('RESULTADO') ||
-        macro.nombre.toUpperCase().includes('GANANCIA') ||
-        macro.nombre.toUpperCase().includes('PERDIDA');
-      let debeSerAbsoluto = false;
-      if (this.config.alcanceNegativos === 'absoluto') debeSerAbsoluto = true;
-      else if (this.config.alcanceNegativos === 'auditoria' && !esEstadoResultados) debeSerAbsoluto = true;
-      if (debeSerAbsoluto) this.hacerPositivoRecursivo(macro);
-    });
-
-    const categoriasActivas = this.config.categoriasSeleccionadas.filter(c => c.selected).map(c => c.nombre);
-    dataParaImprimir = dataParaImprimir.filter(macro => categoriasActivas.includes(macro.nombre));
+    const dataParaImprimir = this.prepararDatosParaReporte(this.reportData, 'standard');
 
     if (dataParaImprimir.length === 0) {
       const noDataHtml = `<div style="padding: 20px; text-align: center; color: #777;">Selecciona al menos una categoría.</div>`;
@@ -185,43 +183,7 @@ export class ReportConfigModal implements OnInit {
       return;
     }
 
-    let residuosHtml = '';
-    if (this.config.verEnMiles) {
-      const { desglose, totalActual } = this._calcularResiduosParaReporte(dataParaImprimir, 'standard');
-      if (totalActual > 0) {
-        let filasResiduos = '';
-        desglose.forEach(item => {
-          filasResiduos += `
-            <tr>
-              <td style="border-bottom: 1px solid #eee; color: #555;">${item.nombre}</td>
-              <td class="text-end" style="border-bottom: 1px solid #eee; font-family: monospace;">${new Intl.NumberFormat('es-CL').format(item.actual)}</td>
-            </tr>`;
-        });
-        residuosHtml = `
-          <div style="margin-top: 5px; page-break-inside: avoid;">
-            <h4 style="font-size: 10px; text-transform: uppercase; border-bottom: 1px solid #ccc; margin-bottom: 5px;">Control de Residuos (M$)</h4>
-            <table style="width: 70%; font-size: 9px;">
-              <thead>
-                <tr>
-                  <th style="text-align: left; background: #f9f9f9; padding:2px;">Categoría</th>
-                  <th class="text-end" style="background: #f9f9f9; padding:2px;">Res. Actual ($)</th>
-
-                </tr>
-              </thead>
-              <tbody>
-                ${filasResiduos}
-                <tr>
-                  <td style="font-weight: bold; border-top: 1px solid #333;">TOTAL OCULTO</td>
-                  <td class="text-end" style="font-weight: bold; border-top: 1px solid #333; font-family: monospace;">${new Intl.NumberFormat('es-CL').format(totalActual)}</td>
-                </tr>
-              </tbody>
-            </table>
-            <p style="font-size: 9px; color: #777; margin-top: 5px;">* Estos montos son la suma de los decimales (cientos de pesos) no visualizados en el reporte principal.</p>
-          </div>
-        `;
-      }
-    }
-
+    const { detailColor, negativeColor } = this.getPaletteColors();
     const nombreConjunto = this.balanceData?.nombre_conjunto || 'Balance';
     const ejercicio = this.balanceData?.ejercicio || '';
     const fechaInicio = new Date(this.balanceData?.fecha_inicio).toLocaleDateString('es-CL');
@@ -240,7 +202,6 @@ export class ReportConfigModal implements OnInit {
       return numStr;
     };
 
-    // Estilos CSS
     const styles = `
     <style>
       @page { size: auto; margin: 10mm; }
@@ -266,7 +227,6 @@ export class ReportConfigModal implements OnInit {
     </style>
     `;
 
-    // HEADER DE LA TABLA (Lo guardamos para repetirlo)
     const tituloSufijo = this.config.verEnMiles ? '(Valores en M$)' : '($)';
     const tableHeaderHtml = `
       <thead>
@@ -276,57 +236,55 @@ export class ReportConfigModal implements OnInit {
         </tr>
       </thead>`;
 
-    // Construcción del contenido
     let fullContent = `<table>${tableHeaderHtml}<tbody>`;
 
-    dataParaImprimir.forEach((macro, index) => {
+    dataParaImprimir.forEach((macro: any, index: number) => {
       fullContent += `<tr class="header-macro"><td colspan="2">${macro.nombre.toUpperCase()}</td></tr>`;
 
-      macro.categorias.forEach((cat) => {
+      macro.categorias.forEach((cat: any) => {
         fullContent += `<tr class="header-cat"><td colspan="2">${cat.categoria}</td></tr>`;
-        cat.subcategorias.forEach((sub) => {
+        cat.subcategorias.forEach((sub: any) => {
           const nombreSub = this.config.mostrarFsa ? `${sub.id_fsa} - ${sub.descripcion}` : sub.descripcion;
           if (this.config.mostrarCuentas) {
             fullContent += `<tr class="header-subcat"><td colspan="2">${nombreSub}</td></tr>`;
             let cuentasVisibles = sub.cuentas;
-            if (!this.config.incluirCuentasCero) cuentasVisibles = cuentasVisibles.filter(c => c.saldo !== 0);
+            if (!this.config.incluirCuentasCero) cuentasVisibles = cuentasVisibles.filter((c: any) => c.saldo !== 0);
 
-            cuentasVisibles.forEach(cuenta => {
+            cuentasVisibles.forEach((cuenta: any) => {
               fullContent += `
               <tr class="row-cuenta">
                 <td>${cuenta.num_cuenta} - ${cuenta.nombre}</td>
-                <td class="text-end">${formatearNumero(this._getValor(cuenta.saldo))}</td>
+                <td class="text-end">${formatearNumero(cuenta.saldo)}</td>
               </tr>`;
             });
 
             fullContent += `
             <tr class="total-subcat">
               <td>Total ${sub.descripcion}</td>
-              <td class="text-end">${formatearNumero(this._getValor(sub.saldo))}</td>
+              <td class="text-end">${formatearNumero(sub.saldo)}</td>
             </tr>`;
           } else {
             fullContent += `
             <tr class="row-simple-subcat">
               <td>${nombreSub}</td>
-              <td class="text-end">${formatearNumero(this._getValor(sub.saldo))}</td>
+              <td class="text-end">${formatearNumero(sub.saldo)}</td>
             </tr>`;
           }
         });
         fullContent += `
         <tr class="total-cat">
           <td>TOTAL ${cat.categoria.toUpperCase()}</td>
-          <td class="text-end">${formatearNumero(this._getValor(cat.saldo))}</td>
+          <td class="text-end">${formatearNumero(cat.saldo)}</td>
         </tr>`;
       });
 
       fullContent += `
       <tr class="total-macro">
         <td>TOTAL ${macro.nombre.toUpperCase()}</td>
-        <td class="text-end">${formatearNumero(this._getValor(macro.saldo))}</td>
+        <td class="text-end">${formatearNumero(macro.saldo)}</td>
       </tr>
-      <tr><td colspan="2" style="height: 30px;"></td></tr>`; // <-- AUMENTADO A 30PX
+      <tr><td colspan="2" style="height: 30px;"></td></tr>`;
 
-      // 🛑 LÓGICA DE CORTE DE PÁGINA (CORREGIDA) 🛑
       if (macro.nombre.toUpperCase().includes('PASIVO') && !macro.nombre.toUpperCase().includes('PATRIMONIO')) {
         fullContent += `</tbody></table>`;
         fullContent += `<div class="page-break"></div>`;
@@ -346,10 +304,8 @@ export class ReportConfigModal implements OnInit {
           <p><strong>${nombreConjunto}</strong></p>
           <p>${ejercicio} | ${fechaInicio} al ${fechaFin}</p>
         </div>
-        
         ${fullContent}
-        
-        ${residuosHtml}<div class="footer"><p>Generado: ${fechaImpresion}</p></div>
+        <div class="footer"><p>Generado: ${fechaImpresion}</p></div>
       </body>
     </html>`;
 
@@ -369,20 +325,7 @@ export class ReportConfigModal implements OnInit {
         excelNumFormat = usarRojo ? '#,##0;[Red]-#,##0' : '#,##0;-#,##0';
       }
 
-      let dataProcesada: IMacroCategoria[] = JSON.parse(JSON.stringify(this.reportData));
-
-      dataProcesada.forEach(macro => {
-        const esEstadoResultados = macro.nombre.toUpperCase().includes('RESULTADO') ||
-          macro.nombre.toUpperCase().includes('GANANCIA') ||
-          macro.nombre.toUpperCase().includes('PERDIDA');
-        let debeSerAbsoluto = false;
-        if (this.config.alcanceNegativos === 'absoluto') debeSerAbsoluto = true;
-        else if (this.config.alcanceNegativos === 'auditoria' && !esEstadoResultados) debeSerAbsoluto = true;
-        if (debeSerAbsoluto) this.hacerPositivoRecursivo(macro);
-      });
-
-      const categoriasActivas = this.config.categoriasSeleccionadas.filter(c => c.selected).map(c => c.nombre);
-      dataProcesada = dataProcesada.filter(macro => categoriasActivas.includes(macro.nombre));
+      const dataProcesada = this.prepararDatosParaReporte(this.reportData, 'standard');
 
       const ws_bi = this._crearHojaPowerBI(dataProcesada, this.config);
       const detailColorHex = detailColor.replace('#', '');
@@ -404,6 +347,123 @@ export class ReportConfigModal implements OnInit {
     }
   }
 
+  private aplicarTransformacionMilesStandard(nodos: any[]): void {
+    this.ejecutarWaterfallStandard(nodos);
+    this.sobreescribirSaldosStandard(nodos);
+  }
+
+  private ejecutarWaterfallStandard(nodos: any[]): void {
+    nodos.forEach(nodo => {
+      nodo.saldoMiles = Math.round(nodo.saldo / 1000);
+
+      let hijos: any[] = [];
+      if (nodo.categorias) hijos = nodo.categorias;
+      else if (nodo.subcategorias) hijos = nodo.subcategorias;
+      else if (nodo.cuentas) hijos = nodo.cuentas;
+
+      if (hijos.length > 0) {
+        this.distribuirAjusteStandard(nodo, hijos);
+        this.ejecutarWaterfallStandard(hijos);
+      }
+    });
+  }
+
+  private distribuirAjusteStandard(padre: any, hijos: any[]): void {
+    let sumaHijos = 0;
+    hijos.forEach(hijo => {
+      hijo.saldoMiles = Math.round(hijo.saldo / 1000);
+      sumaHijos += hijo.saldoMiles;
+    });
+
+    const diferencia = padre.saldoMiles - sumaHijos;
+
+    if (diferencia !== 0) {
+      const hijoCandidato = hijos.reduce((prev, current) =>
+        (Math.abs(current.saldo) > Math.abs(prev.saldo) ? current : prev)
+      );
+      hijoCandidato.saldoMiles += diferencia;
+    }
+  }
+
+  private sobreescribirSaldosStandard(nodos: any[]): void {
+    nodos.forEach(nodo => {
+      if (nodo.saldoMiles !== undefined) nodo.saldo = nodo.saldoMiles;
+
+      if (nodo.categorias) this.sobreescribirSaldosStandard(nodo.categorias);
+      if (nodo.subcategorias) this.sobreescribirSaldosStandard(nodo.subcategorias);
+      if (nodo.cuentas) this.sobreescribirSaldosStandard(nodo.cuentas);
+    });
+  }
+
+  private aplicarTransformacionMilesComparativa(nodos: any[]): void {
+    this.ejecutarWaterfallComparativo(nodos, 'saldo', 'saldoMiles');
+    this.ejecutarWaterfallComparativo(nodos, 'saldoAnterior', 'saldoAnteriorMiles');
+    this.calcularDiferenciasHorizontales(nodos);
+    this.sobreescribirSaldosComparativos(nodos);
+  }
+
+  private ejecutarWaterfallComparativo(nodos: any[], campoOrigen: string, campoDestino: string): void {
+    nodos.forEach(nodo => {
+      nodo[campoDestino] = Math.round(nodo[campoOrigen] / 1000);
+
+      let hijos: any[] = [];
+      if (nodo.categorias) hijos = nodo.categorias;
+      else if (nodo.subcategorias) hijos = nodo.subcategorias;
+      else if (nodo.cuentas) hijos = nodo.cuentas;
+
+      if (hijos.length > 0) {
+        this.distribuirAjusteComparativo(nodo, hijos, campoOrigen, campoDestino);
+        this.ejecutarWaterfallComparativo(hijos, campoOrigen, campoDestino);
+      }
+    });
+  }
+
+  private distribuirAjusteComparativo(padre: any, hijos: any[], campoOrigen: string, campoDestino: string): void {
+    let sumaHijos = 0;
+    hijos.forEach(hijo => {
+      hijo[campoDestino] = Math.round(hijo[campoOrigen] / 1000);
+      sumaHijos += hijo[campoDestino];
+    });
+
+    const diferencia = padre[campoDestino] - sumaHijos;
+
+    if (diferencia !== 0) {
+      const hijoCandidato = hijos.reduce((prev, current) =>
+        (Math.abs(current[campoOrigen]) > Math.abs(prev[campoOrigen]) ? current : prev)
+      );
+      hijoCandidato[campoDestino] += diferencia;
+    }
+  }
+
+  private calcularDiferenciasHorizontales(nodos: any[]): void {
+    nodos.forEach(nodo => {
+      nodo.diferenciaMiles = (nodo.saldoMiles ?? 0) - (nodo.saldoAnteriorMiles ?? 0);
+      nodo.variacionMiles = this.calcularVariacion(nodo.saldoMiles ?? 0, nodo.saldoAnteriorMiles ?? 0);
+
+      if (nodo.categorias) this.calcularDiferenciasHorizontales(nodo.categorias);
+      if (nodo.subcategorias) this.calcularDiferenciasHorizontales(nodo.subcategorias);
+      if (nodo.cuentas) this.calcularDiferenciasHorizontales(nodo.cuentas);
+    });
+  }
+
+  private calcularVariacion(actual: number, anterior: number): number {
+    if (anterior === 0) return actual === 0 ? 0 : 999999;
+    return ((actual - anterior) / anterior) * 100;
+  }
+
+  private sobreescribirSaldosComparativos(nodos: any[]): void {
+    nodos.forEach(nodo => {
+      if (nodo.saldoMiles !== undefined) nodo.saldo = nodo.saldoMiles;
+      if (nodo.saldoAnteriorMiles !== undefined) nodo.saldoAnterior = nodo.saldoAnteriorMiles;
+      if (nodo.diferenciaMiles !== undefined) nodo.diferencia = nodo.diferenciaMiles;
+      if (nodo.variacionMiles !== undefined) nodo.variacion = nodo.variacionMiles;
+
+      if (nodo.categorias) this.sobreescribirSaldosComparativos(nodo.categorias);
+      if (nodo.subcategorias) this.sobreescribirSaldosComparativos(nodo.subcategorias);
+      if (nodo.cuentas) this.sobreescribirSaldosComparativos(nodo.cuentas);
+    });
+  }
+
   private _crearHojaPowerBI(data: IMacroCategoria[], config: IReportConfig): XLSX.WorkSheet {
     const flatData: any[] = [];
     data.forEach(macro => {
@@ -417,7 +477,7 @@ export class ReportConfigModal implements OnInit {
               "Subcategoria_Desc": sub.descripcion,
               "Cuenta_Num": null,
               "Cuenta_Nombre": null,
-              "Saldo": this._getValor(sub.saldo) // APLICAR _getValor
+              "Saldo": sub.saldo
             });
           } else {
             let cuentasParaMostrar = sub.cuentas;
@@ -431,7 +491,7 @@ export class ReportConfigModal implements OnInit {
                   "Subcategoria_Desc": sub.descripcion,
                   "Cuenta_Num": cuenta.num_cuenta,
                   "Cuenta_Nombre": cuenta.nombre,
-                  "Saldo": this._getValor(cuenta.saldo) // APLICAR _getValor
+                  "Saldo": cuenta.saldo
                 });
               });
             } else {
@@ -442,7 +502,7 @@ export class ReportConfigModal implements OnInit {
                 "Subcategoria_Desc": sub.descripcion,
                 "Cuenta_Num": null,
                 "Cuenta_Nombre": null,
-                "Saldo": this._getValor(sub.saldo) // APLICAR _getValor
+                "Saldo": sub.saldo
               });
             }
           }
@@ -474,38 +534,6 @@ export class ReportConfigModal implements OnInit {
 
     const tituloSaldo = this.config.verEnMiles ? 'Saldo (M$)' : 'Saldo';
 
-    if (config.verEnMiles) {
-      const { desglose, totalActual } = this._calcularResiduosParaReporte(data, 'standard');
-
-      if (totalActual > 0) {
-        // Estilos básicos para la tabla de control
-        const sHeaderCtrl = { font: { bold: true, color: { rgb: "333333" } }, fill: { fgColor: { rgb: "F2F2F2" } }, border: { bottom: { style: 'thin' } } };
-        const sRowCtrl = { font: { color: { rgb: "555555" } } };
-        const sTotalCtrl = { font: { bold: true }, border: { top: { style: 'thin' } } };
-        const fmtMoney = '#,##0';
-
-        sheetData.push([]); // Espacio vacío
-        sheetData.push([]);
-        sheetData.push([{ v: 'CONTROL DE RESIDUOS (MILES)', s: { font: { bold: true, underline: true } } }]);
-        sheetData.push([
-          { v: 'Categoría', s: sHeaderCtrl },
-          { v: 'Residuo ($)', s: sHeaderCtrl }
-        ]);
-
-        desglose.forEach(item => {
-          sheetData.push([
-            { v: item.nombre, s: sRowCtrl },
-            { v: item.actual, t: 'n', z: fmtMoney, s: sRowCtrl }
-          ]);
-        });
-
-        sheetData.push([
-          { v: 'TOTAL OCULTO', s: sTotalCtrl },
-          { v: totalActual, t: 'n', z: fmtMoney, s: sTotalCtrl }
-        ]);
-      }
-    }
-
     sheetData.push([
       { v: 'Concepto', s: styleHeader } as any,
       { v: tituloSaldo, s: styleHeader } as any
@@ -524,7 +552,7 @@ export class ReportConfigModal implements OnInit {
           if (!config.mostrarCuentas) {
             sheetData.push([
               { v: nombreSub, s: styleSubNombre },
-              { v: this._getValor(sub.saldo), t: 'n', z: numFormat, s: styleSubNum } // APLICAR _getValor
+              { v: sub.saldo, t: 'n', z: numFormat, s: styleSubNum }
             ]);
           } else {
             sheetData.push([{ v: nombreSub, s: styleSubNombreItalic } as any]);
@@ -534,28 +562,26 @@ export class ReportConfigModal implements OnInit {
             cuentasParaMostrar.forEach(cuenta => {
               sheetData.push([
                 { v: `${cuenta.num_cuenta} - ${cuenta.nombre}`, s: styleCtaNombre },
-                { v: this._getValor(cuenta.saldo), t: 'n', z: numFormat, s: styleCtaNum } // APLICAR _getValor
+                { v: cuenta.saldo, t: 'n', z: numFormat, s: styleCtaNum }
               ]);
             });
             sheetData.push([
               { v: `Total ${sub.descripcion}`, s: styleSubTotal } as any,
-              { v: this._getValor(sub.saldo), t: 'n', z: numFormat, s: styleSubTotal } as any // APLICAR _getValor
+              { v: sub.saldo, t: 'n', z: numFormat, s: styleSubTotal } as any
             ]);
           }
         });
         sheetData.push([
           { v: `TOTAL ${categoria.categoria.toUpperCase()}`, s: styleCatTotal } as any,
-          { v: this._getValor(categoria.saldo), t: 'n', z: numFormat, s: styleCatTotal } as any // APLICAR _getValor
+          { v: categoria.saldo, t: 'n', z: numFormat, s: styleCatTotal } as any
         ]);
       });
       sheetData.push([
         { v: `TOTAL ${macro.nombre.toUpperCase()}`, s: styleMacroTotal } as any,
-        { v: this._getValor(macro.saldo), t: 'n', z: numFormat, s: styleMacroTotal } as any // APLICAR _getValor
+        { v: macro.saldo, t: 'n', z: numFormat, s: styleMacroTotal } as any
       ]);
       sheetData.push([]);
     });
-
-
 
     const ws = XLSX.utils.aoa_to_sheet(sheetData);
     ws['!cols'] = [{ wch: 60 }, { wch: 20 }];
@@ -569,67 +595,16 @@ export class ReportConfigModal implements OnInit {
     saveAs(data, fileName);
   }
 
-  // ==========================================
-  // 🔄 LÓGICA COMPARATIVA
-  // ==========================================
-
   private _generarPreviewComparativo(): void {
     const { detailColor, negativeColor } = this.getPaletteColors();
-    const categoriasActivas = this.config.categoriasSeleccionadas.filter(c => c.selected).map(c => c.nombre);
-    let dataClonada = JSON.parse(JSON.stringify(this.comparativeData));
-    let dataFiltrada = dataClonada.filter((m: any) => categoriasActivas.includes(m.nombre));
+    
+    const dataFiltrada = this.prepararDatosParaReporte(this.comparativeData, 'comparative');
 
     if (dataFiltrada.length === 0) {
       const noDataHtml = `<div style="padding: 20px; text-align: center;">Sin datos.</div>`;
       this.rawPreviewHtml = noDataHtml;
       this.previewHtml = this.sanitizer.bypassSecurityTrustHtml(noDataHtml);
       return;
-    }
-
-    dataFiltrada.forEach((macro: any) => {
-      const esER = macro.nombre.toUpperCase().includes('RESULTADO') || macro.nombre.toUpperCase().includes('GANANCIA') || macro.nombre.toUpperCase().includes('PERDIDA');
-      let abs = this.config.alcanceNegativos === 'absoluto' || (this.config.alcanceNegativos === 'auditoria' && !esER);
-      if (abs) this.hacerPositivoComparativoRecursivo(macro);
-    });
-
-    // Residuos
-    let residuosHtml = '';
-    if (this.config.verEnMiles) {
-      const { desglose, totalActual, totalAnterior } = this._calcularResiduosParaReporte(dataFiltrada, 'comparative');
-      if (totalActual > 0 || totalAnterior > 0) {
-        let filas = '';
-        desglose.forEach(item => {
-          filas += `
-            <tr>
-              <td style="border-bottom: 1px solid #eee;">${item.nombre}</td>
-              <td class="text-end" style="border-bottom: 1px solid #eee; font-family: monospace;">${new Intl.NumberFormat('es-CL').format(item.actual)}</td>
-              <td class="text-end text-muted" style="border-bottom: 1px solid #eee; font-family: monospace;">${new Intl.NumberFormat('es-CL').format(item.anterior)}</td>
-            </tr>`;
-        });
-        residuosHtml = `
-          <div style="margin-top: 25px; page-break-inside: avoid;">
-            <h4 style="font-size: 10px; text-transform: uppercase; border-bottom: 1px solid #ccc; margin-bottom: 5px;">Control de Residuos (M$)</h4>
-            <table style="width: 70%; font-size: 9px;">
-              <thead>
-                <tr>
-                  <th style="text-align: left; background: #f9f9f9; padding:2px;">Categoría</th>
-                  <th class="text-end" style="background: #f9f9f9; padding:2px;">Res. Actual ($)</th>
-                  <th class="text-end" style="background: #f9f9f9; padding:2px;">Res. Ant. ($)</th>
-                </tr>
-              </thead>
-              <tbody>
-                ${filas}
-                <tr>
-                  <td style="font-weight: bold; border-top: 1px solid #333;">TOTAL OCULTO</td>
-                  <td class="text-end" style="font-weight: bold; border-top: 1px solid #333; font-family: monospace;">${new Intl.NumberFormat('es-CL').format(totalActual)}</td>
-                  <td class="text-end" style="font-weight: bold; border-top: 1px solid #333; font-family: monospace; color: #777;">${new Intl.NumberFormat('es-CL').format(totalAnterior)}</td>
-                </tr>
-              </tbody>
-            </table>
-            <p style="font-size: 9px; color: #777; margin-top: 5px;">* Estos montos son la suma de los decimales (cientos de pesos) no visualizados en el reporte principal.</p>
-          </div>
-        `;
-      }
     }
 
     const showDiff = this.config.mostrarDiferencia;
@@ -647,7 +622,6 @@ export class ReportConfigModal implements OnInit {
     const fmtVar = (v: number) => Math.abs(v) > 9999 ? '>>' : `${v > 0 ? '+' : ''}${v.toLocaleString('es-CL', { maximumFractionDigits: 1 })}%`;
     const colorVar = (v: number) => v > 0 ? 'color:#198754' : (v < 0 ? `color:${negativeColor}` : 'color:#666');
 
-    // Estilos CSS
     const styles = `
     <style>
       @page { size: auto; margin: 8mm; }
@@ -668,12 +642,10 @@ export class ReportConfigModal implements OnInit {
       .tot-cat td { font-weight: 700; color: #333; background-color: #f8f9fa; border-top: 1px solid #999; padding-left: 10px; }
       .tot-macro td { font-weight: 800; color: #000; background-color: #f0f0f0; border-top: 1px solid #000; border-bottom: 3px double #000; padding-top: 4px; padding-bottom: 4px; }
       .row-simple td { padding-left: 20px; }
-      /* CLASE PARA SALTO DE PÁGINA FORZADO */
       .page-break { page-break-after: always; display: block; height: 1px; width: 100%; border: none; }
     </style>
   `;
 
-    // HEADER DE LA TABLA (Lo guardamos para repetirlo)
     const tituloSufijo = this.config.verEnMiles ? '(M$)' : '($)';
     let headerHtml = `
       <thead>
@@ -685,7 +657,6 @@ export class ReportConfigModal implements OnInit {
     if (showVar) headerHtml += `<th class="text-end">Var (%)</th>`;
     headerHtml += `</tr></thead>`;
 
-    // Construcción del contenido
     let fullContent = `<table>${headerHtml}<tbody>`;
 
     dataFiltrada.forEach((macro: any) => {
@@ -700,46 +671,45 @@ export class ReportConfigModal implements OnInit {
               if (!this.config.incluirCuentasCero && cta.saldo === 0 && cta.saldoAnterior === 0) return;
               fullContent += `<tr class="row-cta">
                 <td>${cta.num_cuenta} - ${cta.nombre}</td>
-                <td class="text-end">${fmtNum(this._getValor(cta.saldo))}</td>
-                <td class="text-end text-muted">${fmtNum(this._getValor(cta.saldoAnterior))}</td>`;
-              if (showDiff) fullContent += `<td class="text-end">${fmtNum(this._getValor(cta.diferencia))}</td>`;
+                <td class="text-end">${fmtNum(cta.saldo)}</td>
+                <td class="text-end text-muted">${fmtNum(cta.saldoAnterior)}</td>`;
+              if (showDiff) fullContent += `<td class="text-end">${fmtNum(cta.diferencia)}</td>`;
               if (showVar) fullContent += `<td class="text-end" style="${colorVar(cta.variacion)}">${fmtVar(cta.variacion)}</td>`;
               fullContent += `</tr>`;
             });
             fullContent += `<tr class="tot-sub">
               <td>Total ${sub.descripcion}</td>
-              <td class="text-end">${fmtNum(this._getValor(sub.saldo))}</td>
-              <td class="text-end text-muted">${fmtNum(this._getValor(sub.saldoAnterior))}</td>`;
-            if (showDiff) fullContent += `<td class="text-end">${fmtNum(this._getValor(sub.diferencia))}</td>`;
+              <td class="text-end">${fmtNum(sub.saldo)}</td>
+              <td class="text-end text-muted">${fmtNum(sub.saldoAnterior)}</td>`;
+            if (showDiff) fullContent += `<td class="text-end">${fmtNum(sub.diferencia)}</td>`;
             if (showVar) fullContent += `<td class="text-end" style="${colorVar(sub.variacion)}">${fmtVar(sub.variacion)}</td>`;
             fullContent += `</tr>`;
           } else {
             fullContent += `<tr class="row-simple">
               <td>${nomSub}</td>
-              <td class="text-end">${fmtNum(this._getValor(sub.saldo))}</td>
-              <td class="text-end text-muted">${fmtNum(this._getValor(sub.saldoAnterior))}</td>`;
-            if (showDiff) fullContent += `<td class="text-end">${fmtNum(this._getValor(sub.diferencia))}</td>`;
+              <td class="text-end">${fmtNum(sub.saldo)}</td>
+              <td class="text-end text-muted">${fmtNum(sub.saldoAnterior)}</td>`;
+            if (showDiff) fullContent += `<td class="text-end">${fmtNum(sub.diferencia)}</td>`;
             if (showVar) fullContent += `<td class="text-end" style="${colorVar(sub.variacion)}">${fmtVar(sub.variacion)}</td>`;
             fullContent += `</tr>`;
           }
         });
         fullContent += `<tr class="tot-cat">
           <td>TOTAL ${cat.categoria.toUpperCase()}</td>
-          <td class="text-end">${fmtNum(this._getValor(cat.saldo))}</td>
-          <td class="text-end text-muted">${fmtNum(this._getValor(cat.saldoAnterior))}</td>`;
-        if (showDiff) fullContent += `<td class="text-end">${fmtNum(this._getValor(cat.diferencia))}</td>`;
+          <td class="text-end">${fmtNum(cat.saldo)}</td>
+          <td class="text-end text-muted">${fmtNum(cat.saldoAnterior)}</td>`;
+        if (showDiff) fullContent += `<td class="text-end">${fmtNum(cat.diferencia)}</td>`;
         if (showVar) fullContent += `<td class="text-end" style="${colorVar(cat.variacion)}">${fmtVar(cat.variacion)}</td>`;
         fullContent += `</tr>`;
       });
       fullContent += `<tr class="tot-macro">
         <td>TOTAL ${macro.nombre.toUpperCase()}</td>
-        <td class="text-end">${fmtNum(this._getValor(macro.saldo))}</td>
-        <td class="text-end text-muted">${fmtNum(this._getValor(macro.saldoAnterior))}</td>`;
-      if (showDiff) fullContent += `<td class="text-end">${fmtNum(this._getValor(macro.diferencia))}</td>`;
+        <td class="text-end">${fmtNum(macro.saldo)}</td>
+        <td class="text-end text-muted">${fmtNum(macro.saldoAnterior)}</td>`;
+      if (showDiff) fullContent += `<td class="text-end">${fmtNum(macro.diferencia)}</td>`;
       if (showVar) fullContent += `<td class="text-end" style="${colorVar(macro.variacion)}">${fmtVar(macro.variacion)}</td>`;
-      fullContent += `</tr><tr><td colspan="${colSpan}" style="height:30px"></td></tr>`; // <-- AUMENTADO A 30PX
+      fullContent += `</tr><tr><td colspan="${colSpan}" style="height:30px"></td></tr>`;
 
-      // 🛑 LÓGICA DE CORTE DE PÁGINA (CORREGIDA) 🛑
       if (macro.nombre.toUpperCase().includes('PASIVO') && !macro.nombre.toUpperCase().includes('PATRIMONIO')) {
         fullContent += `</tbody></table>`;
         fullContent += `<div class="page-break"></div>`;
@@ -759,7 +729,7 @@ export class ReportConfigModal implements OnInit {
           <p>Comparando: <strong>${this.balanceData?.ejercicio}</strong> vs <strong>${this.balanceAnteriorData?.ejercicio || 'Anterior'}</strong></p>
         </div>
         ${fullContent}
-        ${residuosHtml}<div style="margin-top:20px; font-size:9px; color:#999; text-align:right;">Generado: ${new Date().toLocaleString('es-CL')}</div>
+        <div style="margin-top:20px; font-size:9px; color:#999; text-align:right;">Generado: ${new Date().toLocaleString('es-CL')}</div>
       </body>
     </html>`;
 
@@ -781,19 +751,7 @@ export class ReportConfigModal implements OnInit {
       }
       const percentFormat = '0.0%';
 
-      const categoriasActivas = this.config.categoriasSeleccionadas.filter(c => c.selected).map(c => c.nombre);
-      let dataClonada = JSON.parse(JSON.stringify(this.comparativeData));
-      let dataFiltrada = dataClonada.filter((m: any) => categoriasActivas.includes(m.nombre));
-
-      dataFiltrada.forEach((macro: any) => {
-        const esER = macro.nombre.toUpperCase().includes('RESULTADO') ||
-          macro.nombre.toUpperCase().includes('GANANCIA') ||
-          macro.nombre.toUpperCase().includes('PERDIDA');
-        let abs = this.config.alcanceNegativos === 'absoluto' || (this.config.alcanceNegativos === 'auditoria' && !esER);
-        if (abs) this.hacerPositivoComparativoRecursivo(macro);
-      });
-
-
+      const dataFiltrada = this.prepararDatosParaReporte(this.comparativeData, 'comparative');
 
       const anioActual = this.balanceData?.ejercicio || 'Actual';
       const anioAnt = this.balanceAnteriorData?.ejercicio || 'Anterior';
@@ -813,16 +771,15 @@ export class ReportConfigModal implements OnInit {
       dataRows.push(headerRow);
 
       const addRow = (nombre: string, tipo: string, saldo: number, ant: number, dif: number, vari: number, styleName: any) => {
-        // APLICAR _getValor en saldo, ant, dif
         const row: any[] = [
           { v: nombre, s: styleName },
           { v: tipo },
-          { v: this._getValor(saldo), t: 'n', z: excelNumFormat },
-          { v: this._getValor(ant), t: 'n', z: excelNumFormat }
+          { v: saldo, t: 'n', z: excelNumFormat },
+          { v: ant, t: 'n', z: excelNumFormat }
         ];
 
         if (this.config.mostrarDiferencia) {
-          row.push({ v: this._getValor(dif), t: 'n', z: excelNumFormat });
+          row.push({ v: dif, t: 'n', z: excelNumFormat });
         }
         if (this.config.mostrarVariacion) {
           const colorVar = vari > 0 ? '008000' : (vari < 0 ? (usarRojo ? 'FF0000' : '000000') : '000000');
@@ -856,42 +813,6 @@ export class ReportConfigModal implements OnInit {
         });
         dataRows.push([]);
       });
-      if (this.config.verEnMiles) {
-        const { desglose, totalActual, totalAnterior } = this._calcularResiduosParaReporte(dataFiltrada, 'comparative');
-
-        if (totalActual > 0 || totalAnterior > 0) {
-          const sHead = { font: { bold: true }, fill: { fgColor: { rgb: "F2F2F2" } } };
-          const sTot = { font: { bold: true }, border: { top: { style: 'thin' } } };
-          const fmt = '#,##0';
-
-          dataRows.push([]);
-          dataRows.push([]);
-          dataRows.push([{ v: 'CONTROL DE RESIDUOS (MILES)', s: { font: { bold: true } } }]);
-
-          dataRows.push([
-            { v: 'Categoría', s: sHead },
-            { v: '', s: sHead }, // Columna Tipo vacía
-            { v: 'Res. Actual ($)', s: sHead },
-            { v: 'Res. Ant. ($)', s: sHead }
-          ]);
-
-          desglose.forEach(item => {
-            dataRows.push([
-              { v: item.nombre },
-              { v: '' },
-              { v: item.actual, t: 'n', z: fmt },
-              { v: item.anterior, t: 'n', z: fmt }
-            ]);
-          });
-
-          dataRows.push([
-            { v: 'TOTAL OCULTO', s: sTot },
-            { v: '', s: sTot },
-            { v: totalActual, t: 'n', z: fmt, s: sTot },
-            { v: totalAnterior, t: 'n', z: fmt, s: sTot }
-          ]);
-        }
-      }
 
       const ws: XLSX.WorkSheet = XLSX.utils.aoa_to_sheet(dataRows);
       const cols = [{ wch: 60 }, { wch: 10 }, { wch: 15 }, { wch: 15 }];
@@ -913,6 +834,12 @@ export class ReportConfigModal implements OnInit {
     }
   }
 
+  private hacerPositivoRecursivo(item: any) {
+    if (item.saldo) item.saldo = Math.abs(item.saldo);
+    if (item.categorias) item.categorias.forEach((cat: any) => this.hacerPositivoRecursivo(cat));
+    if (item.subcategorias) item.subcategorias.forEach((sub: any) => this.hacerPositivoRecursivo(sub));
+  }
+
   private hacerPositivoComparativoRecursivo(item: any) {
     if (item.saldo) item.saldo = Math.abs(item.saldo);
     if (item.saldoAnterior) item.saldoAnterior = Math.abs(item.saldoAnterior);
@@ -920,56 +847,5 @@ export class ReportConfigModal implements OnInit {
     if (item.categorias) item.categorias.forEach((cat: any) => this.hacerPositivoComparativoRecursivo(cat));
     if (item.subcategorias) item.subcategorias.forEach((sub: any) => this.hacerPositivoComparativoRecursivo(sub));
     if (item.cuentas) item.cuentas.forEach((cta: any) => this.hacerPositivoComparativoRecursivo(cta));
-  }
-
-
-  private _calcularResiduosParaReporte(dataFiltrada: any[], mode: 'standard' | 'comparative') {
-    const desglose: { nombre: string; actual: number; anterior: number }[] = [];
-    let totalActual = 0;
-    let totalAnterior = 0;
-
-    dataFiltrada.forEach(macro => {
-      macro.categorias.forEach((grupo: any) => {
-        let catResActual = 0;
-        let catResAnterior = 0;
-
-        grupo.subcategorias.forEach((sub: any) => {
-          sub.cuentas.forEach((cuenta: any) => {
-            // MODO STANDARD (Solo Actual)
-            if (mode === 'standard') {
-              const saldoAbs = Math.abs(cuenta.saldo);
-              const visual = Math.trunc(saldoAbs / 1000);
-              catResActual += (saldoAbs - (visual * 1000));
-            }
-            // MODO COMPARATIVE (Actual + Anterior)
-            else {
-              const saldoActualAbs = Math.abs(cuenta.saldo);
-              const visualActual = Math.trunc(saldoActualAbs / 1000);
-              catResActual += (saldoActualAbs - (visualActual * 1000));
-
-              const saldoAntAbs = Math.abs(cuenta.saldoAnterior || 0);
-              const visualAnt = Math.trunc(saldoAntAbs / 1000);
-              catResAnterior += (saldoAntAbs - (visualAnt * 1000));
-            }
-          });
-        });
-
-        // Si hay residuo, lo agregamos al desglose
-        if (catResActual > 0 || catResAnterior > 0) {
-          desglose.push({
-            nombre: grupo.categoria,
-            actual: catResActual,
-            anterior: catResAnterior
-          });
-        }
-        totalActual += catResActual;
-        totalAnterior += catResAnterior;
-      });
-    });
-
-    // Ordenar por mayor residuo actual
-    desglose.sort((a, b) => b.actual - a.actual);
-
-    return { desglose, totalActual, totalAnterior };
   }
 }

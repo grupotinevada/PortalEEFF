@@ -38,7 +38,7 @@ export class ModalDetalle implements OnInit {
   showSpinner = false;
   msgError = '';
   balance: IBalanceGet[] = [];
-  negativos = false;
+  verNegativos: boolean = false;
 
   macros: IMacroCategoria[] = [];
 
@@ -47,15 +47,14 @@ export class ModalDetalle implements OnInit {
 
   //SWITCH DE MONTO EN MIL
   verEnMiles: boolean = false;
-  dineroOculto: number = 0;
-  residuosPorCategoria: { nombre: string; valor: number }[] = [];
+
 
   constructor(
     public activeModal: NgbActiveModal,
     private balanceService: BalanceService,
     private eeffService: EEFFService,
     private modalService: NgbModal,
-    private sanitizer: DomSanitizer
+
   ) { }
 
   ngOnInit(): void {
@@ -68,65 +67,41 @@ export class ModalDetalle implements OnInit {
   }
 
   toggleMiles(): void {
-    this.verEnMiles = !this.verEnMiles;
-    if (this.verEnMiles) {
-      this.calcularDineroOculto();
-    } else {
-      this.dineroOculto = 0;
-    }
-  }
-
-  /**
-   * Función PRINCIPAL de presentación.
-   * Si el modo miles está activo, TRUNCA el valor (quita los últimos 3 dígitos).
-   * NO redondea (para no inventar dinero).
-   */
-  getValorVisual(valor: number): number {
-    if (!valor && valor !== 0) return 0;
-
-    if (this.verEnMiles) {
-      // Math.trunc elimina los decimales. Al dividir por 1000, "movemos la coma".
-      // Ej: 16.349.827.454 / 1000 = 16.349.827,454 -> Trunc = 16.349.827
-      return Math.trunc(valor / 1000);
+      this.verEnMiles = !this.verEnMiles;
+      if (this.verEnMiles) {
+        this.calcularVistaMiles();
+      }
     }
 
-    return valor;
-  }
-  /**
-   * Recorre la estructura para sumar las "sobras" que no se muestran.
-   * Se basa en las cuentas individuales para mayor precisión del "polvo" acumulado.
+    /**
+   * Algoritmo principal de Cuadratura en Cascada (Waterfall).
+   * 1. Calcula el objetivo del padre (Redondeo puro).
+   * 2. Calcula la suma de los hijos redondeados.
+   * 3. Detecta la diferencia (Delta).
+   * 4. Asigna la diferencia al hijo con mayor saldo absoluto para minimizar impacto visual.
+   * 5. Propaga la lógica hacia abajo (Recursividad).
    */
-  calcularDineroOculto(): void {
-    let totalResiduo = 0;
-    const tempResiduos: { nombre: string; valor: number }[] = [];
-    // Recorremos la vista actual
+  calcularVistaMiles(): void {
+    // 1. Nivel Raíz: Macros
     this.vistaParaMostrar.forEach(macro => {
-      macro.categorias.forEach(grupo => {
-        // Acumulador temporal para ESTA categoría
-        let residuoDeLaCategoria = 0;
-        grupo.subcategorias.forEach(sub => {
-          sub.cuentas.forEach(cuenta => {
-            // Lógica de residuo
-            const valorVisual = Math.trunc(cuenta.saldo / 1000);
-            const valorRepresentado = valorVisual * 1000;
-            const residuo = cuenta.saldo - valorRepresentado;
-            // Sumamos al total global y al de la categoría
-            residuoDeLaCategoria += residuo;
-          });
+      // Paso A: Establecer la "Verdad" del Macro (Redondeo matemático estándar)
+      macro.saldoMiles = Math.round(macro.saldo / 1000);
+
+      // Paso B: Ajustar sus hijos (Categorías) para que sumen exactamente 'macro.saldoMiles'
+      this.distribuirAjuste(macro, macro.categorias);
+
+      // Paso C: Profundizar en la jerarquía
+      macro.categorias.forEach(cat => {
+        // Ajustar Subcategorías para que sumen lo que se definió en 'cat.saldoMiles'
+        this.distribuirAjuste(cat, cat.subcategorias);
+
+        cat.subcategorias.forEach(sub => {
+          // Ajustar Cuentas para que sumen lo que se definió en 'sub.saldoMiles'
+          this.distribuirAjuste(sub, sub.cuentas);
         });
-        // Si la categoría tiene residuo, la agregamos a la lista temporal
-        if (residuoDeLaCategoria !== 0) {
-          tempResiduos.push({ nombre: grupo.categoria, valor: residuoDeLaCategoria });
-        }
-        totalResiduo += residuoDeLaCategoria;
       });
     });
-    this.dineroOculto = totalResiduo;
-    // Guardamos la lista ordenada de MAYOR a MENOR residuo para que lo más importante salga arriba
-    this.residuosPorCategoria = tempResiduos.sort((a, b) => Math.abs(b.valor) - Math.abs(a.valor));
   }
-
-
 
   getBalance(id: string): void {
     if (!id || id.trim().length === 0) {
@@ -150,6 +125,44 @@ export class ModalDetalle implements OnInit {
     });
   }
 
+  /**
+   * Distribuye la diferencia de redondeo entre los hijos para cuadrar con el padre.
+   * @param padre El nodo superior que contiene el 'saldoMiles' objetivo.
+   * @param hijos La lista de nodos hijos a ajustar.
+   */
+  private distribuirAjuste(padre: any, hijos: any[]): void {
+    if (!hijos || hijos.length === 0) return;
+
+    // 1. Calcular redondeo inicial para todos los hijos
+    let sumaHijos = 0;
+    hijos.forEach(hijo => {
+      hijo.saldoMiles = Math.round(hijo.saldo / 1000);
+      sumaHijos += hijo.saldoMiles;
+    });
+
+    // 2. Detectar el "Delta" (Lo que sobra o falta para llegar al padre)
+    // Ejemplo: Padre=10, SumaHijos=9 -> Diff=1 (Falta 1)
+    // Ejemplo: Padre=10, SumaHijos=11 -> Diff=-1 (Sobra 1)
+    let diferencia = padre.saldoMiles - sumaHijos;
+
+    // 3. Si hay diferencia, aplicarla al hijo con mayor peso (Estrategia de menor impacto visual)
+    if (diferencia !== 0) {
+      // Buscamos el hijo con mayor saldo absoluto (el "más grande")
+      // Esto simula el "azar" pero de forma inteligente para no distorsionar cuentas pequeñas.
+      const hijoCandidato = hijos.reduce((prev, current) => 
+        (Math.abs(current.saldo) > Math.abs(prev.saldo) ? current : prev)
+      );
+      
+      // Le inyectamos la diferencia
+      hijoCandidato.saldoMiles += diferencia;
+    }
+  }
+
+  // Helper para el HTML: Devuelve el valor correcto según el modo activo
+  getMontoDisplay(item: any): number {
+    return this.verEnMiles ? (item.saldoMiles ?? 0) : item.saldo;
+  }
+
   agruparVista(): void {
     if (!this.balance || !this.fsas) {
       console.error('No hay datos disponibles para agrupar.');
@@ -170,7 +183,7 @@ export class ModalDetalle implements OnInit {
 
     // 3. Ahora positivizamos la COPIA. 'this.vistaAgrupada' queda intacta.
     this.vistaParaMostrar = this.eeffService.positivizarSaldosParaPreview(copiaParaPositivizar);  //PARA MOSTRAR CON SIGNO BASTA CON USAR VISTA AGRUPARA Y NO VISTAPARAMOSTRAR EN EL HTML
-
+    
     // --- Validaciones ---
     const validaciones = this.eeffService.validarEEFF(this.vistaParaMostrar);
     console.log('Validaciones EEFF:', validaciones);
@@ -193,7 +206,8 @@ export class ModalDetalle implements OnInit {
     }
   }
 
-  mostrarNegativos(): void {
+toggleNegativos(): void {
+    this.verNegativos = !this.verNegativos;
     this.regenerarVista();
   }
 
@@ -212,38 +226,31 @@ export class ModalDetalle implements OnInit {
 
   regenerarVista(): void {
     this.showSpinner = true;
-
     setTimeout(() => {
       try {
         if (!this.balance || !this.fsas) {
-          console.error('No hay datos disponibles para reagrupar.');
           return;
         }
-
-        // 1. Recalcular vista agrupada
         this.vistaAgrupada = this.eeffService.generarVistaAgrupada(
           this.balance,
           this.fsas
         );
-        console.log('Vista Regenerada:', this.vistaAgrupada);
-
-        // 2. Actualizar macros (igual que en agruparVista)
         this.macros = this.vistaAgrupada;
-
-        // 3. Construir vista para mostrar (con saldos positivizados si corresponde)
-        const copiaParaPositivizar = typeof structuredClone === 'function'
+        const copiaParaVista = typeof structuredClone === 'function'
           ? structuredClone(this.vistaAgrupada)
           : JSON.parse(JSON.stringify(this.vistaAgrupada));
-
-        // 3. Ahora positivizamos la COPIA. 'this.vistaAgrupada' queda intacta.
-        this.vistaParaMostrar = this.eeffService.positivizarSaldosParaPreview(copiaParaPositivizar);
-
-        // 4. Validaciones sobre la vista "para mostrar"
+        if (!this.verNegativos) {
+          this.vistaParaMostrar = this.eeffService.positivizarSaldosParaPreview(copiaParaVista);
+        } else {
+          this.vistaParaMostrar = copiaParaVista;
+        }
+        if (this.verEnMiles) {
+          this.calcularVistaMiles();
+        }
         const validaciones = this.eeffService.validarEEFF(this.vistaParaMostrar);
-        console.log('Validaciones EEFF tras regenerar:', validaciones);
-
+        console.log('Validaciones tras regenerar:', validaciones);
       } catch (error) {
-        console.error('Ocurrió un error al regenerar la vista:', error);
+        console.error('Error al regenerar:', error);
       } finally {
         this.showSpinner = false;
       }

@@ -57,12 +57,13 @@ export interface IDefaultMapping {
 }
 
 // ----------------------------------------------------
-// REFACTORIZACIÓN MÍNIMA (Necesaria para la comparación)
+// Comparacion
 
 export interface ICuenta {
   num_cuenta: string;
   nombre: string;
   saldo: number;
+  saldoMiles?: number; // <--- NUEVO
   id_fsa: string;
 }
 
@@ -71,24 +72,27 @@ export interface ISubcategoria {
   descripcion: string;
   orden?: number;
   saldo: number;
-  cuentas: ICuenta[]; // Usa la nueva ICuenta
+  saldoMiles?: number; // <--- NUEVO
+  cuentas: ICuenta[];
 }
 
-// RENOMBRADO: IVistaEEFF -> ICategoria
 export interface ICategoria {
   categoria: string;
   id_cate?: number;
   saldo: number;
+  saldoMiles?: number; // <--- NUEVO
   orden?: number;
-  subcategorias: ISubcategoria[]; // Usa la nueva ISubcategoria
+  subcategorias: ISubcategoria[];
 }
 
 export interface IMacroCategoria {
   nombre: string;
   saldo: number;
-  categorias: ICategoria[]; // USANDO ICategoria[]
+  saldoMiles?: number; // <--- NUEVO
+  categorias: ICategoria[];
   orden?: number;
 }
+
 export interface IValidacionesEEFF {
   balanceCuadrado: boolean;
   diferenciaBalance: number;
@@ -99,31 +103,47 @@ export interface IValidacionesEEFF {
 // INTERFACES COMPARATIVAS (NUEVAS)
 // ----------------------------------------------------
 
+// ... interfaces base anteriores (ICuenta, etc) con saldoMiles ya agregado ...
+
+// --- ACTUALIZACIÓN DE INTERFACES COMPARATIVAS ---
+
 export interface ICuentaComparativa extends ICuenta {
   saldoAnterior: number;
+  saldoAnteriorMiles?: number;
   diferencia: number;
-  variacion: number; // Porcentaje de variación
+  diferenciaMiles?: number;   
+  variacion: number; 
+  variacionMiles?: number;    
 }
 
 export interface ISubcategoriaComparativa extends ISubcategoria {
   saldoAnterior: number;
+  saldoAnteriorMiles?: number;
   diferencia: number;
+  diferenciaMiles?: number;   
   variacion: number;
-  cuentas: ICuentaComparativa[]; // Usa la interfaz de cuenta comparativa
+  variacionMiles?: number;    
+  cuentas: ICuentaComparativa[];
 }
 
 export interface ICategoriaComparativa extends ICategoria {
   saldoAnterior: number;
+  saldoAnteriorMiles?: number;
   diferencia: number;
+  diferenciaMiles?: number;   
   variacion: number;
-  subcategorias: ISubcategoriaComparativa[]; // Usa la interfaz de subcategoría comparativa
+  variacionMiles?: number;    
+  subcategorias: ISubcategoriaComparativa[];
 }
 
 export interface IMacroCategoriaComparativa extends IMacroCategoria {
   saldoAnterior: number;
+  saldoAnteriorMiles?: number;
   diferencia: number;
+  diferenciaMiles?: number;   
   variacion: number;
-  categorias: ICategoriaComparativa[]; // Usa la interfaz de categoría comparativa
+  variacionMiles?: number;    
+  categorias: ICategoriaComparativa[];
 }
 
 // Agregado al final para el prompt, aunque ahora las interfaces están tipadas.

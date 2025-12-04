@@ -85,6 +85,13 @@
               <div class="w-100 rounded-top mb-1" style="height: 6px; background-color: #dc3545;"></div>
               <div class="fw-bold" style="font-size: 9px; color: #dc3545;">(1k)</div>
             </div>
+            <div class="rounded border p-1 text-center flex-fill cursor-pointer" style="transition: all 0.2s;"
+              [class.border-primary]="config.colorTheme === 'black-black'"
+              [class.bg-light]="config.colorTheme === 'black-black'"
+              (click)="config.colorTheme = 'black-black'; emitChange()">
+              <div class="w-100 rounded-top mb-1" style="height: 6px; background-color: #000000;"></div>
+              <div class="fw-bold" style="font-size: 9px; color: #000;">(1k)</div>
+            </div>
 
           </div>
         </div>

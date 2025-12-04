@@ -66,49 +66,19 @@
           Ver en Miles (M$)
         </label>
       </div>
-    </div>
 
-    @if (verEnMiles) {
-    <div class="alert alert-warning py-2 px-3 mt-2 mb-0 small border-warning text-warning-emphasis">
+      <div class="vr h-100 mx-2"></div>
 
-      <div class="d-flex align-items-center">
-        <i class="bi bi-exclamation-triangle-fill me-2 fs-5"></i>
-        <div>
-          <strong>Atención:</strong> Se están ocultando
-          <span class="font-monospace fw-bold">{{ dineroOculto | currency:'CLP' }}</span>
-          en residuos decimales no visibles.
-        </div>
+      <div class="form-check form-switch focus-ring focus-ring-danger m-0 d-flex align-items-center gap-2">
+        <input class="form-check-input" type="checkbox" role="switch" id="switchNegativos" style="cursor: pointer;"
+          [checked]="verNegativos" (change)="toggleNegativos()">
+        <label class="form-check-label small fw-semibold text-secondary cursor-pointer" for="switchNegativos">
+          Ver Saldos Reales (+/-)
+        </label>
       </div>
-
-      @if (residuosPorCategoria.length > 0) {
-      <details class="mt-2">
-        <summary class="fw-semibold cursor-pointer text-decoration-underline" style="list-style: none;">
-          <i class="bi bi-caret-down-fill me-1" style="font-size: 0.7rem;"></i>Ver desglose por categoría
-        </summary>
-
-        <div class="mt-2 bg-white bg-opacity-50 rounded border border-warning-subtle p-0 overflow-hidden">
-          <div class="table-responsive" style="max-height: 150px; overflow-y: auto;">
-            <table class="table table-sm table-borderless table-striped mb-0 smaller-text">
-              <tbody>
-                @for (item of residuosPorCategoria; track item.nombre) {
-                <tr>
-                  <td class="ps-3 text-truncate" style="max-width: 250px;">{{ item.nombre }}</td>
-                  <td class="text-end pe-3 font-monospace fw-bold text-muted">
-                    {{ item.valor | currency:'CLP' }}
-                  </td>
-                </tr>
-                }
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </details>
-      }
-
     </div>
-    }
-
-  </div>
+    
+    </div>
 
   <app-spinner [showSpinner]="showSpinner"></app-spinner>
 
@@ -120,7 +90,7 @@
       <div class="row mx-0 py-2 px-3 fw-bold text-secondary text-uppercase ls-1 small align-items-center">
         <div class="col-9 ps-2">Concepto / Cuenta</div>
         <div class="col-3 text-end">
-          @if (verEnMiles) { Saldo Actual ($M) } @else { Saldo Actual }
+          @if (verEnMiles) { Saldo Actual (M$) } @else { Saldo Actual }
         </div>
         <div class="col-auto" style="width: 20px;"></div>
       </div>
@@ -141,7 +111,7 @@
                   [pTooltip]="verEnMiles ? 'Valor Real: ' + (macro.saldo | currency:'CLP') : undefined"
                   tooltipPosition="left" [style.cursor]="verEnMiles ? 'help' : 'default'">
                   <span *ngIf="macro.nombre !== 'ESTADO DE RESULTADOS'">
-                    $ {{ getValorVisual(macro.saldo) | number:'1.0-0' }}
+                    $ {{ getMontoDisplay(macro) | number:'1.0-0' }}
                   </span>
                 </div>
 
@@ -167,7 +137,7 @@
                           <div class="col-3 text-end text-dark font-monospace smaller-text"
                             [pTooltip]="verEnMiles ? 'Valor Real: ' + (grupo.saldo | currency:'CLP') : undefined"
                             tooltipPosition="left" [style.cursor]="verEnMiles ? 'help' : 'default'">
-                            $ {{ getValorVisual(grupo.saldo) | number:'1.0-0' }}
+                            $ {{ getMontoDisplay(grupo) | number:'1.0-0' }}
                           </div>
 
                         </div>
@@ -195,7 +165,7 @@
                                     <div class="col-3 text-end text-dark font-monospace smaller-text"
                                       [pTooltip]="verEnMiles ? 'Valor Real: ' + (sub.saldo | currency:'CLP') : undefined"
                                       tooltipPosition="left" [style.cursor]="verEnMiles ? 'help' : 'default'">
-                                      $ {{ getValorVisual(sub.saldo) | number:'1.0-0' }}
+                                      $ {{ getMontoDisplay(sub) | number:'1.0-0' }}
                                     </div>
 
                                   </div>
@@ -228,7 +198,7 @@
                                         <div class="col-3 text-end font-monospace smaller-text fw-bold text-dark"
                                           [pTooltip]="verEnMiles ? 'Valor Real: ' + (cuenta.saldo | currency:'CLP') : undefined"
                                           tooltipPosition="left" [style.cursor]="verEnMiles ? 'help' : 'default'">
-                                          $ {{ getValorVisual(cuenta.saldo) | number:'1.0-0' }}
+                                          $ {{ getMontoDisplay(cuenta) | number:'1.0-0' }}
                                         </div>
 
                                         <div class="col-auto" style="width: 20px;"></div>
