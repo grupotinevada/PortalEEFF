@@ -67,40 +67,77 @@ export class ModalDetalle implements OnInit {
   }
 
   toggleMiles(): void {
-      this.verEnMiles = !this.verEnMiles;
-      if (this.verEnMiles) {
-        this.calcularVistaMiles();
-      }
-    }
+    this.verEnMiles = !this.verEnMiles;
+    // Al cambiar el modo miles, regeneramos la vista completa
+    this.regenerarVista();
+  }
 
-    /**
-   * Algoritmo principal de Cuadratura en Cascada (Waterfall).
-   * 1. Calcula el objetivo del padre (Redondeo puro).
-   * 2. Calcula la suma de los hijos redondeados.
-   * 3. Detecta la diferencia (Delta).
-   * 4. Asigna la diferencia al hijo con mayor saldo absoluto para minimizar impacto visual.
-   * 5. Propaga la lógica hacia abajo (Recursividad).
-   */
+  /**
+     * Estrategia "Bottom-Up" (Acumulación Ascendente).
+     * IMPORTANTE: Esta función debe trabajar con datos SIN positivizar (con signos originales)
+     * para que la suma de hijos cuadre correctamente con el padre.
+     */
   calcularVistaMiles(): void {
-    // 1. Nivel Raíz: Macros
+    console.log('⚖️ Calculando vista en Miles (Con Redondeo Simétrico)...');
+
     this.vistaParaMostrar.forEach(macro => {
-      // Paso A: Establecer la "Verdad" del Macro (Redondeo matemático estándar)
-      macro.saldoMiles = Math.round(macro.saldo / 1000);
+      // 🔍 LOG DE DIAGNÓSTICO
+      const saldoOriginal = macro.saldo;
+      const saldoDividido = saldoOriginal / 1000;
+      const saldoRedondeado = this.redondear(saldoDividido);
 
-      // Paso B: Ajustar sus hijos (Categorías) para que sumen exactamente 'macro.saldoMiles'
-      this.distribuirAjuste(macro, macro.categorias);
+      console.log(`🔍 MACRO "${macro.nombre}":`,
+        `Original: ${saldoOriginal},`,
+        `÷1000: ${saldoDividido},`,
+        `Redondeado: ${saldoRedondeado}`
+      );
 
-      // Paso C: Profundizar en la jerarquía
+      macro.saldoMiles = saldoRedondeado;
+
+      this.ajustarHijos(macro.saldoMiles, macro.categorias);
+
       macro.categorias.forEach(cat => {
-        // Ajustar Subcategorías para que sumen lo que se definió en 'cat.saldoMiles'
-        this.distribuirAjuste(cat, cat.subcategorias);
+        this.ajustarHijos(cat.saldoMiles!, cat.subcategorias);
 
         cat.subcategorias.forEach(sub => {
-          // Ajustar Cuentas para que sumen lo que se definió en 'sub.saldoMiles'
-          this.distribuirAjuste(sub, sub.cuentas);
+          this.ajustarHijos(sub.saldoMiles!, sub.cuentas);
         });
       });
     });
+  }
+
+  private ajustarHijos(saldoObjetivoPadre: number, hijos: any[]): void {
+    if (!hijos || hijos.length === 0) return;
+
+    let sumaHijos = 0;
+    hijos.forEach(hijo => {
+      // USAMOS EL NUEVO REDONDEO AQUÍ TAMBIÉN
+      hijo.saldoMiles = this.redondear(hijo.saldo / 1000);
+      sumaHijos += hijo.saldoMiles;
+    });
+
+    const diferencia = saldoObjetivoPadre - sumaHijos;
+
+    // ... (El resto de tu lógica de fusible sigue igual) ...
+    if (diferencia !== 0 && Math.abs(diferencia) <= 2) {
+      // ... lógica de ajuste ...
+      const candidato = hijos.reduce((prev, curr) =>
+        (Math.abs(curr.saldo) > Math.abs(prev.saldo) ? curr : prev)
+      );
+      candidato.saldoMiles += diferencia;
+    }
+    else if (Math.abs(diferencia) > 2) {
+      console.warn(`🚨 FUSIBLE ACTIVADO: Diferencia de ${diferencia} ...`);
+    }
+  }
+
+  /**
+   * Redondeo Simétrico: Asegura que positivos y negativos se redondeen con la misma magnitud.
+   * Math.round(-343.5) = -343 (ERROR en JS) -> Queremos -344
+   * redondearSimetrico(-343.5) = -344 (CORRECTO)
+   */
+  private redondear(valor: number): number {
+    return Math.round(Math.abs(valor)) * Math.sign(valor);
   }
 
   getBalance(id: string): void {
@@ -130,30 +167,45 @@ export class ModalDetalle implements OnInit {
    * @param padre El nodo superior que contiene el 'saldoMiles' objetivo.
    * @param hijos La lista de nodos hijos a ajustar.
    */
-  private distribuirAjuste(padre: any, hijos: any[]): void {
+  private distribuirAjuste(padre: any, hijos: any[], nivel: string): void {
     if (!hijos || hijos.length === 0) return;
 
-    // 1. Calcular redondeo inicial para todos los hijos
+    // 1. Calcular redondeo inicial (usando redondeo simétrico)
     let sumaHijos = 0;
     hijos.forEach(hijo => {
-      hijo.saldoMiles = Math.round(hijo.saldo / 1000);
+      hijo.saldoMiles = this.redondear(hijo.saldo / 1000);
       sumaHijos += hijo.saldoMiles;
     });
 
-    // 2. Detectar el "Delta" (Lo que sobra o falta para llegar al padre)
-    // Ejemplo: Padre=10, SumaHijos=9 -> Diff=1 (Falta 1)
-    // Ejemplo: Padre=10, SumaHijos=11 -> Diff=-1 (Sobra 1)
+    // 2. Detectar Delta
     let diferencia = padre.saldoMiles - sumaHijos;
 
-    // 3. Si hay diferencia, aplicarla al hijo con mayor peso (Estrategia de menor impacto visual)
+    // 🚨 LOG DE ALERTA SI LA DIFERENCIA ES GRANDE (Más de 5 mil pesos de error es sospechoso)
+    if (Math.abs(diferencia) > 5) {
+      console.warn(`🚨 DESCUADRE MASIVO DETECTADO EN NIVEL ${nivel}`);
+      console.log(`Padre: ${padre.nombre || padre.categoria || padre.descripcion}`);
+      console.log(`💰 El Padre exige sumar: ${padre.saldoMiles}`);
+      console.log(`∑ Los Hijos suman solo: ${sumaHijos}`);
+      console.log(`📉 DIFERENCIA A INYECTAR: ${diferencia}`);
+      console.table(hijos.map(h => ({
+        nombre: h.nombre || h.categoria || h.descripcion,
+        saldoReal: h.saldo,
+        saldoMilesCalc: h.saldoMiles
+      })));
+    }
+
+    // 3. Aplicar diferencia
     if (diferencia !== 0) {
-      // Buscamos el hijo con mayor saldo absoluto (el "más grande")
-      // Esto simula el "azar" pero de forma inteligente para no distorsionar cuentas pequeñas.
-      const hijoCandidato = hijos.reduce((prev, current) => 
+      const hijoCandidato = hijos.reduce((prev, current) =>
         (Math.abs(current.saldo) > Math.abs(prev.saldo) ? current : prev)
       );
-      
-      // Le inyectamos la diferencia
+
+      if (Math.abs(diferencia) > 5) {
+        console.log(`💉 INYECTANDO la diferencia de ${diferencia} en el candidato:`, hijoCandidato.nombre || hijoCandidato.descripcion);
+        console.log(`   Valor Antes: ${hijoCandidato.saldoMiles}`);
+        console.log(`   Valor Después: ${hijoCandidato.saldoMiles + diferencia}`);
+      }
+
       hijoCandidato.saldoMiles += diferencia;
     }
   }
@@ -183,7 +235,7 @@ export class ModalDetalle implements OnInit {
 
     // 3. Ahora positivizamos la COPIA. 'this.vistaAgrupada' queda intacta.
     this.vistaParaMostrar = this.eeffService.positivizarSaldosParaPreview(copiaParaPositivizar);  //PARA MOSTRAR CON SIGNO BASTA CON USAR VISTA AGRUPARA Y NO VISTAPARAMOSTRAR EN EL HTML
-    
+
     // --- Validaciones ---
     const validaciones = this.eeffService.validarEEFF(this.vistaParaMostrar);
     console.log('Validaciones EEFF:', validaciones);
@@ -206,7 +258,7 @@ export class ModalDetalle implements OnInit {
     }
   }
 
-toggleNegativos(): void {
+  toggleNegativos(): void {
     this.verNegativos = !this.verNegativos;
     this.regenerarVista();
   }
@@ -226,29 +278,46 @@ toggleNegativos(): void {
 
   regenerarVista(): void {
     this.showSpinner = true;
+
+    // Usamos setTimeout para dar respiro al renderizado UI
     setTimeout(() => {
       try {
-        if (!this.balance || !this.fsas) {
-          return;
+        if (!this.vistaAgrupada || this.vistaAgrupada.length === 0) {
+          // Si no hay vista base, la regeneramos desde cero usando el servicio
+          if (this.balance && this.fsas) {
+            this.vistaAgrupada = this.eeffService.generarVistaAgrupada(this.balance, this.fsas);
+          } else {
+            return;
+          }
         }
-        this.vistaAgrupada = this.eeffService.generarVistaAgrupada(
-          this.balance,
-          this.fsas
-        );
-        this.macros = this.vistaAgrupada;
-        const copiaParaVista = typeof structuredClone === 'function'
+
+        // PASO CLAVE: Siempre partimos de una copia FRESCA de los datos originales (vistaAgrupada)
+        // Esto evita que activar/desactivar switches acumule errores o cambios.
+        const copiaFresca = typeof structuredClone === 'function'
           ? structuredClone(this.vistaAgrupada)
           : JSON.parse(JSON.stringify(this.vistaAgrupada));
-        if (!this.verNegativos) {
-          this.vistaParaMostrar = this.eeffService.positivizarSaldosParaPreview(copiaParaVista);
-        } else {
-          this.vistaParaMostrar = copiaParaVista;
-        }
+
+        // ⚠️ ORDEN CORRECTO DE TRANSFORMACIONES:
+        // 1. PRIMERO: Calcular miles (sobre datos con signos originales)
+        // 2. DESPUÉS: Positivizar (solo para display visual)
+
+        this.vistaParaMostrar = copiaFresca;
+
+        // 1. Aplicar conversión a Miles si corresponde (trabaja con signos originales)
         if (this.verEnMiles) {
           this.calcularVistaMiles();
         }
+
+        // 2. Aplicar lógica de signos (Solo visual, después de calcular miles)
+        // Si "Ver Negativos" está APAGADO (!verNegativos), aplicamos la positivización.
+        if (!this.verNegativos) {
+          this.vistaParaMostrar = this.eeffService.positivizarSaldosParaPreview(this.vistaParaMostrar);
+        }
+
+        // Validaciones solo informativas
         const validaciones = this.eeffService.validarEEFF(this.vistaParaMostrar);
         console.log('Validaciones tras regenerar:', validaciones);
+
       } catch (error) {
         console.error('Error al regenerar:', error);
       } finally {
@@ -256,26 +325,28 @@ toggleNegativos(): void {
       }
     }, 0);
   }
+
+
   abrirModalImpresion(): void {
-    const modalRef = this.modalService.open(ReportConfigModal, { size: 'xl', centered: true, scrollable: true });
+  const modalRef = this.modalService.open(ReportConfigModal, { size: 'xl', centered: true, scrollable: true });
 
-    modalRef.componentInstance.type = 'print';
-    modalRef.componentInstance.title = 'Opciones y Previsualización de Impresión';
+  modalRef.componentInstance.type = 'print';
+  modalRef.componentInstance.title = 'Opciones y Previsualización de Impresión';
 
-    // 💡 CLAVE: Pasamos la data ya procesada y la cabecera
-    modalRef.componentInstance.reportData = this.vistaAgrupada;
-    modalRef.componentInstance.balanceData = this.balance[0];
-  }
+  // 💡 CLAVE: Pasamos la data ya procesada y la cabecera
+  modalRef.componentInstance.reportData = this.vistaAgrupada;
+  modalRef.componentInstance.balanceData = this.balance[0];
+}
 
-  abrirModalExcel(): void {
-    const modalRef = this.modalService.open(ReportConfigModal, { size: 'lg', centered: true, scrollable: true });
+abrirModalExcel(): void {
+  const modalRef = this.modalService.open(ReportConfigModal, { size: 'lg', centered: true, scrollable: true });
 
-    modalRef.componentInstance.type = 'excel';
-    modalRef.componentInstance.title = 'Opciones de Exportación Excel';
+  modalRef.componentInstance.type = 'excel';
+  modalRef.componentInstance.title = 'Opciones de Exportación Excel';
 
-    // 💡 CLAVE: Pasamos la data ya procesada y la cabecera
-    modalRef.componentInstance.reportData = this.vistaAgrupada;
-    modalRef.componentInstance.balanceData = this.balance[0];
-  }
+  // 💡 CLAVE: Pasamos la data ya procesada y la cabecera
+  modalRef.componentInstance.reportData = this.vistaAgrupada;
+  modalRef.componentInstance.balanceData = this.balance[0];
+}
 
 }

@@ -1,36 +1,31 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { BalanceResumen, IMacroCategoriaComparativa } from '../../models/balance.model';
 import { NgbAccordionModule, NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { CurrencyPipe } from '@angular/common';
+import { CurrencyPipe, CommonModule } from '@angular/common';
 import { Spinner } from '../spinner/spinner';
 import { ReportConfigModal } from '../report-config-modal/report-config-modal';
 import { TooltipModule } from 'primeng/tooltip';
 
 @Component({
   selector: 'app-modal-comparativo',
+  standalone: true,
   imports: [
+    CommonModule,
     NgbAccordionModule,
     Spinner,
     CurrencyPipe,
     TooltipModule
   ],
-
   templateUrl: './modal-comparativo.html',
   styleUrl: './modal-comparativo.css',
 })
 export class ModalComparativo implements OnInit {
-  //entrada de datos
   @Input() vistaComparativa: IMacroCategoriaComparativa[] = [];
   @Input() balanceActual: BalanceResumen | null = null;
   @Input() balanceAnterior: BalanceResumen | null = null;
 
   showSpinner = false;
-
-  //Variables para ver en miles
   verEnMiles: boolean = false;
-  dineroOcultoActual: number = 0;
-  dineroOcultoAnterior: number = 0;
-  residuosPorCategoria: { nombre: string; actual: number; anterior: number }[] = [];
 
   constructor(
     public activeModal: NgbActiveModal,
@@ -41,96 +36,110 @@ export class ModalComparativo implements OnInit {
     console.log('Vista Comparativa recibida:', this.vistaComparativa);
   }
 
+  toggleMiles(): void {
+    this.verEnMiles = !this.verEnMiles;
+    if (this.verEnMiles) {
+      this.calcularVistaMilesCompleta();
+    }
+  }
 
   /**
-   * Orquestador principal:
-   * 1. Ajusta verticalmente la columna ACTUAL.
-   * 2. Ajusta verticalmente la columna ANTERIOR.
-   * 3. Calcula horizontalmente DIFERENCIA y VARIACIÓN usando los valores ajustados.
+   * Lógica estandarizada con ModalDetalle:
+   * 1. Calcula Miles para la columna Actual (usando redondeo simétrico + ajuste hijos).
+   * 2. Calcula Miles para la columna Anterior (usando redondeo simétrico + ajuste hijos).
+   * 3. Recalcula diferencias horizontales (Diferencia y Variación) sobre los valores en Miles.
    */
   calcularVistaMilesCompleta(): void {
-    // 1. Cascada para columna ACTUAL ('saldo' -> 'saldoMiles')
-    this.ejecutarWaterfall(this.vistaComparativa, 'saldo', 'saldoMiles');
+    console.log('⚖️ Calculando vista Comparativa en Miles...');
 
-    // 2. Cascada para columna ANTERIOR ('saldoAnterior' -> 'saldoAnteriorMiles')
-    this.ejecutarWaterfall(this.vistaComparativa, 'saldoAnterior', 'saldoAnteriorMiles');
+    // Iteramos explícitamente igual que en ModalDetalle para asegurar consistencia
+    this.vistaComparativa.forEach(macro => {
 
-    // 3. Cálculo Horizontal (Diferencias y Variaciones en base a Miles)
-    this.calcularDiferenciasHorizontales(this.vistaComparativa);
+      // --- 1. PROCESAR COLUMNA ACTUAL ---
+      macro.saldoMiles = this.redondear(macro.saldo / 1000);
+      this.ajustarHijos(macro.saldoMiles, macro.categorias, 'saldo', 'saldoMiles');
+
+      macro.categorias.forEach(cat => {
+        this.ajustarHijos(cat.saldoMiles!, cat.subcategorias, 'saldo', 'saldoMiles');
+
+        cat.subcategorias.forEach(sub => {
+          this.ajustarHijos(sub.saldoMiles!, sub.cuentas, 'saldo', 'saldoMiles');
+        });
+      });
+
+      // --- 2. PROCESAR COLUMNA ANTERIOR ---
+      macro.saldoAnteriorMiles = this.redondear(macro.saldoAnterior / 1000);
+      this.ajustarHijos(macro.saldoAnteriorMiles, macro.categorias, 'saldoAnterior', 'saldoAnteriorMiles');
+
+      macro.categorias.forEach(cat => {
+        this.ajustarHijos(cat.saldoAnteriorMiles!, cat.subcategorias, 'saldoAnterior', 'saldoAnteriorMiles');
+
+        cat.subcategorias.forEach(sub => {
+          this.ajustarHijos(sub.saldoAnteriorMiles!, sub.cuentas, 'saldoAnterior', 'saldoAnteriorMiles');
+        });
+      });
+    });
+
+    // --- 3. RECALCULO HORIZONTAL (Diferencias y Variaciones) ---
+    this.recalcularDiferenciasHorizontales();
   }
 
   /**
-   * Algoritmo genérico de distribución de redondeo (Waterfall).
-   * @param nodos Lista de elementos a procesar (Macros, Categorías, etc.)
-   * @param campoOrigen Nombre del campo con data real (ej: 'saldo' o 'saldoAnterior')
-   * @param campoDestino Nombre del campo donde guardar el valor visual (ej: 'saldoMiles' o 'saldoAnteriorMiles')
+   * Ajusta la suma de los hijos para que cuadre con el padre redondeado.
+   * Se aplica el ajuste al hijo con mayor valor absoluto ("Candidato").
    */
-  private ejecutarWaterfall(nodos: any[], campoOrigen: string, campoDestino: string): void {
-    nodos.forEach(nodo => {
-      // A. Definir la verdad del padre
-      nodo[campoDestino] = Math.round(nodo[campoOrigen] / 1000);
+  private ajustarHijos(saldoObjetivoPadre: number, hijos: any[], campoOrigen: string, campoDestino: string): void {
+    if (!hijos || hijos.length === 0) return;
 
-      // B. Determinar hijos según el tipo de nodo
-      let hijos: any[] = [];
-      if (nodo.categorias) hijos = nodo.categorias;
-      else if (nodo.subcategorias) hijos = nodo.subcategorias;
-      else if (nodo.cuentas) hijos = nodo.cuentas;
-
-      if (hijos.length > 0) {
-        // C. Distribuir ajuste en los hijos
-        this.distribuirAjusteGenerico(nodo, hijos, campoOrigen, campoDestino);
-        
-        // D. Recursividad
-        this.ejecutarWaterfall(hijos, campoOrigen, campoDestino);
-      }
-    });
-  }
-
-  private distribuirAjusteGenerico(padre: any, hijos: any[], campoOrigen: string, campoDestino: string): void {
     let sumaHijos = 0;
-    
-    // 1. Calcular redondeo inicial hijos
+
     hijos.forEach(hijo => {
-      hijo[campoDestino] = Math.round(hijo[campoOrigen] / 1000);
+      // Redondeo simétrico inicial
+      hijo[campoDestino] = this.redondear(hijo[campoOrigen] / 1000);
       sumaHijos += hijo[campoDestino];
     });
 
-    // 2. Calcular Delta
-    const diferencia = padre[campoDestino] - sumaHijos;
+    const diferencia = saldoObjetivoPadre - sumaHijos;
 
-    // 3. Asignar al mayor candidato
-    if (diferencia !== 0) {
-      const hijoCandidato = hijos.reduce((prev, current) => 
-        (Math.abs(current[campoOrigen]) > Math.abs(prev[campoOrigen]) ? current : prev)
+    // Si hay diferencia pequeña (fusible), se ajusta
+    if (diferencia !== 0 && Math.abs(diferencia) <= 2) {
+      const candidato = hijos.reduce((prev, curr) =>
+        (Math.abs(curr[campoOrigen]) > Math.abs(prev[campoOrigen]) ? curr : prev)
       );
-      hijoCandidato[campoDestino] += diferencia;
+      candidato[campoDestino] += diferencia;
+    }
+    else if (Math.abs(diferencia) > 2) {
+      console.warn(`🚨 FUSIBLE COMPARATIVO: Diferencia grande (${diferencia}) en campo ${campoDestino}`);
     }
   }
 
-  private calcularDiferenciasHorizontales(nodos: any[]): void {
-    nodos.forEach(nodo => {
-      // Diferencia Simple (M$ Actual - M$ Anterior)
-      nodo.diferenciaMiles = (nodo.saldoMiles ?? 0) - (nodo.saldoAnteriorMiles ?? 0);
+  private recalcularDiferenciasHorizontales(): void {
+    // Función recursiva simple para actualizar diferencias tras el redondeo
+    const actualizarNodo = (nodo: any) => {
+      const actual = nodo.saldoMiles ?? 0;
+      const anterior = nodo.saldoAnteriorMiles ?? 0;
 
-      // Variación % (Basada en los valores visuales de Miles)
-      nodo.variacionMiles = this.calcularVariacion(nodo.saldoMiles ?? 0, nodo.saldoAnteriorMiles ?? 0);
+      nodo.diferenciaMiles = actual - anterior;
+      nodo.variacionMiles = this.calcularVariacion(actual, anterior);
 
-      // Recursividad para bajar por el árbol
-      if (nodo.categorias) this.calcularDiferenciasHorizontales(nodo.categorias);
-      if (nodo.subcategorias) this.calcularDiferenciasHorizontales(nodo.subcategorias);
-      if (nodo.cuentas) this.calcularDiferenciasHorizontales(nodo.cuentas);
-    });
+      if (nodo.categorias) nodo.categorias.forEach(actualizarNodo);
+      if (nodo.subcategorias) nodo.subcategorias.forEach(actualizarNodo);
+      if (nodo.cuentas) nodo.cuentas.forEach(actualizarNodo);
+    };
+
+    this.vistaComparativa.forEach(actualizarNodo);
   }
 
-// Misma lógica de variación que el servicio, pero aplicada a números pequeños (Miles)
+  private redondear(valor: number): number {
+    return Math.round(Math.abs(valor)) * Math.sign(valor);
+  }
+
   private calcularVariacion(actual: number, anterior: number): number {
-    if (anterior === 0) {
-      return actual === 0 ? 0 : 999999; // Valor centinela para variación infinita
-    }
+    if (anterior === 0) return actual === 0 ? 0 : 999999;
     return ((actual - anterior) / anterior) * 100;
   }
 
-  // --- HELPERS PARA HTML ---
+  // --- GETTERS PARA HTML ---
 
   getMontoDisplay(item: any, tipo: 'actual' | 'anterior' | 'diferencia'): number {
     if (this.verEnMiles) {
@@ -161,33 +170,23 @@ export class ModalComparativo implements OnInit {
 
   formatearVariacion(variacion: number | null): string {
     if (variacion === null || isNaN(variacion)) return '-';
-    if (Math.abs(variacion) > 9999) return '>>'; // Simplificado para espacios reducidos
+    if (Math.abs(variacion) > 9999) return '>>';
     const signo = variacion > 0 ? '+' : '';
     return `${signo}${variacion.toLocaleString('es-CL', { minimumFractionDigits: 1, maximumFractionDigits: 1 })}%`;
   }
-  
 
-
-abrirConfiguracion(tipo: 'print' | 'excel'): void {
+  abrirConfiguracion(tipo: 'print' | 'excel'): void {
     const modalRef = this.modalService.open(ReportConfigModal, { size: 'xl', backdrop: 'static' });
     modalRef.componentInstance.type = tipo;
     modalRef.componentInstance.title = tipo === 'print' ? 'Imprimir Comparativo' : 'Exportar Comparativo';
     modalRef.componentInstance.mode = 'comparative';
-    modalRef.componentInstance.comparativeData = this.vistaComparativa;
+
+    // Clonamos para evitar mutaciones directas indeseadas
+    modalRef.componentInstance.comparativeData = JSON.parse(JSON.stringify(this.vistaComparativa));
     modalRef.componentInstance.balanceData = this.balanceActual;
     modalRef.componentInstance.balanceAnteriorData = this.balanceAnterior;
-    
-    // PASO CRUCIAL: Pasamos la configuración de miles actual al reporte
-    // Para que el reporte sepa si debe inicializarse en miles o no.
+
+    // Pasar configuración actual
     modalRef.componentInstance.config.verEnMiles = this.verEnMiles;
   }
-
-toggleMiles(): void {
-    this.verEnMiles = !this.verEnMiles;
-    if (this.verEnMiles) {
-      this.calcularVistaMilesCompleta();
-    }
-  }
-
-
 }

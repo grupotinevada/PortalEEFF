@@ -5,10 +5,10 @@ import {
   IValidacionesEEFF,
   ICategoria,
   ICuenta,
-  ISubcategoria, 
-  IMacroCategoriaComparativa, 
-  ICategoriaComparativa, 
-  ISubcategoriaComparativa, 
+  ISubcategoria,
+  IMacroCategoriaComparativa,
+  ICategoriaComparativa,
+  ISubcategoriaComparativa,
   ICuentaComparativa,
 } from '../models/balance.model';
 
@@ -211,7 +211,7 @@ export class EEFFService {
 
       // Si el switch "Mostrar Detalles" está desactivado...
       if (
-        !this.mostrarDetalles && 
+        !this.mostrarDetalles &&
         (id_cate === 9 || item.saldo === 0)
       ) {
         // ...y la cuenta es "No Mapeada" O tiene saldo cero, entonces la saltamos.
@@ -239,7 +239,7 @@ export class EEFFService {
           orden: ordenSubcategoria,
           saldo: 0,
           cuentas: [],
-        }as ISubcategoria;
+        } as ISubcategoria;
         categoriaRef.subcategorias.push(subcategoria);
       }
 
@@ -291,28 +291,64 @@ export class EEFFService {
     };
   }
 
+  /**
+   * Redondeo Simétrico: Asegura que positivos y negativos se redondeen con la misma magnitud.
+   * Math.round(-343.5) = -343 (ERROR en JS) -> Queremos -344
+   * redondear(-343.5) = -344 (CORRECTO)
+   */
+  public redondear(valor: number): number {
+    return Math.round(Math.abs(valor)) * Math.sign(valor);
+  }
+
   public positivizarSaldosParaPreview(
     macros: IMacroCategoria[]
   ): IMacroCategoria[] {
+    console.log('🔄 Positivizando saldos...');
+
     // Se itera sobre cada nivel de la estructura para acceder a cada saldo.
     for (const macro of macros) {
+      const saldoAntes = macro.saldo;
       macro.saldo = Math.abs(macro.saldo);
+
+      // También positivizar saldoMiles si existe
+      if (macro.saldoMiles !== undefined) {
+        macro.saldoMiles = Math.abs(macro.saldoMiles);
+      }
+
+      if (saldoAntes !== macro.saldo) {
+        console.log(`🔍 MACRO "${macro.nombre}": ${saldoAntes} → ${macro.saldo}`);
+      }
 
       for (const categoria of macro.categorias) {
         categoria.saldo = Math.abs(categoria.saldo);
+        if (categoria.saldoMiles !== undefined) {
+          categoria.saldoMiles = Math.abs(categoria.saldoMiles);
+        }
 
         for (const subcategoria of categoria.subcategorias) {
           subcategoria.saldo = Math.abs(subcategoria.saldo);
+          if (subcategoria.saldoMiles !== undefined) {
+            subcategoria.saldoMiles = Math.abs(subcategoria.saldoMiles);
+          }
 
           for (const cuenta of subcategoria.cuentas) {
+            const cuentaAntes = cuenta.saldo;
             cuenta.saldo = Math.abs(cuenta.saldo);
+            if (cuenta.saldoMiles !== undefined) {
+              cuenta.saldoMiles = Math.abs(cuenta.saldoMiles);
+            }
+
+            // Log solo si hay discrepancia significativa
+            if (Math.abs(cuentaAntes) !== cuenta.saldo && Math.abs(Math.abs(cuentaAntes) - cuenta.saldo) > 0.5) {
+              console.warn(`⚠️ CUENTA ${cuenta.num_cuenta}: ${cuentaAntes} → ${cuenta.saldo} (Diferencia: ${Math.abs(cuentaAntes) - cuenta.saldo})`);
+            }
           }
         }
       }
     }
     return macros;
   }
-// ----------------------------------------------------
+  // ----------------------------------------------------
   // NUEVA FUNCIÓN COMPARATIVA
   // ----------------------------------------------------
 

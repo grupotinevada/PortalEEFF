@@ -12,11 +12,11 @@ import { TooltipModule } from 'primeng/tooltip';
 
 @Component({
   selector: 'app-report-config-modal',
+  standalone: true,
   imports: [CommonModule, FormsModule, TooltipModule],
   templateUrl: './report-config-modal.html',
   styles: []
 })
-
 export class ReportConfigModal implements OnInit {
 
   @Input() type: 'print' | 'excel' = 'print';
@@ -47,8 +47,7 @@ export class ReportConfigModal implements OnInit {
   constructor(
     public activeModal: NgbActiveModal,
     private sanitizer: DomSanitizer
-  ) {
-  }
+  ) { }
 
   private _getValor(valor: number): number {
     return valor || 0;
@@ -94,7 +93,6 @@ export class ReportConfigModal implements OnInit {
   }
 
   get themeClass(): string {
-    // Si es blanco y negro, usamos 'dark' para el header del modal, o lo dejamos en success/teal
     return this.type === 'print' ? 'success' : 'teal';
   }
 
@@ -141,6 +139,16 @@ export class ReportConfigModal implements OnInit {
     const categoriasActivas = this.config.categoriasSeleccionadas.filter(c => c.selected).map(c => c.nombre);
     dataProcesada = dataProcesada.filter((macro: any) => categoriasActivas.includes(macro.nombre));
 
+    // 1. PRIMERO: Aplicar transformación a Miles (sobre datos con signos originales)
+    if (this.config.verEnMiles) {
+      if (mode === 'standard') {
+        this.aplicarTransformacionMilesStandard(dataProcesada);
+      } else {
+        this.aplicarTransformacionMilesComparativa(dataProcesada);
+      }
+    }
+
+    // 2. DESPUÉS: Aplicar tratamiento de signos (Positivizar visualmente si corresponde)
     dataProcesada.forEach((macro: any) => {
       const esER = macro.nombre.toUpperCase().includes('RESULTADO') ||
         macro.nombre.toUpperCase().includes('GANANCIA') ||
@@ -155,17 +163,8 @@ export class ReportConfigModal implements OnInit {
       }
     });
 
-    if (this.config.verEnMiles) {
-      if (mode === 'standard') {
-        this.aplicarTransformacionMilesStandard(dataProcesada);
-      } else {
-        this.aplicarTransformacionMilesComparativa(dataProcesada);
-      }
-    }
-
     return dataProcesada;
   }
-
 
   actualizarPreview(): void {
     if (this.mode === 'comparative') {
@@ -347,120 +346,121 @@ export class ReportConfigModal implements OnInit {
     }
   }
 
+  // =========================================================
+  // LOGICA M$ STANDARD (Igual a ModalDetalle)
+  // =========================================================
   private aplicarTransformacionMilesStandard(nodos: any[]): void {
-    this.ejecutarWaterfallStandard(nodos);
+    nodos.forEach(macro => {
+      macro.saldoMiles = this.redondear(macro.saldo / 1000);
+      this.ajustarHijosStandard(macro.saldoMiles, macro.categorias);
+
+      macro.categorias.forEach((cat: any) => {
+        this.ajustarHijosStandard(cat.saldoMiles, cat.subcategorias);
+
+        cat.subcategorias.forEach((sub: any) => {
+          this.ajustarHijosStandard(sub.saldoMiles, sub.cuentas);
+        });
+      });
+    });
+
     this.sobreescribirSaldosStandard(nodos);
   }
 
-  private ejecutarWaterfallStandard(nodos: any[]): void {
-    nodos.forEach(nodo => {
-      nodo.saldoMiles = Math.round(nodo.saldo / 1000);
+  private ajustarHijosStandard(saldoObjetivoPadre: number, hijos: any[]): void {
+    if (!hijos || hijos.length === 0) return;
 
-      let hijos: any[] = [];
-      if (nodo.categorias) hijos = nodo.categorias;
-      else if (nodo.subcategorias) hijos = nodo.subcategorias;
-      else if (nodo.cuentas) hijos = nodo.cuentas;
-
-      if (hijos.length > 0) {
-        this.distribuirAjusteStandard(nodo, hijos);
-        this.ejecutarWaterfallStandard(hijos);
-      }
-    });
-  }
-
-  private distribuirAjusteStandard(padre: any, hijos: any[]): void {
     let sumaHijos = 0;
     hijos.forEach(hijo => {
-      hijo.saldoMiles = Math.round(hijo.saldo / 1000);
+      hijo.saldoMiles = this.redondear(hijo.saldo / 1000);
       sumaHijos += hijo.saldoMiles;
     });
 
-    const diferencia = padre.saldoMiles - sumaHijos;
+    const diferencia = saldoObjetivoPadre - sumaHijos;
 
-    if (diferencia !== 0) {
-      const hijoCandidato = hijos.reduce((prev, current) =>
-        (Math.abs(current.saldo) > Math.abs(prev.saldo) ? current : prev)
+    if (diferencia !== 0 && Math.abs(diferencia) <= 2) {
+      const candidato = hijos.reduce((prev, curr) =>
+        (Math.abs(curr.saldo) > Math.abs(prev.saldo) ? curr : prev)
       );
-      hijoCandidato.saldoMiles += diferencia;
+      candidato.saldoMiles += diferencia;
     }
   }
 
   private sobreescribirSaldosStandard(nodos: any[]): void {
     nodos.forEach(nodo => {
       if (nodo.saldoMiles !== undefined) nodo.saldo = nodo.saldoMiles;
-
       if (nodo.categorias) this.sobreescribirSaldosStandard(nodo.categorias);
       if (nodo.subcategorias) this.sobreescribirSaldosStandard(nodo.subcategorias);
       if (nodo.cuentas) this.sobreescribirSaldosStandard(nodo.cuentas);
     });
   }
 
+  // =========================================================
+  // LOGICA M$ COMPARATIVA (Igual a ModalComparativo)
+  // =========================================================
   private aplicarTransformacionMilesComparativa(nodos: any[]): void {
-    this.ejecutarWaterfallComparativo(nodos, 'saldo', 'saldoMiles');
-    this.ejecutarWaterfallComparativo(nodos, 'saldoAnterior', 'saldoAnteriorMiles');
-    this.calcularDiferenciasHorizontales(nodos);
-    this.sobreescribirSaldosComparativos(nodos);
-  }
+    nodos.forEach(macro => {
+      // 1. Columna Actual
+      macro.saldoMiles = this.redondear(macro.saldo / 1000);
+      this.ajustarHijosComparativo(macro.saldoMiles, macro.categorias, 'saldo', 'saldoMiles');
 
-  private ejecutarWaterfallComparativo(nodos: any[], campoOrigen: string, campoDestino: string): void {
-    nodos.forEach(nodo => {
-      nodo[campoDestino] = Math.round(nodo[campoOrigen] / 1000);
+      macro.categorias.forEach((cat: any) => {
+        this.ajustarHijosComparativo(cat.saldoMiles, cat.subcategorias, 'saldo', 'saldoMiles');
+        cat.subcategorias.forEach((sub: any) => {
+          this.ajustarHijosComparativo(sub.saldoMiles, sub.cuentas, 'saldo', 'saldoMiles');
+        });
+      });
 
-      let hijos: any[] = [];
-      if (nodo.categorias) hijos = nodo.categorias;
-      else if (nodo.subcategorias) hijos = nodo.subcategorias;
-      else if (nodo.cuentas) hijos = nodo.cuentas;
+      // 2. Columna Anterior
+      macro.saldoAnteriorMiles = this.redondear(macro.saldoAnterior / 1000);
+      this.ajustarHijosComparativo(macro.saldoAnteriorMiles, macro.categorias, 'saldoAnterior', 'saldoAnteriorMiles');
 
-      if (hijos.length > 0) {
-        this.distribuirAjusteComparativo(nodo, hijos, campoOrigen, campoDestino);
-        this.ejecutarWaterfallComparativo(hijos, campoOrigen, campoDestino);
-      }
+      macro.categorias.forEach((cat: any) => {
+        this.ajustarHijosComparativo(cat.saldoAnteriorMiles, cat.subcategorias, 'saldoAnterior', 'saldoAnteriorMiles');
+        cat.subcategorias.forEach((sub: any) => {
+          this.ajustarHijosComparativo(sub.saldoAnteriorMiles, sub.cuentas, 'saldoAnterior', 'saldoAnteriorMiles');
+        });
+      });
     });
+
+    this.recalcularHorizontalesYPlanchar(nodos);
   }
 
-  private distribuirAjusteComparativo(padre: any, hijos: any[], campoOrigen: string, campoDestino: string): void {
+  private ajustarHijosComparativo(saldoObjetivoPadre: number, hijos: any[], campoOrigen: string, campoDestino: string): void {
+    if (!hijos || hijos.length === 0) return;
     let sumaHijos = 0;
     hijos.forEach(hijo => {
-      hijo[campoDestino] = Math.round(hijo[campoOrigen] / 1000);
+      hijo[campoDestino] = this.redondear(hijo[campoOrigen] / 1000);
       sumaHijos += hijo[campoDestino];
     });
 
-    const diferencia = padre[campoDestino] - sumaHijos;
-
-    if (diferencia !== 0) {
-      const hijoCandidato = hijos.reduce((prev, current) =>
-        (Math.abs(current[campoOrigen]) > Math.abs(prev[campoOrigen]) ? current : prev)
+    const diferencia = saldoObjetivoPadre - sumaHijos;
+    if (diferencia !== 0 && Math.abs(diferencia) <= 2) {
+      const candidato = hijos.reduce((prev, curr) =>
+        (Math.abs(curr[campoOrigen]) > Math.abs(prev[campoOrigen]) ? curr : prev)
       );
-      hijoCandidato[campoDestino] += diferencia;
+      candidato[campoDestino] += diferencia;
     }
   }
 
-  private calcularDiferenciasHorizontales(nodos: any[]): void {
+  private recalcularHorizontalesYPlanchar(nodos: any[]): void {
     nodos.forEach(nodo => {
-      nodo.diferenciaMiles = (nodo.saldoMiles ?? 0) - (nodo.saldoAnteriorMiles ?? 0);
-      nodo.variacionMiles = this.calcularVariacion(nodo.saldoMiles ?? 0, nodo.saldoAnteriorMiles ?? 0);
-
-      if (nodo.categorias) this.calcularDiferenciasHorizontales(nodo.categorias);
-      if (nodo.subcategorias) this.calcularDiferenciasHorizontales(nodo.subcategorias);
-      if (nodo.cuentas) this.calcularDiferenciasHorizontales(nodo.cuentas);
-    });
-  }
-
-  private calcularVariacion(actual: number, anterior: number): number {
-    if (anterior === 0) return actual === 0 ? 0 : 999999;
-    return ((actual - anterior) / anterior) * 100;
-  }
-
-  private sobreescribirSaldosComparativos(nodos: any[]): void {
-    nodos.forEach(nodo => {
+      // Planchar valores (sobrescribir originales con miles)
       if (nodo.saldoMiles !== undefined) nodo.saldo = nodo.saldoMiles;
       if (nodo.saldoAnteriorMiles !== undefined) nodo.saldoAnterior = nodo.saldoAnteriorMiles;
-      if (nodo.diferenciaMiles !== undefined) nodo.diferencia = nodo.diferenciaMiles;
-      if (nodo.variacionMiles !== undefined) nodo.variacion = nodo.variacionMiles;
 
-      if (nodo.categorias) this.sobreescribirSaldosComparativos(nodo.categorias);
-      if (nodo.subcategorias) this.sobreescribirSaldosComparativos(nodo.subcategorias);
-      if (nodo.cuentas) this.sobreescribirSaldosComparativos(nodo.cuentas);
+      // Recalcular diferencias en base a lo planchado
+      nodo.diferencia = (nodo.saldo || 0) - (nodo.saldoAnterior || 0);
+
+      const anterior = nodo.saldoAnterior || 0;
+      if (anterior === 0) {
+        nodo.variacion = (nodo.saldo === 0) ? 0 : 999999;
+      } else {
+        nodo.variacion = ((nodo.saldo - anterior) / anterior) * 100;
+      }
+
+      if (nodo.categorias) this.recalcularHorizontalesYPlanchar(nodo.categorias);
+      if (nodo.subcategorias) this.recalcularHorizontalesYPlanchar(nodo.subcategorias);
+      if (nodo.cuentas) this.recalcularHorizontalesYPlanchar(nodo.cuentas);
     });
   }
 
@@ -510,6 +510,16 @@ export class ReportConfigModal implements OnInit {
       });
     });
     return XLSX.utils.json_to_sheet(flatData);
+  }
+
+  private redondear(valor: number): number {
+    return Math.round(Math.abs(valor)) * Math.sign(valor);
+  }
+
+  public positivizarSaldosParaPreview(
+    macros: IMacroCategoria[]
+  ): IMacroCategoria[] {
+    return macros;
   }
 
   private _crearHojaDisenoFinal(
@@ -597,7 +607,7 @@ export class ReportConfigModal implements OnInit {
 
   private _generarPreviewComparativo(): void {
     const { detailColor, negativeColor } = this.getPaletteColors();
-    
+
     const dataFiltrada = this.prepararDatosParaReporte(this.comparativeData, 'comparative');
 
     if (dataFiltrada.length === 0) {
@@ -838,6 +848,7 @@ export class ReportConfigModal implements OnInit {
     if (item.saldo) item.saldo = Math.abs(item.saldo);
     if (item.categorias) item.categorias.forEach((cat: any) => this.hacerPositivoRecursivo(cat));
     if (item.subcategorias) item.subcategorias.forEach((sub: any) => this.hacerPositivoRecursivo(sub));
+    if (item.cuentas) item.cuentas.forEach((cta: any) => this.hacerPositivoRecursivo(cta));
   }
 
   private hacerPositivoComparativoRecursivo(item: any) {

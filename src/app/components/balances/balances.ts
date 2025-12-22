@@ -233,6 +233,7 @@ export class Balances implements OnInit {
     ).subscribe({
       next: (mappingsData) => {
         this.mappings = mappingsData;
+        console.log('mappings data cargada:', this.mappings);
       },
       error: (error) => {
         console.error('Error de API al cargar mappings:', error);
