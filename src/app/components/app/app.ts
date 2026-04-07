@@ -6,7 +6,7 @@ import { UsuarioLogin } from '../../models/usuario-login';
 import { Navbar } from '../navbar/navbar';
 import { filter } from 'rxjs';
 import { CommonModule } from '@angular/common';
-
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-root',
@@ -16,7 +16,7 @@ import { CommonModule } from '@angular/common';
 })
 export class App implements OnInit {
   @HostBinding('class.theme-danger') isDangerTheme = false;
-
+  version: string = environment.version;
   showNavbar: boolean = true;
 
   constructor(

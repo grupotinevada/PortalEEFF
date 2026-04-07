@@ -183,3 +183,13 @@ app-root.theme-danger {
 
 
 }
+
+
+.backdrop-super-top {
+  z-index: 10000 !important;
+}
+
+/* Contenedor principal del modal */
+.modal-super-top {
+  z-index: 10001 !important;
+}

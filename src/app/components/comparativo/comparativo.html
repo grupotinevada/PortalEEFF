@@ -116,7 +116,7 @@
               <label class="form-label small text-muted fw-bold">Empresa</label>
               <p-select [options]="empresas" formControlName="idEmpresa" optionValue="id_empresa" [showClear]="true"
                 placeholder="Buscar empresa..." styleClass="w-100 p-inputtext-sm border-0 shadow-sm custom-input"
-                [filter]="true" filterBy="id_empresa,descripcion" appendTo="body">
+                [filter]="true" filterBy="id_empresa,descripcion" appendTo="body" (onChange)="onApplyFilters()">
                 <ng-template let-empresa pTemplate="selectedItem">
                   <div class="d-flex align-items-center gap-2" *ngIf="empresa">
                     <i class="bi bi-building text-success"></i>
