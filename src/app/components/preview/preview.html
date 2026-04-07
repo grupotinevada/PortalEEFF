@@ -18,6 +18,7 @@
         </div>
         <div class="mt-3 mt-md-0">
           <div class="d-flex gap-2">
+
             <button type="button" class="btn btn-success d-flex align-items-center" (click)="abrirModal()">
               <i class="bi bi-plus-circle-dotted me-2"></i>
               <span class="fw-semibold">Crear FSA</span>
@@ -26,6 +27,10 @@
               (click)="agregarNuevaCuenta()" [disabled]="isDistributionMode">
               <i class="bi bi-plus-square-dotted me-2"></i>
               <span class="fw-semibold">Agregar Cuenta</span>
+            </button>
+            <button type="button" class="btn btn-outline-secondary d-flex align-items-center"
+              (click)="mostrarBalances = true" title="Ver Balances guardados">
+              <i class="bi bi-list fs-5"></i>
             </button>
           </div>
         </div>
@@ -116,9 +121,12 @@
                   <ng-container *ngIf="h === 'FSA'; else normalCell">
 
                     <p-select [options]="fsas" [(ngModel)]="row['FSA']" optionLabel="display" optionValue="id_fsa"
-                      [filter]="true" [showClear]="true" placeholder="Buscar o crear FSA"
-                      (onChange)="onFsaChange(row, $event.value)" [style]="{'width': '100%'}"
-                      styleClass="rounded zoom-select" [appendTo]="'body'">
+                      dataKey="id_fsa" [resetFilterOnHide]="true" [filter]="true" [showClear]="true"
+                      placeholder="Buscar o crear FSA" (onChange)="onFsaChange(row, $event.value)"
+                      [style]="{'width': '100%'}" styleClass="rounded zoom-select" [appendTo]="'body'">
+                      <ng-template pTemplate="selectedItem" let-item>
+                        <span *ngIf="item">{{ item.display || item }}</span>
+                      </ng-template>
                     </p-select>
                   </ng-container>
 
@@ -204,28 +212,35 @@
             <fieldset class="border border-secondary rounded-3 p-3 h-100">
               <legend class="float-none w-auto px-2 small fw-semibold">Parámetros de Procesamiento</legend>
               <div class="row g-3">
+
                 <div class="col-sm-4">
                   <label for="anioInput" class="form-label small">Ejercicio <span class="text-danger">*</span></label>
                   <p-select id="anioInput" [options]="listaAnios" [(ngModel)]="anioSeleccionado"
-                    placeholder="Selecciona" [style]="{'width': '100%'}" styleClass="p-inputtext-xs rounded p-select-xs"
-                    [showClear]="true" appendTo="body" />
+                    [resetFilterOnHide]="true" placeholder="Selecciona" [style]="{'width': '100%'}"
+                    styleClass="p-inputtext-xs rounded p-select-xs" [showClear]="true" appendTo="body" />
                 </div>
+
                 <div class="col-sm-8">
                   <label for="mappingSelect" class="form-label small">Mapping <span class="text-danger">*</span></label>
                   <p-select id="mappingSelect" [options]="mappings" [(ngModel)]="selectedMapping"
-                    optionLabel="descripcion" optionValue="id_mapping" (onChange)="onMappingChange()"
-                    placeholder="Selecciona" [filter]="true" [showClear]="true" [style]="{'width': '100%'}"
-                    styleClass="p-inputtext-xs rounded p-select-xs" appendTo="body" />
+                    optionLabel="descripcion" optionValue="id_mapping" dataKey="id_mapping" [resetFilterOnHide]="true"
+                    (onChange)="onMappingChange()" placeholder="Selecciona" [filter]="true" [showClear]="true"
+                    [style]="{'width': '100%'}" styleClass="p-inputtext-xs rounded p-select-xs" appendTo="body">
+                    <ng-template pTemplate="selectedItem" let-item>
+                      <span *ngIf="item">{{ item.descripcion || item }}</span>
+                    </ng-template>
+                  </p-select>
                 </div>
+
                 <div class="col-12">
                   <label for="empresaSelect" class="form-label small">Empresa <span class="text-danger">*</span></label>
                   <p-select id="empresaSelect" [options]="empresas" [(ngModel)]="selectedEmpresa"
-                    optionValue="id_empresa" placeholder="Selecciona" [filter]="true" [showClear]="true"
-                    [style]="{'width': '100%'}" styleClass="p-inputtext-xs rounded p-select-xs" appendTo="body"
-                    filterBy="id_empresa,descripcion">
+                    optionLabel="descripcion" optionValue="id_empresa" dataKey="id_empresa" [resetFilterOnHide]="true"
+                    placeholder="Selecciona" [filter]="true" [showClear]="true" [style]="{'width': '100%'}"
+                    styleClass="p-inputtext-xs rounded p-select-xs" appendTo="body" filterBy="id_empresa,descripcion">
                     <ng-template let-item pTemplate="selectedItem">
                       <div *ngIf="item">
-                        {{item.id_empresa}} - {{ item.descripcion }}
+                        {{item.id_empresa || item}} - {{ item.descripcion || '' }}
                       </div>
                     </ng-template>
                     <ng-template let-item pTemplate="item">
@@ -235,6 +250,7 @@
                     </ng-template>
                   </p-select>
                 </div>
+
               </div>
             </fieldset>
           </div>
@@ -321,4 +337,7 @@
       </ul>
     </div>
   </div>
+  <p-drawer [(visible)]="mostrarBalances" position="right" [style]="{ width: '70vw' }">
+    <app-balances *ngIf="mostrarBalances" [isPreviewMode]="true"></app-balances>
+  </p-drawer>
 </main>
