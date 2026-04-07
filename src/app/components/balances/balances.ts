@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild, Input } from '@angular/core';
 import { BalanceService } from '../../services/balance.service';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { BalanceResumen } from '../../models/balance.model';
@@ -51,6 +51,7 @@ import { TagModule } from 'primeng/tag';
 })
 export class Balances implements OnInit {
 
+  @Input() isPreviewMode: boolean = false;
   @ViewChild('dt') table!: Table;
 
   readonly currentUser$: Observable<UsuarioLogin | null>;
@@ -59,6 +60,8 @@ export class Balances implements OnInit {
   currentView = 'list';
   balances: BalanceResumen[] = [];
   total = 0;
+  animatedTotal = 0;
+  private animationFrame: any;
   page = 1;
   limit = 10;
   filtersForm!: FormGroup;
@@ -120,6 +123,27 @@ export class Balances implements OnInit {
       // Esto generará: [2026, 2025, 2024, ..., 2015]
     }
 
+  }
+
+  animateCounter(endValue: number, duration: number = 800) {
+    cancelAnimationFrame(this.animationFrame);
+
+    const startTime = performance.now();
+
+    const easeOut = (t: number) => 1 - Math.pow(1 - t, 3);
+
+    const update = (currentTime: number) => {
+      const progress = Math.min((currentTime - startTime) / duration, 1);
+      this.animatedTotal = Math.floor(easeOut(progress) * endValue);
+
+      if (progress < 1) {
+        this.animationFrame = requestAnimationFrame(update);
+      } else {
+        this.animatedTotal = endValue;
+      }
+    };
+
+    this.animationFrame = requestAnimationFrame(update);
   }
 
   private getData() {
@@ -283,6 +307,7 @@ export class Balances implements OnInit {
           if (res.success) {
             this.balances = res.data;
             this.total = res.total;
+            this.animateCounter(this.total);
             console.log('Balances cargados:', this.balances);
           } else {
             Swal.fire({
@@ -349,7 +374,8 @@ export class Balances implements OnInit {
       fullscreen: true,
       backdrop: 'static',
       centered: false,
-
+      windowClass: this.isPreviewMode ? 'modal-super-top' : '',     // <-- Condición aplicada
+      backdropClass: this.isPreviewMode ? 'backdrop-super-top' : '' // <-- Condición aplicada
     });
 
     modalRef.componentInstance.mappings = this.mappings;
@@ -411,7 +437,9 @@ export class Balances implements OnInit {
   abrirModalEdicion(balanceId: string) {
     const modalRef = this.modalService.open(EditarBalance, {
       fullscreen: true, // ¡Clave para la pantalla completa!
-      scrollable: true
+      scrollable: true,
+      windowClass: this.isPreviewMode ? 'modal-super-top' : '',
+      backdropClass: this.isPreviewMode ? 'backdrop-super-top' : ''
     });
     modalRef.componentInstance.id = balanceId;
     modalRef.componentInstance.estados = this.estados

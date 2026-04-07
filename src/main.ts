@@ -7,9 +7,16 @@ import { App } from './app/components/app/app';
 // Importaciones para el locale
 import { registerLocaleData } from '@angular/common';
 import localeEsCl from '@angular/common/locales/es-CL';
+import { environment } from './environments/environment';
 
 // Registra los datos del locale ANTES de iniciar la app
 registerLocaleData(localeEsCl);
 
 bootstrapApplication(App, appConfig)
   .catch((err) => console.error(err));
+
+if (environment.production) {
+  console.log = () => { };
+  console.warn = () => { };
+
+}

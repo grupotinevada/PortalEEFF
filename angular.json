@@ -14,7 +14,10 @@
           "builder": "@angular/build:application",
           "options": {
             "browser": "src/main.ts",
-            "polyfills": ["zone.js", "@angular/localize/init"],
+            "polyfills": [
+              "zone.js",
+              "@angular/localize/init"
+            ],
             "tsConfig": "tsconfig.app.json",
             "assets": [
               {
@@ -109,8 +112,8 @@
               "buildTarget": "PortalEEFF:build:development"
             },
             "qa": {
-            "buildTarget": "PortalEEFF:build:qa"
-          }
+              "buildTarget": "PortalEEFF:build:qa"
+            }
           },
           "defaultConfiguration": "development"
         },

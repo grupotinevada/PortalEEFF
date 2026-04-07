@@ -34,6 +34,8 @@ import { TableModule } from 'primeng/table';
 import { SelectModule } from 'primeng/select';
 import { UsuarioLogin } from '../../models/usuario-login';
 import { TooltipModule } from 'primeng/tooltip';
+import { DrawerModule } from 'primeng/drawer';
+import { Balances } from '../balances/balances';
 
 @Component({
   selector: 'app-preview',
@@ -44,6 +46,8 @@ import { TooltipModule } from 'primeng/tooltip';
     TableModule,
     SelectModule,
     TooltipModule,
+    DrawerModule, // <-- AGREGADO
+    Balances
 
   ],
   templateUrl: './preview.html',
@@ -59,7 +63,7 @@ export class Preview implements OnInit {
   processed = false;
   originalTableData: any[] = [];
   originalHeaders: string[] = [];
-
+  mostrarBalances: boolean = false;
   //cheack name variables
   isNombreLoading = false;
   nombreValidationMessage = '';
@@ -998,13 +1002,41 @@ export class Preview implements OnInit {
           } else if (result.isConfirmed) {
             Swal.fire({
               title: 'Crear nuevo Mapping',
-              html: `<input id="swal-input-descripcion" class="swal2-input" placeholder="Descripción del mapping">
-                   <div style="position: relative; width: 100%;">
-                     <input id="swal-input-codigo" class="swal2-input pe-5" placeholder="Código del mapping" />
-                     <button type="button" id="btn-generar-codigo" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); border: none; background: transparent; cursor: pointer; color: #6c757d;">
-                       <i class="bi bi-dice-5-fill"></i>
-                     </button>
-                   </div>`,
+              html: `
+                      <div style="display: flex; flex-direction: column; gap: 8px;">
+
+          <input id="swal-input-descripcion"
+                class="swal2-input"
+                placeholder="Descripción" 
+                style="margin: 0;" />
+
+          <div style="display: flex; gap: 6px; align-items: center;">
+            
+            <input id="swal-input-codigo"
+                  class="swal2-input"
+                  placeholder="Código"
+                  style="margin: 0; flex: 1;" />
+
+            <button type="button" id="btn-generar-codigo"
+                    style="
+                      width: 36px;
+                      height: 36px;
+                      border: none;
+                      border-radius: 6px;
+                      background: #f1f3f5;
+                      cursor: pointer;
+                      display: flex;
+                      align-items: center;
+                      justify-content: center;
+                    "
+                    title="Generar código">
+              <i class="bi bi-dice-5-fill"></i>
+            </button>
+
+          </div>
+
+        </div>
+              `,
               didOpen: () => {
                 const btn = document.getElementById('btn-generar-codigo');
                 const input = document.getElementById('swal-input-codigo') as HTMLInputElement;

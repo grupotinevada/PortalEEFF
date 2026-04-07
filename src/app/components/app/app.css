@@ -1,0 +1,12 @@
+.version-badge {
+    position: fixed;
+    bottom: 4px;
+    right: 8px;
+    font-size: 12px;
+    opacity: 0.3;
+    transition: opacity 0.2s;
+}
+
+.version-badge:hover {
+    opacity: 0.8;
+}

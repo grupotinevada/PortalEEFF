@@ -4,7 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { IReportConfig } from '../../models/report-config-modal';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
-import * as XLSX from 'xlsx';
+import * as XLSX from 'xlsx-js-style';
 import { saveAs } from 'file-saver';
 import Swal from 'sweetalert2';
 import { IBalanceGet, IMacroCategoria, IMacroCategoriaComparativa } from '../../models/balance.model';
@@ -530,71 +530,120 @@ export class ReportConfigModal implements OnInit {
   ): XLSX.WorkSheet {
 
     const sheetData: any[] = [];
-    const styleHeader = { font: { bold: true, color: { rgb: colorHex } }, border: { bottom: { style: 'medium', color: { rgb: colorHex } } } };
-    const styleMacro = { font: { bold: true, color: { rgb: colorHex } } };
-    const styleCat = { font: { bold: true, color: { rgb: "444444" } } };
-    const styleCatTotal = { font: { bold: true }, border: { top: { style: 'thin' } } };
-    const styleSubNombre = { alignment: { indent: 1 } };
-    const styleSubNum = { font: { italic: false } };
-    const styleSubNombreItalic = { alignment: { indent: 1 }, font: { italic: true } };
-    const styleSubTotal = { alignment: { indent: 1 }, font: { italic: true }, border: { top: { style: 'thin' } } };
-    const styleCtaNombre = { alignment: { indent: 3 }, font: { color: { rgb: "777777" } } };
-    const styleCtaNum = { font: { color: { rgb: "777777" } } };
-    const styleMacroTotal = { font: { bold: true }, border: { top: { style: 'thin' }, bottom: { style: 'double' } } };
 
-    const tituloSaldo = this.config.verEnMiles ? 'Saldo (M$)' : 'Saldo';
+    // --- ESTILOS CON FONDO BLANCO ---
+    const bgWhite = { fgColor: { rgb: "FFFFFF" } };
 
-    sheetData.push([
-      { v: 'Concepto', s: styleHeader } as any,
-      { v: tituloSaldo, s: styleHeader } as any
+    const styleMetaTitle = { font: { bold: true, sz: 12 }, fill: bgWhite };
+    const styleMetaSub = { font: { bold: true, sz: 10 }, fill: bgWhite };
+
+    const styleHeader = {
+      font: { bold: true, color: { rgb: "FFFFFF" } },
+      fill: { fgColor: { rgb: colorHex } },
+      alignment: { horizontal: 'center', vertical: 'center', wrapText: true }
+    };
+
+    const styleMacro = { font: { bold: true, color: { rgb: colorHex } }, fill: bgWhite };
+    const styleCat = { font: { bold: true, color: { rgb: "444444" } }, fill: bgWhite };
+    const styleCatTotal = { font: { bold: true }, border: { top: { style: 'thin' } }, fill: bgWhite };
+    const styleSubNombre = { alignment: { indent: 1 }, fill: bgWhite };
+    const styleSubNum = { font: { italic: false }, fill: bgWhite };
+    const styleSubNombreItalic = { alignment: { indent: 1 }, font: { italic: true }, fill: bgWhite };
+    const styleSubTotal = { alignment: { indent: 1 }, font: { bold: true, italic: true }, border: { top: { style: 'thin' } }, fill: bgWhite };
+    const styleCtaNombre = { alignment: { indent: 3 }, font: { color: { rgb: "777777" } }, fill: bgWhite };
+    const styleCtaNum = { font: { color: { rgb: "777777" } }, fill: bgWhite };
+    const styleMacroTotal = { font: { bold: true }, border: { top: { style: 'thin' }, bottom: { style: 'double' } }, fill: bgWhite };
+    const styleEmpty = { fill: bgWhite };
+
+    // --- HELPER PARA RELLENAR BLANCOS ---
+    // Asegura que ambas columnas tengan el fondo blanco, incluso si están vacías
+    const pushRow = (cells: any[]) => {
+      const row = [{ v: '', s: styleEmpty }, { v: '', s: styleEmpty }];
+      cells.forEach((cell, i) => { if (cell) row[i] = cell; });
+      sheetData.push(row);
+    };
+
+    let dia = 'DD', mesStr = 'Mes', mesNum = 'MM', anio = 'AAAA';
+    if (this.balanceData?.fecha_fin) {
+      const f = new Date(this.balanceData.fecha_fin);
+      const offset = f.getTimezoneOffset() * 60000;
+      const localDate = new Date(f.getTime() + offset);
+      dia = localDate.getDate().toString().padStart(2, '0');
+      mesNum = (localDate.getMonth() + 1).toString().padStart(2, '0');
+      anio = localDate.getFullYear().toString();
+      const meses = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'];
+      mesStr = meses[localDate.getMonth()];
+    }
+
+    const nombreConjunto = this.balanceData?.nombre_conjunto || this.balanceData?.empresaDesc || 'Balance';
+    const nombreEmpresa = this.balanceData?.id_empresa + ' - ' + this.balanceData?.empresaDesc || 'Ingresa empresa';
+    pushRow([{ v: nombreConjunto, s: styleMetaTitle }]);
+    pushRow([{ v: nombreEmpresa, s: styleMetaTitle }]);
+    pushRow([{ v: `Estados Financieros al ${dia} de ${mesStr} ${anio}`, s: styleMetaSub }]);
+    pushRow([]);
+
+    const sufijoMiles = this.config.verEnMiles ? '\n(M$)' : '';
+    const tituloSaldo = `Saldo al\n${dia}-${mesNum}-${anio}${sufijoMiles}`;
+
+    pushRow([
+      { v: 'Concepto', s: styleHeader },
+      { v: tituloSaldo, s: styleHeader }
     ]);
 
     data.forEach(macro => {
-      sheetData.push([{ v: macro.nombre.toUpperCase(), s: styleMacro } as any]);
+      const esER = macro.nombre.toUpperCase().includes('RESULTADO') ||
+        macro.nombre.toUpperCase().includes('GANANCIA') ||
+        macro.nombre.toUpperCase().includes('PERDIDA');
+
+      pushRow([{ v: macro.nombre.toUpperCase(), s: styleMacro }]);
+
       macro.categorias.forEach(categoria => {
-        sheetData.push([
-          { v: categoria.categoria, s: styleCat } as any,
-          { v: '', s: styleCat } as any
-        ]);
+        pushRow([{ v: categoria.categoria, s: styleCat }]);
 
         categoria.subcategorias.forEach(sub => {
           const nombreSub = config.mostrarFsa ? `${sub.id_fsa} - ${sub.descripcion}` : sub.descripcion;
           if (!config.mostrarCuentas) {
-            sheetData.push([
+            pushRow([
               { v: nombreSub, s: styleSubNombre },
               { v: sub.saldo, t: 'n', z: numFormat, s: styleSubNum }
             ]);
           } else {
-            sheetData.push([{ v: nombreSub, s: styleSubNombreItalic } as any]);
+            pushRow([{ v: nombreSub, s: styleSubNombreItalic }]);
             let cuentasParaMostrar = sub.cuentas;
             if (!config.incluirCuentasCero) cuentasParaMostrar = cuentasParaMostrar.filter(c => c.saldo !== 0);
 
             cuentasParaMostrar.forEach(cuenta => {
-              sheetData.push([
+              pushRow([
                 { v: `${cuenta.num_cuenta} - ${cuenta.nombre}`, s: styleCtaNombre },
                 { v: cuenta.saldo, t: 'n', z: numFormat, s: styleCtaNum }
               ]);
             });
-            sheetData.push([
-              { v: `Total ${sub.descripcion}`, s: styleSubTotal } as any,
-              { v: sub.saldo, t: 'n', z: numFormat, s: styleSubTotal } as any
+            pushRow([
+              { v: `Total ${sub.descripcion}`, s: styleSubTotal },
+              { v: sub.saldo, t: 'n', z: numFormat, s: styleSubTotal }
             ]);
           }
         });
-        sheetData.push([
-          { v: `TOTAL ${categoria.categoria.toUpperCase()}`, s: styleCatTotal } as any,
-          { v: categoria.saldo, t: 'n', z: numFormat, s: styleCatTotal } as any
+
+        const textoTotalCat = esER ? categoria.categoria : `TOTAL ${categoria.categoria.toUpperCase()}`;
+        pushRow([
+          { v: textoTotalCat, s: styleCatTotal },
+          { v: categoria.saldo, t: 'n', z: numFormat, s: styleCatTotal }
         ]);
       });
-      sheetData.push([
-        { v: `TOTAL ${macro.nombre.toUpperCase()}`, s: styleMacroTotal } as any,
-        { v: macro.saldo, t: 'n', z: numFormat, s: styleMacroTotal } as any
-      ]);
-      sheetData.push([]);
+
+      if (!esER) {
+        pushRow([
+          { v: `TOTAL ${macro.nombre.toUpperCase()}`, s: styleMacroTotal },
+          { v: macro.saldo, t: 'n', z: numFormat, s: styleMacroTotal }
+        ]);
+      }
+      pushRow([]);
     });
 
     const ws = XLSX.utils.aoa_to_sheet(sheetData);
-    ws['!cols'] = [{ wch: 60 }, { wch: 20 }];
+    ws['!cols'] = [{ wch: 80 }, { wch: 20 }];
+
     return ws;
   }
 
@@ -753,6 +802,7 @@ export class ReportConfigModal implements OnInit {
       const { detailColor } = this.getPaletteColors();
       const detailColorHex = detailColor.replace('#', '');
       const usarRojo = this.config.colorTheme.includes('red');
+
       let excelNumFormat = '#,##0';
       if (this.config.estiloNegativo === 'parentesis') {
         excelNumFormat = usarRojo ? '#,##0;[Red](#,##0)' : '#,##0;(#,##0)';
@@ -763,69 +813,129 @@ export class ReportConfigModal implements OnInit {
 
       const dataFiltrada = this.prepararDatosParaReporte(this.comparativeData, 'comparative');
 
-      const anioActual = this.balanceData?.ejercicio || 'Actual';
-      const anioAnt = this.balanceAnteriorData?.ejercicio || 'Anterior';
-      const tituloSufijo = this.config.verEnMiles ? '(M$)' : '($)';
+      // --- ESTILOS CON FONDO BLANCO ---
+      const bgWhite = { fgColor: { rgb: "FFFFFF" } };
 
-      const headerRow = [
-        { v: 'Concepto', s: { font: { bold: true, color: { rgb: detailColorHex } }, border: { bottom: { style: 'medium', color: { rgb: detailColorHex } } } } },
-        { v: 'Tipo', s: { font: { bold: true } } },
-        { v: `Saldo ${anioActual} ${tituloSufijo}`, s: { font: { bold: true } } },
-        { v: `Saldo ${anioAnt} ${tituloSufijo}`, s: { font: { bold: true } } }
-      ];
+      const styleMetaTitle = { font: { bold: true, sz: 12 }, fill: bgWhite };
+      const styleMetaSub = { font: { bold: true, sz: 10 }, fill: bgWhite };
 
-      if (this.config.mostrarDiferencia) headerRow.push({ v: `Diferencia ${tituloSufijo}`, s: { font: { bold: true } } });
-      if (this.config.mostrarVariacion) headerRow.push({ v: 'Variación %', s: { font: { bold: true } } });
+      const styleHeader = {
+        font: { bold: true, color: { rgb: "FFFFFF" } },
+        fill: { fgColor: { rgb: detailColorHex } },
+        alignment: { horizontal: 'center', vertical: 'center', wrapText: true }
+      };
 
+      const styleMacro = { font: { bold: true, color: { rgb: detailColorHex } }, fill: bgWhite };
+      const styleCat = { font: { bold: true, color: { rgb: "444444" } }, fill: bgWhite };
+      const styleCatTotal = { font: { bold: true }, border: { top: { style: 'thin' } }, fill: bgWhite };
+      const styleSubNombre = { alignment: { indent: 1 }, fill: bgWhite };
+      const styleSubNombreItalic = { alignment: { indent: 1 }, font: { italic: true }, fill: bgWhite };
+      const styleSubTotal = { alignment: { indent: 1 }, font: { bold: true, italic: true }, border: { top: { style: 'thin' } }, fill: bgWhite };
+      const styleCtaNombre = { alignment: { indent: 3 }, font: { color: { rgb: "777777" } }, fill: bgWhite };
+      const styleCtaNum = { font: { color: { rgb: "777777" } }, fill: bgWhite };
+      const styleMacroTotal = { font: { bold: true }, border: { top: { style: 'thin' }, bottom: { style: 'double' } }, fill: bgWhite };
+      const styleNormalNum = { font: { italic: false }, fill: bgWhite };
+      const styleEmpty = { fill: bgWhite };
+
+      // --- CONFIGURACIÓN DE COLUMNAS Y HELPER DE RELLENO ---
+      const numCols = 3 + (this.config.mostrarDiferencia ? 1 : 0) + (this.config.mostrarVariacion ? 1 : 0);
       const dataRows: any[] = [];
-      dataRows.push(headerRow);
 
-      const addRow = (nombre: string, tipo: string, saldo: number, ant: number, dif: number, vari: number, styleName: any) => {
-        const row: any[] = [
-          { v: nombre, s: styleName },
-          { v: tipo },
-          { v: saldo, t: 'n', z: excelNumFormat },
-          { v: ant, t: 'n', z: excelNumFormat }
-        ];
-
-        if (this.config.mostrarDiferencia) {
-          row.push({ v: dif, t: 'n', z: excelNumFormat });
-        }
-        if (this.config.mostrarVariacion) {
-          const colorVar = vari > 0 ? '008000' : (vari < 0 ? (usarRojo ? 'FF0000' : '000000') : '000000');
-          row.push({ v: vari / 100, t: 'n', z: percentFormat, s: { font: { color: { rgb: colorVar } } } });
-        }
+      const pushRow = (cells: any[]) => {
+        const row = Array.from({ length: numCols }, () => ({ v: '', s: styleEmpty }));
+        cells.forEach((cell, i) => { if (cell) row[i] = cell; });
         dataRows.push(row);
       };
 
-      const styleMacro = { font: { bold: true, color: { rgb: detailColorHex } } };
-      const styleCat = { font: { bold: true } };
-      const styleSub = { alignment: { indent: 1 } };
-      const styleCta = { alignment: { indent: 2 }, font: { color: { rgb: "777777" } } };
+      let dia = 'DD', mesStr = 'Mes', mesNum = 'MM', anio = 'AAAA';
+      if (this.balanceData?.fecha_fin) {
+        const f = new Date(this.balanceData.fecha_fin);
+        const offset = f.getTimezoneOffset() * 60000;
+        const localDate = new Date(f.getTime() + offset);
+        dia = localDate.getDate().toString().padStart(2, '0');
+        mesNum = (localDate.getMonth() + 1).toString().padStart(2, '0');
+        anio = localDate.getFullYear().toString();
+        const meses = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'];
+        mesStr = meses[localDate.getMonth()];
+      }
+
+      const anioActual = this.balanceData?.ejercicio || 'Actual';
+      const anioAnt = this.balanceAnteriorData?.ejercicio || 'Anterior';
+      const tituloSufijo = this.config.verEnMiles ? '\n(M$)' : '';
+
+      const nombreConjunto = this.balanceData?.nombre_conjunto || this.balanceData?.empresaDesc || 'Balance';
+      const nombreEmpresa = this.balanceData?.id_empresa + ' - ' + this.balanceData?.empresaDesc || 'Ingresa empresa';
+      pushRow([{ v: nombreConjunto, s: styleMetaTitle }]);
+      pushRow([{ v: nombreEmpresa, s: styleMetaTitle }]);
+      pushRow([{ v: `Estados Financieros Comparativos al ${dia} de ${mesStr} de ${anio} y ${anioAnt}`, s: styleMetaSub }]);
+      pushRow([]);
+
+      const headerRow = [
+        { v: 'Concepto', s: styleHeader },
+        { v: `Saldo al\n${dia}-${mesNum}-${anio}${tituloSufijo}`, s: styleHeader },
+        { v: `Saldo al\n${dia}-${mesNum}-${anioAnt}${tituloSufijo}`, s: styleHeader }
+      ];
+
+      if (this.config.mostrarDiferencia) headerRow.push({ v: `Diferencia${tituloSufijo}`, s: styleHeader });
+      if (this.config.mostrarVariacion) headerRow.push({ v: 'Variación %', s: styleHeader });
+
+      pushRow(headerRow);
+
+      const addRow = (nombre: string, saldo: number, ant: number, dif: number, vari: number, styleConcepto: any, isCuenta: boolean = false) => {
+        const numStyle = isCuenta ? styleCtaNum : styleNormalNum;
+        const cells: any[] = [
+          { v: nombre, s: styleConcepto },
+          { v: saldo, t: 'n', z: excelNumFormat, s: numStyle },
+          { v: ant, t: 'n', z: excelNumFormat, s: numStyle }
+        ];
+
+        if (this.config.mostrarDiferencia) {
+          cells.push({ v: dif, t: 'n', z: excelNumFormat, s: numStyle });
+        }
+        if (this.config.mostrarVariacion) {
+          const colorVar = vari > 0 ? '008000' : (vari < 0 ? (usarRojo ? 'FF0000' : '000000') : '000000');
+          // Al asignar un color específico, nos aseguramos de que el fondo siga siendo blanco
+          cells.push({ v: vari / 100, t: 'n', z: percentFormat, s: { font: { color: { rgb: colorVar } }, fill: bgWhite } });
+        }
+        pushRow(cells);
+      };
 
       dataFiltrada.forEach((macro: any) => {
-        addRow(macro.nombre.toUpperCase(), 'MACRO', macro.saldo, macro.saldoAnterior, macro.diferencia, macro.variacion, styleMacro);
+        const esER = macro.nombre.toUpperCase().includes('RESULTADO') ||
+          macro.nombre.toUpperCase().includes('GANANCIA') ||
+          macro.nombre.toUpperCase().includes('PERDIDA');
+
+        pushRow([{ v: macro.nombre.toUpperCase(), s: styleMacro }]);
+
         macro.categorias.forEach((cat: any) => {
-          addRow(`  ${cat.categoria}`, 'CATEGORIA', cat.saldo, cat.saldoAnterior, cat.diferencia, cat.variacion, styleCat);
+          pushRow([{ v: cat.categoria, s: styleCat }]);
+
           cat.subcategorias.forEach((sub: any) => {
-            const nombreSub = this.config.mostrarFsa ? `(${sub.id_fsa}) ${sub.descripcion}` : sub.descripcion;
+            const nombreSub = this.config.mostrarFsa ? `${sub.id_fsa} - ${sub.descripcion}` : sub.descripcion;
             if (!this.config.mostrarCuentas) {
-              addRow(`    ${nombreSub}`, 'RUBRO', sub.saldo, sub.saldoAnterior, sub.diferencia, sub.variacion, styleSub);
+              addRow(nombreSub, sub.saldo, sub.saldoAnterior, sub.diferencia, sub.variacion, styleSubNombre);
             } else {
-              dataRows.push([{ v: `    ${nombreSub}`, s: { font: { italic: true } } }]);
+              pushRow([{ v: nombreSub, s: styleSubNombreItalic }]);
               sub.cuentas.forEach((cta: any) => {
                 if (!this.config.incluirCuentasCero && cta.saldo === 0 && cta.saldoAnterior === 0) return;
-                addRow(`      ${cta.num_cuenta} - ${cta.nombre}`, 'CUENTA', cta.saldo, cta.saldoAnterior, cta.diferencia, cta.variacion, styleCta);
+                addRow(`${cta.num_cuenta} - ${cta.nombre}`, cta.saldo, cta.saldoAnterior, cta.diferencia, cta.variacion, styleCtaNombre, true);
               });
-              addRow(`      Total ${sub.descripcion}`, 'TOTAL RUBRO', sub.saldo, sub.saldoAnterior, sub.diferencia, sub.variacion, { font: { italic: true }, border: { top: { style: 'thin' } } });
+              addRow(`Total ${sub.descripcion}`, sub.saldo, sub.saldoAnterior, sub.diferencia, sub.variacion, styleSubTotal);
             }
           });
+
+          const textoTotalCat = esER ? cat.categoria : `TOTAL ${cat.categoria.toUpperCase()}`;
+          addRow(textoTotalCat, cat.saldo, cat.saldoAnterior, cat.diferencia, cat.variacion, styleCatTotal);
         });
-        dataRows.push([]);
+
+        if (!esER) {
+          addRow(`TOTAL ${macro.nombre.toUpperCase()}`, macro.saldo, macro.saldoAnterior, macro.diferencia, macro.variacion, styleMacroTotal);
+        }
+        pushRow([]);
       });
 
       const ws: XLSX.WorkSheet = XLSX.utils.aoa_to_sheet(dataRows);
-      const cols = [{ wch: 60 }, { wch: 10 }, { wch: 15 }, { wch: 15 }];
+      const cols = [{ wch: 60 }, { wch: 15 }, { wch: 15 }];
       if (this.config.mostrarDiferencia) cols.push({ wch: 15 });
       if (this.config.mostrarVariacion) cols.push({ wch: 10 });
       ws['!cols'] = cols;

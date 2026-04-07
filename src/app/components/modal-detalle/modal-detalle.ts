@@ -13,7 +13,7 @@ import { CommonModule } from '@angular/common';
 import Swal from 'sweetalert2';
 import { FormsModule } from '@angular/forms';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
-import * as XLSX from 'xlsx';
+import * as XLSX from 'xlsx-js-style';
 import { saveAs } from 'file-saver';
 import { ReportConfigModal } from '../report-config-modal/report-config-modal';
 import { TooltipModule } from 'primeng/tooltip';
@@ -328,25 +328,25 @@ export class ModalDetalle implements OnInit {
 
 
   abrirModalImpresion(): void {
-  const modalRef = this.modalService.open(ReportConfigModal, { size: 'xl', centered: true, scrollable: true });
+    const modalRef = this.modalService.open(ReportConfigModal, { size: 'xl', centered: true, scrollable: true });
 
-  modalRef.componentInstance.type = 'print';
-  modalRef.componentInstance.title = 'Opciones y Previsualización de Impresión';
+    modalRef.componentInstance.type = 'print';
+    modalRef.componentInstance.title = 'Opciones y Previsualización de Impresión';
 
-  // 💡 CLAVE: Pasamos la data ya procesada y la cabecera
-  modalRef.componentInstance.reportData = this.vistaAgrupada;
-  modalRef.componentInstance.balanceData = this.balance[0];
-}
+    // 💡 CLAVE: Pasamos la data ya procesada y la cabecera
+    modalRef.componentInstance.reportData = this.vistaAgrupada;
+    modalRef.componentInstance.balanceData = this.balance[0];
+  }
 
-abrirModalExcel(): void {
-  const modalRef = this.modalService.open(ReportConfigModal, { size: 'lg', centered: true, scrollable: true });
+  abrirModalExcel(): void {
+    const modalRef = this.modalService.open(ReportConfigModal, { size: 'lg', centered: true, scrollable: true });
 
-  modalRef.componentInstance.type = 'excel';
-  modalRef.componentInstance.title = 'Opciones de Exportación Excel';
+    modalRef.componentInstance.type = 'excel';
+    modalRef.componentInstance.title = 'Opciones de Exportación Excel';
 
-  // 💡 CLAVE: Pasamos la data ya procesada y la cabecera
-  modalRef.componentInstance.reportData = this.vistaAgrupada;
-  modalRef.componentInstance.balanceData = this.balance[0];
-}
+    // 💡 CLAVE: Pasamos la data ya procesada y la cabecera
+    modalRef.componentInstance.reportData = this.vistaAgrupada;
+    modalRef.componentInstance.balanceData = this.balance[0];
+  }
 
 }

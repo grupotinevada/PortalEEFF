@@ -2542,3 +2542,148 @@
 [INFO] 2025-12-16T20:27:07.030Z - Usuario Ignacio Salazar (undefined) solicitó balance con ID: eb33c56509044ed78c6492fa77f0c1f4
 [INFO] 2025-12-16T20:27:07.032Z - Iniciando búsqueda de balance con ID: eb33c56509044ed78c6492fa77f0c1f4 por usuario 10
 [INFO] 2025-12-16T20:27:07.038Z - Balance encontrado con ID: eb33c56509044ed78c6492fa77f0c1f4
+[INFO] 2026-04-06T14:57:50.131Z - Recibido callback de Microsoft.
+[INFO] 2026-04-06T14:57:50.749Z - Email extraído de MSAL: isalazar@inevada.cl
+[INFO] 2026-04-06T14:57:50.985Z - Usuario isalazar@inevada.cl autenticado exitosamente. Generando JWT...
+[INFO] 2026-04-06T14:57:50.987Z - Generando token para [Ignacio Salazar] 
+[INFO] 2026-04-06T14:57:50.994Z - Cookie de sesión establecida para isalazar@inevada.cl. Redirigiendo al frontend.
+[INFO] 2026-04-06T14:58:46.148Z - Usuario 10 solicitó getAllUsers.
+[INFO] 2026-04-06T14:58:46.153Z - getAllUsers completado exitosamente para 10.
+[INFO] 2026-04-06T15:12:36.999Z - Usuario 10 solicitó getAllUsers.
+[INFO] 2026-04-06T15:12:37.004Z - getAllUsers completado exitosamente para 10.
+[INFO] 2026-04-06T15:12:39.505Z - Usuario 10 solicitó getAllUsers.
+[INFO] 2026-04-06T15:12:39.508Z - getAllUsers completado exitosamente para 10.
+[INFO] 2026-04-06T15:14:21.459Z - Usuario 10 solicitó getAllUsers.
+[INFO] 2026-04-06T15:14:21.462Z - getAllUsers completado exitosamente para 10.
+[INFO] 2026-04-06T15:29:12.493Z - Usuario Ignacio Salazar (undefined) solicitó balance con ID: 7dce4fa269e1433ea439cde7edfad921
+[INFO] 2026-04-06T15:29:12.495Z - Iniciando búsqueda de balance con ID: 7dce4fa269e1433ea439cde7edfad921 por usuario 10
+[INFO] 2026-04-06T15:29:12.504Z - Balance encontrado con ID: 7dce4fa269e1433ea439cde7edfad921
+[INFO] 2026-04-06T16:02:51.280Z - Verificando disponibilidad del nombre de balance: San rique
+[INFO] 2026-04-06T16:02:51.288Z - El nombre "San rique" está disponible.
+[INFO] 2026-04-06T16:02:52.733Z - Verificando disponibilidad del nombre de balance: San r
+[INFO] 2026-04-06T16:02:52.736Z - El nombre "San r" está disponible.
+[INFO] 2026-04-06T16:02:53.933Z - Verificando disponibilidad del nombre de balance: San roque
+[INFO] 2026-04-06T16:02:53.935Z - El nombre "San roque" está disponible.
+[INFO] 2026-04-06T16:02:55.178Z - Verificando disponibilidad del nombre de balance: San roque 2025
+[INFO] 2026-04-06T16:02:55.181Z - El nombre "San roque 2025" está disponible.
+[INFO] 2026-04-06T16:25:25.173Z - Usuario Ignacio Salazar (undefined) solicitó balance con ID: eb33c56509044ed78c6492fa77f0c1f4
+[INFO] 2026-04-06T16:25:25.174Z - Iniciando búsqueda de balance con ID: eb33c56509044ed78c6492fa77f0c1f4 por usuario 10
+[INFO] 2026-04-06T16:25:25.182Z - Balance encontrado con ID: eb33c56509044ed78c6492fa77f0c1f4
+[INFO] 2026-04-06T16:40:55.780Z - Usuario Ignacio Salazar (undefined) solicitó balance con ID: 7dce4fa269e1433ea439cde7edfad921
+[INFO] 2026-04-06T16:40:55.781Z - Iniciando búsqueda de balance con ID: 7dce4fa269e1433ea439cde7edfad921 por usuario 10
+[INFO] 2026-04-06T16:40:55.790Z - Balance encontrado con ID: 7dce4fa269e1433ea439cde7edfad921
+[INFO] 2026-04-06T16:48:50.597Z - Usuario Ignacio Salazar (undefined) solicitó balance con ID: c30da13c7055495db9366e967bd0ce62
+[INFO] 2026-04-06T16:48:50.598Z - Iniciando búsqueda de balance con ID: c30da13c7055495db9366e967bd0ce62 por usuario 10
+[INFO] 2026-04-06T16:48:50.600Z - Usuario Ignacio Salazar (undefined) solicitó balance con ID: 7dce4fa269e1433ea439cde7edfad921
+[INFO] 2026-04-06T16:48:50.602Z - Iniciando búsqueda de balance con ID: 7dce4fa269e1433ea439cde7edfad921 por usuario 10
+[INFO] 2026-04-06T16:48:50.606Z - Balance encontrado con ID: 7dce4fa269e1433ea439cde7edfad921
+[INFO] 2026-04-06T16:48:50.615Z - Balance encontrado con ID: c30da13c7055495db9366e967bd0ce62
+[INFO] 2026-04-06T16:52:48.864Z - Usuario Ignacio Salazar (undefined) solicitó balance con ID: 7dce4fa269e1433ea439cde7edfad921
+[INFO] 2026-04-06T16:52:48.866Z - Iniciando búsqueda de balance con ID: 7dce4fa269e1433ea439cde7edfad921 por usuario 10
+[INFO] 2026-04-06T16:52:48.867Z - Usuario Ignacio Salazar (undefined) solicitó balance con ID: c30da13c7055495db9366e967bd0ce62
+[INFO] 2026-04-06T16:52:48.869Z - Iniciando búsqueda de balance con ID: c30da13c7055495db9366e967bd0ce62 por usuario 10
+[INFO] 2026-04-06T16:52:48.872Z - Balance encontrado con ID: 7dce4fa269e1433ea439cde7edfad921
+[INFO] 2026-04-06T16:52:48.882Z - Balance encontrado con ID: c30da13c7055495db9366e967bd0ce62
+[INFO] 2026-04-06T16:53:29.018Z - Usuario Ignacio Salazar (undefined) solicitó balance con ID: 7dce4fa269e1433ea439cde7edfad921
+[INFO] 2026-04-06T16:53:29.019Z - Iniciando búsqueda de balance con ID: 7dce4fa269e1433ea439cde7edfad921 por usuario 10
+[INFO] 2026-04-06T16:53:29.024Z - Balance encontrado con ID: 7dce4fa269e1433ea439cde7edfad921
+[INFO] 2026-04-06T16:58:41.268Z - Usuario Ignacio Salazar (undefined) solicitó balance con ID: 7dce4fa269e1433ea439cde7edfad921
+[INFO] 2026-04-06T16:58:41.269Z - Iniciando búsqueda de balance con ID: 7dce4fa269e1433ea439cde7edfad921 por usuario 10
+[INFO] 2026-04-06T16:58:41.273Z - Balance encontrado con ID: 7dce4fa269e1433ea439cde7edfad921
+[INFO] 2026-04-06T17:08:05.493Z - Usuario 10 solicitó getAllUsers.
+[INFO] 2026-04-06T17:08:05.500Z - getAllUsers completado exitosamente para 10.
+[INFO] 2026-04-06T17:10:19.009Z - Usuario 10 solicitó getAllUsers.
+[INFO] 2026-04-06T17:10:19.012Z - getAllUsers completado exitosamente para 10.
+[INFO] 2026-04-06T17:18:00.859Z - Usuario 10 solicitó getAllUsers.
+[INFO] 2026-04-06T17:18:00.873Z - getAllUsers completado exitosamente para 10.
+[INFO] 2026-04-06T17:18:05.080Z - Usuario 10 solicitó getAllUsers.
+[INFO] 2026-04-06T17:18:05.083Z - getAllUsers completado exitosamente para 10.
+[INFO] 2026-04-06T17:19:47.740Z - Usuario 10 solicitó getAllUsers.
+[INFO] 2026-04-06T17:19:47.750Z - getAllUsers completado exitosamente para 10.
+[INFO] 2026-04-06T17:23:45.552Z - Verificando disponibilidad del nombre de balance: Balance CV 19 Version 1
+[INFO] 2026-04-06T17:23:45.554Z - El nombre "Balance CV 19 Version 1" ya existe.
+[INFO] 2026-04-06T17:23:57.086Z - Verificando disponibilidad del nombre de balance: Balance CV 19 Version 1a
+[INFO] 2026-04-06T17:23:57.089Z - El nombre "Balance CV 19 Version 1a" está disponible.
+[INFO] 2026-04-06T17:24:10.696Z - Verificando disponibilidad del nombre de balance: Balance CV 19 Version 1
+[INFO] 2026-04-06T17:24:10.697Z - El nombre "Balance CV 19 Version 1" ya existe.
+[INFO] 2026-04-06T17:24:12.533Z - Verificando disponibilidad del nombre de balance: Balance CV 19 Version 1a
+[INFO] 2026-04-06T17:24:12.536Z - El nombre "Balance CV 19 Version 1a" está disponible.
+[INFO] 2026-04-06T17:26:13.819Z - Verificando disponibilidad del nombre de balance: Balance CV 19 Version 1a
+[INFO] 2026-04-06T17:26:13.821Z - El nombre "Balance CV 19 Version 1a" está disponible.
+[INFO] 2026-04-06T17:28:12.556Z - Usuario 10 solicitó getAllUsers.
+[INFO] 2026-04-06T17:28:12.560Z - getAllUsers completado exitosamente para 10.
+[INFO] 2026-04-06T17:29:22.477Z - Usuario Ignacio Salazar (undefined) solicitó balance con ID: 05fc6fc6c9824fc8bd234a5cf2ea298e
+[INFO] 2026-04-06T17:29:22.478Z - Iniciando búsqueda de balance con ID: 05fc6fc6c9824fc8bd234a5cf2ea298e por usuario 10
+[INFO] 2026-04-06T17:29:22.483Z - Balance encontrado con ID: 05fc6fc6c9824fc8bd234a5cf2ea298e
+[INFO] 2026-04-06T17:29:30.129Z - Usuario 10 inició la actualización del balance con ID: 05fc6fc6c9824fc8bd234a5cf2ea298e
+[ACTION] 2026-04-06T17:29:30.170Z - User 10 - UPDATE_BALANCE - Actualizadas: 57 filas para el id_blce: 05fc6fc6c9824fc8bd234a5cf2ea298e
+[INFO] 2026-04-06T17:29:35.942Z - Usuario 10 solicitó getAllUsers.
+[INFO] 2026-04-06T17:29:35.945Z - getAllUsers completado exitosamente para 10.
+[INFO] 2026-04-06T17:35:30.012Z - Usuario Ignacio Salazar (undefined) solicitó balance con ID: 05fc6fc6c9824fc8bd234a5cf2ea298e
+[INFO] 2026-04-06T17:35:30.013Z - Iniciando búsqueda de balance con ID: 05fc6fc6c9824fc8bd234a5cf2ea298e por usuario 10
+[INFO] 2026-04-06T17:35:30.016Z - Balance encontrado con ID: 05fc6fc6c9824fc8bd234a5cf2ea298e
+[INFO] 2026-04-06T17:36:47.248Z - Usuario Ignacio Salazar (undefined) solicitó balance con ID: 05fc6fc6c9824fc8bd234a5cf2ea298e
+[INFO] 2026-04-06T17:36:47.249Z - Iniciando búsqueda de balance con ID: 05fc6fc6c9824fc8bd234a5cf2ea298e por usuario 10
+[INFO] 2026-04-06T17:36:47.253Z - Balance encontrado con ID: 05fc6fc6c9824fc8bd234a5cf2ea298e
+[INFO] 2026-04-06T19:20:50.876Z - Usuario Ignacio Salazar (undefined) solicitó balance con ID: eb33c56509044ed78c6492fa77f0c1f4
+[INFO] 2026-04-06T19:20:50.879Z - Iniciando búsqueda de balance con ID: eb33c56509044ed78c6492fa77f0c1f4 por usuario 10
+[INFO] 2026-04-06T19:20:50.887Z - Balance encontrado con ID: eb33c56509044ed78c6492fa77f0c1f4
+[INFO] 2026-04-06T19:20:59.205Z - Usuario Ignacio Salazar (undefined) solicitó balance con ID: eb33c56509044ed78c6492fa77f0c1f4
+[INFO] 2026-04-06T19:20:59.206Z - Iniciando búsqueda de balance con ID: eb33c56509044ed78c6492fa77f0c1f4 por usuario 10
+[INFO] 2026-04-06T19:20:59.215Z - Balance encontrado con ID: eb33c56509044ed78c6492fa77f0c1f4
+[INFO] 2026-04-06T19:24:49.181Z - Usuario Ignacio Salazar (undefined) solicitó balance con ID: eb33c56509044ed78c6492fa77f0c1f4
+[INFO] 2026-04-06T19:24:49.183Z - Iniciando búsqueda de balance con ID: eb33c56509044ed78c6492fa77f0c1f4 por usuario 10
+[INFO] 2026-04-06T19:24:49.189Z - Balance encontrado con ID: eb33c56509044ed78c6492fa77f0c1f4
+[INFO] 2026-04-06T19:39:05.656Z - Usuario Ignacio Salazar (undefined) solicitó balance con ID: eb33c56509044ed78c6492fa77f0c1f4
+[INFO] 2026-04-06T19:39:05.657Z - Iniciando búsqueda de balance con ID: eb33c56509044ed78c6492fa77f0c1f4 por usuario 10
+[INFO] 2026-04-06T19:39:05.662Z - Balance encontrado con ID: eb33c56509044ed78c6492fa77f0c1f4
+[INFO] 2026-04-06T19:51:01.718Z - Verificando disponibilidad del nombre de balance: Balance CV 19 Version 1a
+[INFO] 2026-04-06T19:51:01.722Z - El nombre "Balance CV 19 Version 1a" está disponible.
+[INFO] 2026-04-06T19:52:04.637Z - Verificando disponibilidad del nombre de balance: Balance CV 19 Version 1a
+[INFO] 2026-04-06T19:52:04.640Z - El nombre "Balance CV 19 Version 1a" está disponible.
+[INFO] 2026-04-06T19:52:18.601Z - Usuario Ignacio Salazar (undefined) solicitó balance con ID: eb33c56509044ed78c6492fa77f0c1f4
+[INFO] 2026-04-06T19:52:18.602Z - Iniciando búsqueda de balance con ID: eb33c56509044ed78c6492fa77f0c1f4 por usuario 10
+[INFO] 2026-04-06T19:52:18.611Z - Balance encontrado con ID: eb33c56509044ed78c6492fa77f0c1f4
+[INFO] 2026-04-06T19:53:08.529Z - Usuario Ignacio Salazar (undefined) solicitó balance con ID: 7dce4fa269e1433ea439cde7edfad921
+[INFO] 2026-04-06T19:53:08.530Z - Iniciando búsqueda de balance con ID: 7dce4fa269e1433ea439cde7edfad921 por usuario 10
+[INFO] 2026-04-06T19:53:08.536Z - Balance encontrado con ID: 7dce4fa269e1433ea439cde7edfad921
+[INFO] 2026-04-06T20:11:46.223Z - Verificando disponibilidad del nombre de balance: Balance CV 19 Version 1a
+[INFO] 2026-04-06T20:11:46.229Z - El nombre "Balance CV 19 Version 1a" está disponible.
+[INFO] 2026-04-06T20:11:55.535Z - Usuario Ignacio Salazar (undefined) solicitó balance con ID: eb33c56509044ed78c6492fa77f0c1f4
+[INFO] 2026-04-06T20:11:55.536Z - Iniciando búsqueda de balance con ID: eb33c56509044ed78c6492fa77f0c1f4 por usuario 10
+[INFO] 2026-04-06T20:11:55.544Z - Balance encontrado con ID: eb33c56509044ed78c6492fa77f0c1f4
+[INFO] 2026-04-06T20:12:53.026Z - Usuario 10 solicitó getAllUsers.
+[INFO] 2026-04-06T20:12:53.031Z - getAllUsers completado exitosamente para 10.
+[INFO] 2026-04-06T20:40:15.736Z - Usuario Ignacio Salazar (undefined) solicitó balance con ID: eb33c56509044ed78c6492fa77f0c1f4
+[INFO] 2026-04-06T20:40:15.740Z - Iniciando búsqueda de balance con ID: eb33c56509044ed78c6492fa77f0c1f4 por usuario 10
+[INFO] 2026-04-06T20:40:15.747Z - Balance encontrado con ID: eb33c56509044ed78c6492fa77f0c1f4
+[INFO] 2026-04-06T20:40:28.340Z - Usuario Ignacio Salazar (undefined) solicitó balance con ID: eb33c56509044ed78c6492fa77f0c1f4
+[INFO] 2026-04-06T20:40:28.341Z - Iniciando búsqueda de balance con ID: eb33c56509044ed78c6492fa77f0c1f4 por usuario 10
+[INFO] 2026-04-06T20:40:28.348Z - Balance encontrado con ID: eb33c56509044ed78c6492fa77f0c1f4
+[INFO] 2026-04-06T20:40:29.159Z - Usuario Ignacio Salazar (undefined) solicitó balance con ID: eb33c56509044ed78c6492fa77f0c1f4
+[INFO] 2026-04-06T20:40:29.160Z - Iniciando búsqueda de balance con ID: eb33c56509044ed78c6492fa77f0c1f4 por usuario 10
+[INFO] 2026-04-06T20:40:29.165Z - Balance encontrado con ID: eb33c56509044ed78c6492fa77f0c1f4
+[INFO] 2026-04-06T20:40:30.130Z - Usuario Ignacio Salazar (undefined) solicitó balance con ID: eb33c56509044ed78c6492fa77f0c1f4
+[INFO] 2026-04-06T20:40:30.132Z - Iniciando búsqueda de balance con ID: eb33c56509044ed78c6492fa77f0c1f4 por usuario 10
+[INFO] 2026-04-06T20:40:30.137Z - Balance encontrado con ID: eb33c56509044ed78c6492fa77f0c1f4
+[INFO] 2026-04-06T20:40:30.268Z - Usuario Ignacio Salazar (undefined) solicitó balance con ID: eb33c56509044ed78c6492fa77f0c1f4
+[INFO] 2026-04-06T20:40:30.270Z - Iniciando búsqueda de balance con ID: eb33c56509044ed78c6492fa77f0c1f4 por usuario 10
+[INFO] 2026-04-06T20:40:30.278Z - Balance encontrado con ID: eb33c56509044ed78c6492fa77f0c1f4
+[INFO] 2026-04-06T20:40:30.396Z - Usuario Ignacio Salazar (undefined) solicitó balance con ID: eb33c56509044ed78c6492fa77f0c1f4
+[INFO] 2026-04-06T20:40:30.397Z - Iniciando búsqueda de balance con ID: eb33c56509044ed78c6492fa77f0c1f4 por usuario 10
+[INFO] 2026-04-06T20:40:30.409Z - Balance encontrado con ID: eb33c56509044ed78c6492fa77f0c1f4
+[INFO] 2026-04-06T20:40:30.528Z - Usuario Ignacio Salazar (undefined) solicitó balance con ID: eb33c56509044ed78c6492fa77f0c1f4
+[INFO] 2026-04-06T20:40:30.531Z - Iniciando búsqueda de balance con ID: eb33c56509044ed78c6492fa77f0c1f4 por usuario 10
+[INFO] 2026-04-06T20:40:30.542Z - Balance encontrado con ID: eb33c56509044ed78c6492fa77f0c1f4
+[INFO] 2026-04-06T20:52:58.716Z - Usuario Ignacio Salazar (undefined) solicitó balance con ID: eb33c56509044ed78c6492fa77f0c1f4
+[INFO] 2026-04-06T20:52:58.717Z - Iniciando búsqueda de balance con ID: eb33c56509044ed78c6492fa77f0c1f4 por usuario 10
+[INFO] 2026-04-06T20:52:58.724Z - Balance encontrado con ID: eb33c56509044ed78c6492fa77f0c1f4
+[INFO] 2026-04-06T20:53:03.695Z - Usuario Ignacio Salazar (undefined) solicitó balance con ID: eb33c56509044ed78c6492fa77f0c1f4
+[INFO] 2026-04-06T20:53:03.697Z - Iniciando búsqueda de balance con ID: eb33c56509044ed78c6492fa77f0c1f4 por usuario 10
+[INFO] 2026-04-06T20:53:03.707Z - Balance encontrado con ID: eb33c56509044ed78c6492fa77f0c1f4
+[INFO] 2026-04-06T20:53:17.315Z - Usuario Ignacio Salazar (undefined) solicitó balance con ID: eb33c56509044ed78c6492fa77f0c1f4
+[INFO] 2026-04-06T20:53:17.316Z - Iniciando búsqueda de balance con ID: eb33c56509044ed78c6492fa77f0c1f4 por usuario 10
+[INFO] 2026-04-06T20:53:17.321Z - Balance encontrado con ID: eb33c56509044ed78c6492fa77f0c1f4
+[INFO] 2026-04-06T20:55:34.998Z - Usuario Ignacio Salazar (undefined) solicitó balance con ID: eb33c56509044ed78c6492fa77f0c1f4
+[INFO] 2026-04-06T20:55:35.000Z - Iniciando búsqueda de balance con ID: eb33c56509044ed78c6492fa77f0c1f4 por usuario 10
+[INFO] 2026-04-06T20:55:35.004Z - Balance encontrado con ID: eb33c56509044ed78c6492fa77f0c1f4

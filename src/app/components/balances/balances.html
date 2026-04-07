@@ -1,4 +1,4 @@
-<div class="container-fluid px-4 my-4">
+<div class="container-fluid px-4 my-4 animate-fade-in">
 
   <div class="d-flex align-items-center justify-content-between mb-3">
     <div class="d-flex align-items-center gap-2">
@@ -12,7 +12,7 @@
     </div>
 
     <span class="badge bg-white text-dark border shadow-sm py-2 px-3 fw-normal" *ngIf="total > 0">
-      Total : <strong class="ms-1">{{ total }} balances</strong>
+      Total : <strong class="ms-1">{{ animatedTotal }} balances</strong>
     </span>
   </div>
 
@@ -114,7 +114,7 @@
       </form>
     </div>
 
-    <div class="card-body p-0">
+    <div class="card-body p-0 animate-slide-up">
       <p-table #dt [value]="balances" [lazy]="true" (onLazyLoad)="onTableLazyLoad($event)" [paginator]="true"
         [rows]="10" [totalRecords]="total" [loading]="loading" [rowsPerPageOptions]="[5, 10, 20]"
         [showCurrentPageReport]="true" currentPageReportTemplate="{first}-{last} de {totalRecords}"
@@ -132,9 +132,11 @@
                 field="fecha_inicio"></p-sortIcon></th>
             <th pSortableColumn="id_mapping" class="border-bottom-0 text-dark">Mapping <p-sortIcon
                 field="id_mapping"></p-sortIcon></th>
-            <th pSortableColumn="estado_desc" class="text-center border-bottom-0 text-dark">Estado <p-sortIcon
-                field="estado_desc"></p-sortIcon></th>
-            <th pSortableColumn="username" class="border-bottom-0 text-dark">Usuario <p-sortIcon
+            <th pSortableColumn="estado_desc" class="text-center border-bottom-0 text-dark" *ngIf="!isPreviewMode">
+              Estado
+              <p-sortIcon field="estado_desc"></p-sortIcon>
+            </th>
+            <th pSortableColumn="username" class="border-bottom-0 text-dark" *ngIf="!isPreviewMode">Usuario <p-sortIcon
                 field="username"></p-sortIcon></th>
             <th class="text-center border-bottom-0 text-dark" style="width: 100px;">Acciones</th>
           </tr>
@@ -151,15 +153,19 @@
             <td class="small text-muted">{{ b.fecha_inicio | date: 'dd/MM/yy'}} - {{ b.fecha_fin | date: 'dd/MM/yy'}}
             </td>
             <td><span class="badge bg-light text-secondary border fw-normal">{{ b.id_mapping }}</span></td>
-            <td class="text-center">
+            <td class="text-center" *ngIf="!isPreviewMode">
               <span class="badge rounded-pill px-2"
                 [ngStyle]="{'background-color': b.estado_color, 'color': 'white'}">{{ b.estado_desc }}</span>
             </td>
-            <td><span class="small text-muted">{{ b.username || 'System' }}</span></td>
+            <td *ngIf="!isPreviewMode"><span class="small text-muted">{{ b.username || 'System' }}</span></td>
             <td class="text-center">
               <div class="d-flex justify-content-center gap-1">
-                <button class="btn btn-sm btn-light border text-primary" (click)="abrirModalEdicion(b.id_blce)"><i
-                    class="bi bi-pencil-fill"></i></button>
+                <button class="btn btn-sm btn-light border text-primary" (click)="abrirModalEdicion(b.id_blce)"
+                  [disabled]="b.estado_desc === 'Bloqueado' || b.id_estado === 1"
+                  [class.opacity-50]="b.estado_desc === 'Bloqueado' || b.id_estado === 1"
+                  title="No se puede editar cuando está bloqueado" *ngIf="!isPreviewMode">
+                  <i class="bi bi-pencil-fill"></i>
+                </button>
                 <button class="btn btn-sm btn-light border text-info" (click)="abrirModal(b.id_blce)"><i
                     class="bi bi-eye-fill"></i></button>
               </div>
@@ -169,7 +175,7 @@
 
         <ng-template pTemplate="emptymessage">
           <tr>
-            <td colspan="9" class="text-center py-4 text-muted">Sin resultados.</td>
+            <td [attr.colspan]="isPreviewMode ? 7 : 9" class="text-center py-4 text-muted">Sin resultados.</td>
           </tr>
         </ng-template>
       </p-table>
