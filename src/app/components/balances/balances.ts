@@ -28,6 +28,7 @@ import { SelectModule } from 'primeng/select';
 import { Table, TableModule, TableLazyLoadEvent } from 'primeng/table';
 import { TooltipModule } from 'primeng/tooltip';
 import { TagModule } from 'primeng/tag';
+import { Dashboard } from '../dashboard/dashboard';
 
 
 @Component({
@@ -455,5 +456,17 @@ export class Balances implements OnInit {
         console.log(`Modal cerrado: ${reason}`);
       }
     );
+  }
+
+  abrirDashboard(balanceId: string) {
+    const modalRef = this.modalService.open(Dashboard, {
+      fullscreen: true,
+      scrollable: true,
+      windowClass: this.isPreviewMode ? 'modal-super-top' : '',
+      backdropClass: this.isPreviewMode ? 'backdrop-super-top' : ''
+    });
+
+    modalRef.componentInstance.id = balanceId;
+    modalRef.componentInstance.fsas = this.fsas; // <-- AGREGADO
   }
 }

@@ -23,16 +23,15 @@
             <label class="form-label small fw-semibold mb-1 text-truncate">Tratamiento Saldos</label>
             <select class="form-select form-select-sm" [(ngModel)]="config.alcanceNegativos"
               (ngModelChange)="emitChange()">
-              <option value="absoluto">Solo Positivos</option>
-              <option value="auditoria">Norma Auditoría</option>
-              <option value="todo_negativo">Saldos Originales</option>
+              <option value="auditoria">Vista Financiera</option>
+              <option value="todo_negativo">Vista Cruda (+/-)</option>
             </select>
           </div>
 
           <div class="col-6">
             <label class="form-label small fw-semibold mb-1 text-truncate">Formato Negativos</label>
             <select class="form-select form-select-sm" [(ngModel)]="config.estiloNegativo"
-              (ngModelChange)="emitChange()" [disabled]="config.alcanceNegativos === 'absoluto'">
+              (ngModelChange)="emitChange()">
               <option value="signo">-1.500 (Signo)</option>
               <option value="parentesis">(1.500) Paréntesis</option>
             </select>

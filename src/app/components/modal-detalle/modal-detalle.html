@@ -69,16 +69,36 @@
 
       <div class="vr h-100 mx-2"></div>
 
+      <div class="form-check form-switch focus-ring focus-ring-success m-0 d-flex align-items-center gap-2">
+        <input class="form-check-input" type="radio" name="modoVistaGroup" id="switchPositivos" value="positivos"
+          [(ngModel)]="modoVista" (change)="regenerarVista()" style="cursor: pointer;">
+        <label class="form-check-label small fw-semibold text-secondary cursor-pointer" for="switchPositivos">
+          Solo Positivos
+        </label>
+      </div>
+
+      <div class="vr h-100 mx-2"></div>
+
+      <div class="form-check form-switch focus-ring focus-ring-primary m-0 d-flex align-items-center gap-2">
+        <input class="form-check-input" type="radio" name="modoVistaGroup" id="switchFinanciera" value="financiera"
+          [(ngModel)]="modoVista" (change)="regenerarVista()" style="cursor: pointer;">
+        <label class="form-check-label small fw-semibold text-secondary cursor-pointer" for="switchFinanciera">
+          Vista Financiera
+        </label>
+      </div>
+
+      <div class="vr h-100 mx-2"></div>
+
       <div class="form-check form-switch focus-ring focus-ring-danger m-0 d-flex align-items-center gap-2">
-        <input class="form-check-input" type="checkbox" role="switch" id="switchNegativos" style="cursor: pointer;"
-          [checked]="verNegativos" (change)="toggleNegativos()">
-        <label class="form-check-label small fw-semibold text-secondary cursor-pointer" for="switchNegativos">
-          Ver Saldos Reales (+/-)
+        <input class="form-check-input" type="radio" name="modoVistaGroup" id="switchCruda" value="cruda"
+          [(ngModel)]="modoVista" (change)="regenerarVista()" style="cursor: pointer;">
+        <label class="form-check-label small fw-semibold text-secondary cursor-pointer" for="switchCruda">
+          Vista Cruda (+/-)
         </label>
       </div>
     </div>
-    
-    </div>
+
+  </div>
 
   <app-spinner [showSpinner]="showSpinner"></app-spinner>
 

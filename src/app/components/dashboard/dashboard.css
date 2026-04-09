@@ -1,6 +1,13 @@
+/* Altura fluida para que los gráficos tomen todo el espacio de la tarjeta de forma responsiva */
+.chart-container {
+    height: 320px;
+    width: 100%;
+}
 
-
-
-.header{
-border-radius: 1rem ;
+/* Estilos para pulir el renderizado de los textos SVG */
+:host ::ng-deep .ngx-charts text {
+    fill: #6c757d;
+    /* Color text-muted de Bootstrap */
+    font-family: inherit;
+    font-size: 12px;
 }

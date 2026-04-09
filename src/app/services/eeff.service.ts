@@ -515,5 +515,40 @@ export class EEFFService {
     } as ICuentaComparativa;
   }
 
+  public aplicarVistaFinanciera(macros: IMacroCategoria[]): IMacroCategoria[] {
+    console.log('🔄 Aplicando Vista Financiera...');
+    // Definimos qué grupos deben invertirse para lectura financiera
+    const macrosInvertir = ['PASIVOS', 'PATRIMONIO', 'ESTADO DE RESULTADOS', 'PASIVO + PATRIMONIO'];
 
+    for (const macro of macros) {
+      const factor = macrosInvertir.includes(macro.nombre) ? -1 : 1;
+
+      macro.saldo = macro.saldo * factor;
+      if (macro.saldoMiles !== undefined) {
+        macro.saldoMiles = macro.saldoMiles * factor;
+      }
+
+      for (const categoria of macro.categorias) {
+        categoria.saldo = categoria.saldo * factor;
+        if (categoria.saldoMiles !== undefined) {
+          categoria.saldoMiles = categoria.saldoMiles * factor;
+        }
+
+        for (const subcategoria of categoria.subcategorias) {
+          subcategoria.saldo = subcategoria.saldo * factor;
+          if (subcategoria.saldoMiles !== undefined) {
+            subcategoria.saldoMiles = subcategoria.saldoMiles * factor;
+          }
+
+          for (const cuenta of subcategoria.cuentas) {
+            cuenta.saldo = cuenta.saldo * factor;
+            if (cuenta.saldoMiles !== undefined) {
+              cuenta.saldoMiles = cuenta.saldoMiles * factor;
+            }
+          }
+        }
+      }
+    }
+    return macros;
+  }
 }
