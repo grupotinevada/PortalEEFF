@@ -2687,3 +2687,109 @@
 [INFO] 2026-04-06T20:55:34.998Z - Usuario Ignacio Salazar (undefined) solicitó balance con ID: eb33c56509044ed78c6492fa77f0c1f4
 [INFO] 2026-04-06T20:55:35.000Z - Iniciando búsqueda de balance con ID: eb33c56509044ed78c6492fa77f0c1f4 por usuario 10
 [INFO] 2026-04-06T20:55:35.004Z - Balance encontrado con ID: eb33c56509044ed78c6492fa77f0c1f4
+[INFO] 2026-04-07T14:10:15.573Z - Recibido callback de Microsoft.
+[INFO] 2026-04-07T14:10:16.163Z - Email extraído de MSAL: isalazar@inevada.cl
+[INFO] 2026-04-07T14:10:16.276Z - Usuario isalazar@inevada.cl autenticado exitosamente. Generando JWT...
+[INFO] 2026-04-07T14:10:16.276Z - Generando token para [Ignacio Salazar] 
+[INFO] 2026-04-07T14:10:16.280Z - Cookie de sesión establecida para isalazar@inevada.cl. Redirigiendo al frontend.
+[INFO] 2026-04-07T14:20:06.848Z - Usuario Ignacio Salazar (undefined) solicitó balance con ID: eb33c56509044ed78c6492fa77f0c1f4
+[INFO] 2026-04-07T14:20:06.849Z - Iniciando búsqueda de balance con ID: eb33c56509044ed78c6492fa77f0c1f4 por usuario 10
+[INFO] 2026-04-07T14:20:06.858Z - Balance encontrado con ID: eb33c56509044ed78c6492fa77f0c1f4
+[INFO] 2026-04-07T14:21:11.087Z - Usuario Ignacio Salazar (undefined) solicitó balance con ID: 05fc6fc6c9824fc8bd234a5cf2ea298e
+[INFO] 2026-04-07T14:21:11.089Z - Iniciando búsqueda de balance con ID: 05fc6fc6c9824fc8bd234a5cf2ea298e por usuario 10
+[INFO] 2026-04-07T14:21:11.100Z - Balance encontrado con ID: 05fc6fc6c9824fc8bd234a5cf2ea298e
+[INFO] 2026-04-07T14:23:27.422Z - Usuario Ignacio Salazar (undefined) solicitó balance con ID: eb33c56509044ed78c6492fa77f0c1f4
+[INFO] 2026-04-07T14:23:27.423Z - Iniciando búsqueda de balance con ID: eb33c56509044ed78c6492fa77f0c1f4 por usuario 10
+[INFO] 2026-04-07T14:23:27.427Z - Balance encontrado con ID: eb33c56509044ed78c6492fa77f0c1f4
+[INFO] 2026-04-07T14:23:35.903Z - Usuario Ignacio Salazar (undefined) solicitó balance con ID: eb33c56509044ed78c6492fa77f0c1f4
+[INFO] 2026-04-07T14:23:35.904Z - Iniciando búsqueda de balance con ID: eb33c56509044ed78c6492fa77f0c1f4 por usuario 10
+[INFO] 2026-04-07T14:23:35.909Z - Balance encontrado con ID: eb33c56509044ed78c6492fa77f0c1f4
+[INFO] 2026-04-07T14:33:54.152Z - Usuario Ignacio Salazar (undefined) solicitó balance con ID: eb33c56509044ed78c6492fa77f0c1f4
+[INFO] 2026-04-07T14:33:54.155Z - Iniciando búsqueda de balance con ID: eb33c56509044ed78c6492fa77f0c1f4 por usuario 10
+[INFO] 2026-04-07T14:33:54.165Z - Balance encontrado con ID: eb33c56509044ed78c6492fa77f0c1f4
+[INFO] 2026-04-07T14:34:04.562Z - Usuario Ignacio Salazar (undefined) solicitó balance con ID: c30da13c7055495db9366e967bd0ce62
+[INFO] 2026-04-07T14:34:04.563Z - Iniciando búsqueda de balance con ID: c30da13c7055495db9366e967bd0ce62 por usuario 10
+[INFO] 2026-04-07T14:34:04.569Z - Balance encontrado con ID: c30da13c7055495db9366e967bd0ce62
+[INFO] 2026-04-07T14:34:08.062Z - Usuario Ignacio Salazar (undefined) solicitó balance con ID: 435673fe7a3b4a08bfa1d61090da852c
+[INFO] 2026-04-07T14:34:08.063Z - Iniciando búsqueda de balance con ID: 435673fe7a3b4a08bfa1d61090da852c por usuario 10
+[INFO] 2026-04-07T14:34:08.067Z - Balance encontrado con ID: 435673fe7a3b4a08bfa1d61090da852c
+[INFO] 2026-04-07T14:34:11.335Z - Usuario Ignacio Salazar (undefined) solicitó balance con ID: 05fc6fc6c9824fc8bd234a5cf2ea298e
+[INFO] 2026-04-07T14:34:11.336Z - Iniciando búsqueda de balance con ID: 05fc6fc6c9824fc8bd234a5cf2ea298e por usuario 10
+[INFO] 2026-04-07T14:34:11.340Z - Balance encontrado con ID: 05fc6fc6c9824fc8bd234a5cf2ea298e
+[INFO] 2026-04-09T15:42:36.879Z - Recibido callback de Microsoft.
+[INFO] 2026-04-09T15:42:37.429Z - Email extraído de MSAL: isalazar@inevada.cl
+[INFO] 2026-04-09T15:42:37.646Z - Usuario isalazar@inevada.cl autenticado exitosamente. Generando JWT...
+[INFO] 2026-04-09T15:42:37.647Z - Generando token para [Ignacio Salazar] 
+[INFO] 2026-04-09T15:42:37.650Z - Cookie de sesión establecida para isalazar@inevada.cl. Redirigiendo al frontend.
+[INFO] 2026-04-09T15:42:53.565Z - Usuario Ignacio Salazar (undefined) solicitó balance con ID: eb33c56509044ed78c6492fa77f0c1f4
+[INFO] 2026-04-09T15:42:53.566Z - Iniciando búsqueda de balance con ID: eb33c56509044ed78c6492fa77f0c1f4 por usuario 10
+[INFO] 2026-04-09T15:42:53.574Z - Balance encontrado con ID: eb33c56509044ed78c6492fa77f0c1f4
+[INFO] 2026-04-09T15:42:56.868Z - Usuario Ignacio Salazar (undefined) solicitó balance con ID: eb33c56509044ed78c6492fa77f0c1f4
+[INFO] 2026-04-09T15:42:56.869Z - Iniciando búsqueda de balance con ID: eb33c56509044ed78c6492fa77f0c1f4 por usuario 10
+[INFO] 2026-04-09T15:42:56.874Z - Balance encontrado con ID: eb33c56509044ed78c6492fa77f0c1f4
+[INFO] 2026-04-09T15:53:11.986Z - Recibido callback de Microsoft.
+[INFO] 2026-04-09T15:53:12.587Z - Email extraído de MSAL: isalazar@inevada.cl
+[INFO] 2026-04-09T15:53:12.627Z - Usuario isalazar@inevada.cl autenticado exitosamente. Generando JWT...
+[INFO] 2026-04-09T15:53:12.627Z - Generando token para [Ignacio Salazar] 
+[INFO] 2026-04-09T15:53:12.631Z - Cookie de sesión establecida para isalazar@inevada.cl. Redirigiendo al frontend.
+[INFO] 2026-04-09T15:55:44.673Z - Usuario Ignacio Salazar (undefined) solicitó balance con ID: 435673fe7a3b4a08bfa1d61090da852c
+[INFO] 2026-04-09T15:55:44.674Z - Iniciando búsqueda de balance con ID: 435673fe7a3b4a08bfa1d61090da852c por usuario 10
+[INFO] 2026-04-09T15:55:44.679Z - Balance encontrado con ID: 435673fe7a3b4a08bfa1d61090da852c
+[INFO] 2026-04-09T15:55:51.164Z - Usuario Ignacio Salazar (undefined) solicitó balance con ID: 05fc6fc6c9824fc8bd234a5cf2ea298e
+[INFO] 2026-04-09T15:55:51.164Z - Iniciando búsqueda de balance con ID: 05fc6fc6c9824fc8bd234a5cf2ea298e por usuario 10
+[INFO] 2026-04-09T15:55:51.169Z - Balance encontrado con ID: 05fc6fc6c9824fc8bd234a5cf2ea298e
+[INFO] 2026-04-09T15:56:17.340Z - Usuario Ignacio Salazar (undefined) solicitó balance con ID: 7dce4fa269e1433ea439cde7edfad921
+[INFO] 2026-04-09T15:56:17.341Z - Iniciando búsqueda de balance con ID: 7dce4fa269e1433ea439cde7edfad921 por usuario 10
+[INFO] 2026-04-09T15:56:17.346Z - Balance encontrado con ID: 7dce4fa269e1433ea439cde7edfad921
+[INFO] 2026-04-09T15:56:20.778Z - Usuario Ignacio Salazar (undefined) solicitó balance con ID: eb33c56509044ed78c6492fa77f0c1f4
+[INFO] 2026-04-09T15:56:20.779Z - Iniciando búsqueda de balance con ID: eb33c56509044ed78c6492fa77f0c1f4 por usuario 10
+[INFO] 2026-04-09T15:56:20.783Z - Balance encontrado con ID: eb33c56509044ed78c6492fa77f0c1f4
+[INFO] 2026-04-09T15:56:59.575Z - Usuario Ignacio Salazar (undefined) solicitó balance con ID: 7dce4fa269e1433ea439cde7edfad921
+[INFO] 2026-04-09T15:56:59.576Z - Iniciando búsqueda de balance con ID: 7dce4fa269e1433ea439cde7edfad921 por usuario 10
+[INFO] 2026-04-09T15:56:59.582Z - Balance encontrado con ID: 7dce4fa269e1433ea439cde7edfad921
+[INFO] 2026-04-09T15:57:57.160Z - Recibido callback de Microsoft.
+[INFO] 2026-04-09T15:57:57.705Z - Email extraído de MSAL: isalazar@inevada.cl
+[INFO] 2026-04-09T15:57:57.709Z - Usuario isalazar@inevada.cl autenticado exitosamente. Generando JWT...
+[INFO] 2026-04-09T15:57:57.710Z - Generando token para [Ignacio Salazar] 
+[INFO] 2026-04-09T15:57:57.714Z - Cookie de sesión establecida para isalazar@inevada.cl. Redirigiendo al frontend.
+[INFO] 2026-04-09T15:58:17.463Z - Usuario Ignacio Salazar (undefined) solicitó balance con ID: eb33c56509044ed78c6492fa77f0c1f4
+[INFO] 2026-04-09T15:58:17.463Z - Iniciando búsqueda de balance con ID: eb33c56509044ed78c6492fa77f0c1f4 por usuario 10
+[INFO] 2026-04-09T15:58:17.468Z - Balance encontrado con ID: eb33c56509044ed78c6492fa77f0c1f4
+[INFO] 2026-04-09T15:59:23.039Z - Usuario Ignacio Salazar (undefined) solicitó balance con ID: eb33c56509044ed78c6492fa77f0c1f4
+[INFO] 2026-04-09T15:59:23.040Z - Iniciando búsqueda de balance con ID: eb33c56509044ed78c6492fa77f0c1f4 por usuario 10
+[INFO] 2026-04-09T15:59:23.046Z - Balance encontrado con ID: eb33c56509044ed78c6492fa77f0c1f4
+[INFO] 2026-04-09T16:01:37.513Z - Verificando disponibilidad del nombre de balance: Balance CV 19 Version 1a
+[INFO] 2026-04-09T16:01:37.518Z - El nombre "Balance CV 19 Version 1a" está disponible.
+[ACTION] 2026-04-09T16:01:55.441Z - User 10 - CREAR_BALANCE_BULK - Insertados: 39 con id_blce: 3fe3da8699ce4953b843531c17ddfb91
+[INFO] 2026-04-09T16:02:06.621Z - Usuario Ignacio Salazar (undefined) solicitó balance con ID: 3fe3da8699ce4953b843531c17ddfb91
+[INFO] 2026-04-09T16:02:06.622Z - Iniciando búsqueda de balance con ID: 3fe3da8699ce4953b843531c17ddfb91 por usuario 10
+[INFO] 2026-04-09T16:02:06.626Z - Balance encontrado con ID: 3fe3da8699ce4953b843531c17ddfb91
+[INFO] 2026-04-09T16:02:17.006Z - Usuario 10 inició la actualización del balance con ID: 3fe3da8699ce4953b843531c17ddfb91
+[ACTION] 2026-04-09T16:02:17.026Z - User 10 - UPDATE_BALANCE - Actualizadas: 39 filas para el id_blce: 3fe3da8699ce4953b843531c17ddfb91
+[INFO] 2026-04-09T16:02:42.052Z - Usuario Ignacio Salazar (undefined) solicitó balance con ID: 3fe3da8699ce4953b843531c17ddfb91
+[INFO] 2026-04-09T16:02:42.053Z - Iniciando búsqueda de balance con ID: 3fe3da8699ce4953b843531c17ddfb91 por usuario 10
+[INFO] 2026-04-09T16:02:42.056Z - Balance encontrado con ID: 3fe3da8699ce4953b843531c17ddfb91
+[INFO] 2026-04-09T16:02:44.689Z - Usuario Ignacio Salazar (undefined) solicitó balance con ID: 3fe3da8699ce4953b843531c17ddfb91
+[INFO] 2026-04-09T16:02:44.689Z - Iniciando búsqueda de balance con ID: 3fe3da8699ce4953b843531c17ddfb91 por usuario 10
+[INFO] 2026-04-09T16:02:44.692Z - Balance encontrado con ID: 3fe3da8699ce4953b843531c17ddfb91
+[INFO] 2026-04-09T16:44:14.163Z - Usuario Ignacio Salazar (undefined) solicitó balance con ID: 8027efe8fc164d1197535fba55bb1307
+[INFO] 2026-04-09T16:44:14.164Z - Iniciando búsqueda de balance con ID: 8027efe8fc164d1197535fba55bb1307 por usuario 10
+[INFO] 2026-04-09T16:44:14.168Z - Balance encontrado con ID: 8027efe8fc164d1197535fba55bb1307
+[INFO] 2026-04-09T16:44:17.680Z - Usuario Ignacio Salazar (undefined) solicitó balance con ID: 3fe3da8699ce4953b843531c17ddfb91
+[INFO] 2026-04-09T16:44:17.681Z - Iniciando búsqueda de balance con ID: 3fe3da8699ce4953b843531c17ddfb91 por usuario 10
+[INFO] 2026-04-09T16:44:17.686Z - Balance encontrado con ID: 3fe3da8699ce4953b843531c17ddfb91
+[INFO] 2026-04-09T19:23:10.766Z - Usuario Ignacio Salazar (undefined) solicitó balance con ID: 3fe3da8699ce4953b843531c17ddfb91
+[INFO] 2026-04-09T19:23:10.769Z - Iniciando búsqueda de balance con ID: 3fe3da8699ce4953b843531c17ddfb91 por usuario 10
+[INFO] 2026-04-09T19:23:10.774Z - Balance encontrado con ID: 3fe3da8699ce4953b843531c17ddfb91
+[INFO] 2026-04-09T19:25:12.847Z - Usuario Ignacio Salazar (undefined) solicitó balance con ID: 3fe3da8699ce4953b843531c17ddfb91
+[INFO] 2026-04-09T19:25:12.848Z - Iniciando búsqueda de balance con ID: 3fe3da8699ce4953b843531c17ddfb91 por usuario 10
+[INFO] 2026-04-09T19:25:12.851Z - Balance encontrado con ID: 3fe3da8699ce4953b843531c17ddfb91
+[INFO] 2026-04-09T19:33:24.721Z - Usuario Ignacio Salazar (undefined) solicitó balance con ID: 3fe3da8699ce4953b843531c17ddfb91
+[INFO] 2026-04-09T19:33:24.722Z - Iniciando búsqueda de balance con ID: 3fe3da8699ce4953b843531c17ddfb91 por usuario 10
+[INFO] 2026-04-09T19:33:24.725Z - Balance encontrado con ID: 3fe3da8699ce4953b843531c17ddfb91
+[INFO] 2026-04-09T19:43:43.991Z - Usuario Ignacio Salazar (undefined) solicitó balance con ID: 3fe3da8699ce4953b843531c17ddfb91
+[INFO] 2026-04-09T19:43:43.992Z - Iniciando búsqueda de balance con ID: 3fe3da8699ce4953b843531c17ddfb91 por usuario 10
+[INFO] 2026-04-09T19:43:43.995Z - Balance encontrado con ID: 3fe3da8699ce4953b843531c17ddfb91
+[INFO] 2026-04-09T19:46:48.623Z - Usuario Ignacio Salazar (undefined) solicitó balance con ID: 3fe3da8699ce4953b843531c17ddfb91
+[INFO] 2026-04-09T19:46:48.623Z - Iniciando búsqueda de balance con ID: 3fe3da8699ce4953b843531c17ddfb91 por usuario 10
+[INFO] 2026-04-09T19:46:48.627Z - Balance encontrado con ID: 3fe3da8699ce4953b843531c17ddfb91

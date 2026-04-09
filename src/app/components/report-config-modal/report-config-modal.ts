@@ -148,22 +148,66 @@ export class ReportConfigModal implements OnInit {
       }
     }
 
-    // 2. DESPUÉS: Aplicar tratamiento de signos (Positivizar visualmente si corresponde)
-    dataProcesada.forEach((macro: any) => {
-      const esER = macro.nombre.toUpperCase().includes('RESULTADO') ||
-        macro.nombre.toUpperCase().includes('GANANCIA') ||
-        macro.nombre.toUpperCase().includes('PERDIDA');
-      let debeSerAbsoluto = false;
-      if (this.config.alcanceNegativos === 'absoluto') debeSerAbsoluto = true;
-      else if (this.config.alcanceNegativos === 'auditoria' && !esER) debeSerAbsoluto = true;
-
-      if (debeSerAbsoluto) {
-        if (mode === 'standard') this.hacerPositivoRecursivo(macro);
-        else this.hacerPositivoComparativoRecursivo(macro);
+    // 2. DESPUÉS: Aplicar tratamiento de signos (Vista Financiera = 'auditoria')
+    if (this.config.alcanceNegativos === 'auditoria') {
+      if (mode === 'standard') {
+        this.aplicarVistaFinancieraStandard(dataProcesada);
+      } else {
+        this.aplicarVistaFinancieraComparativa(dataProcesada);
       }
-    });
+    }
+    // Si es 'todo_negativo' (Vista Cruda), se mantienen los signos contables originales.
 
     return dataProcesada;
+  }
+
+  // =========================================================
+  // LÓGICA DE INVERSIÓN: VISTA FINANCIERA
+  // =========================================================
+  private aplicarVistaFinancieraStandard(nodos: any[]) {
+    const macrosInvertir = ['PASIVOS', 'PATRIMONIO', 'ESTADO DE RESULTADOS', 'PASIVO + PATRIMONIO'];
+    nodos.forEach(macro => {
+      const factor = macrosInvertir.includes(macro.nombre) ? -1 : 1;
+      this.multiplicarNodosRecursivo(macro, factor);
+    });
+  }
+
+  private multiplicarNodosRecursivo(item: any, factor: number) {
+    if (item.saldo !== undefined) item.saldo = item.saldo * factor;
+    if (item.saldoMiles !== undefined) item.saldoMiles = item.saldoMiles * factor;
+
+    if (item.categorias) item.categorias.forEach((cat: any) => this.multiplicarNodosRecursivo(cat, factor));
+    if (item.subcategorias) item.subcategorias.forEach((sub: any) => this.multiplicarNodosRecursivo(sub, factor));
+    if (item.cuentas) item.cuentas.forEach((cta: any) => this.multiplicarNodosRecursivo(cta, factor));
+  }
+
+  private aplicarVistaFinancieraComparativa(nodos: any[]) {
+    const macrosInvertir = ['PASIVOS', 'PATRIMONIO', 'ESTADO DE RESULTADOS', 'PASIVO + PATRIMONIO'];
+    nodos.forEach(macro => {
+      const factor = macrosInvertir.includes(macro.nombre) ? -1 : 1;
+      this.multiplicarComparativoRecursivo(macro, factor);
+    });
+  }
+
+  private multiplicarComparativoRecursivo(item: any, factor: number) {
+    // Invertimos saldos actuales
+    if (item.saldo !== undefined) item.saldo = item.saldo * factor;
+    if (item.saldoMiles !== undefined) item.saldoMiles = item.saldoMiles * factor;
+
+    // Invertimos saldos anteriores
+    if (item.saldoAnterior !== undefined) item.saldoAnterior = item.saldoAnterior * factor;
+    if (item.saldoAnteriorMiles !== undefined) item.saldoAnteriorMiles = item.saldoAnteriorMiles * factor;
+
+    // Al invertir ambos saldos, la diferencia monetaria también invierte su signo
+    if (item.diferencia !== undefined) item.diferencia = item.diferencia * factor;
+    if (item.diferenciaMiles !== undefined) item.diferenciaMiles = item.diferenciaMiles * factor;
+
+    // NOTA: La variación porcentual (item.variacion) NO se altera.
+    // Matemáticamente: (-Nuevo - -Ant) / -Ant == (Nuevo - Ant) / Ant
+
+    if (item.categorias) item.categorias.forEach((cat: any) => this.multiplicarComparativoRecursivo(cat, factor));
+    if (item.subcategorias) item.subcategorias.forEach((sub: any) => this.multiplicarComparativoRecursivo(sub, factor));
+    if (item.cuentas) item.cuentas.forEach((cta: any) => this.multiplicarComparativoRecursivo(cta, factor));
   }
 
   actualizarPreview(): void {

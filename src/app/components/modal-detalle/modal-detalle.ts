@@ -38,7 +38,8 @@ export class ModalDetalle implements OnInit {
   showSpinner = false;
   msgError = '';
   balance: IBalanceGet[] = [];
-  verNegativos: boolean = false;
+  // Reemplaza: verNegativos: boolean = false;
+  modoVista: 'positivos' | 'cruda' | 'financiera' = 'positivos';
 
   macros: IMacroCategoria[] = [];
 
@@ -258,10 +259,7 @@ export class ModalDetalle implements OnInit {
     }
   }
 
-  toggleNegativos(): void {
-    this.verNegativos = !this.verNegativos;
-    this.regenerarVista();
-  }
+
 
 
   // 🔹 Estado combinado (getter)
@@ -308,12 +306,14 @@ export class ModalDetalle implements OnInit {
           this.calcularVistaMiles();
         }
 
-        // 2. Aplicar lógica de signos (Solo visual, después de calcular miles)
-        // Si "Ver Negativos" está APAGADO (!verNegativos), aplicamos la positivización.
-        if (!this.verNegativos) {
+        // 2. Aplicar lógica de signos y visualización
+        if (this.modoVista === 'positivos') {
+          // Todo en valor absoluto
           this.vistaParaMostrar = this.eeffService.positivizarSaldosParaPreview(this.vistaParaMostrar);
+        } else if (this.modoVista === 'financiera') {
+          // Lógica de vista financiera (inversión condicional)
+          this.vistaParaMostrar = this.eeffService.aplicarVistaFinanciera(this.vistaParaMostrar);
         }
-
         // Validaciones solo informativas
         const validaciones = this.eeffService.validarEEFF(this.vistaParaMostrar);
         console.log('Validaciones tras regenerar:', validaciones);

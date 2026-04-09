@@ -1,14 +1,82 @@
-<div
-    style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 60vh; text-align: center; color: #555;">
-    <svg width="80" height="80" viewBox="0 0 24 24" fill="none" style="margin-bottom: 16px;">
-        <circle cx="12" cy="12" r="10" fill="#e0e7ff" />
-        <path d="M8 15h8M8 11h8M8 7h4" stroke="#6366f1" stroke-width="2" stroke-linecap="round" />
-        <circle cx="12" cy="12" r="10" stroke="#6366f1" stroke-width="2" fill="none" />
-    </svg>
-    <h2 style="margin-bottom: 8px;">¡Ups! Aquí aún no hay contenido</h2>
-    <p style="margin-bottom: 16px;">Esta sección está en progreso. Pronto tendrás acceso a nuevas funcionalidades.</p>
-    <svg width="40" height="40" viewBox="0 0 24 24" fill="none">
-        <path d="M12 17v.01M12 7v6" stroke="#6366f1" stroke-width="2" stroke-linecap="round" />
-        <circle cx="12" cy="12" r="10" stroke="#6366f1" stroke-width="2" fill="none" />
-    </svg>
+<div class="modal-header bg-light border-bottom">
+    <div class="d-flex align-items-center gap-2">
+        <div class="bg-warning bg-opacity-10 text-warning rounded p-2 d-flex">
+            <i class="bi bi-bar-chart-fill fs-5"></i>
+        </div>
+        <div>
+            <h4 class="fw-bold text-dark mb-0 ls-tight">Análisis del Balance</h4>
+            <small class="text-muted">Balance ID: {{ id }}</small>
+        </div>
+    </div>
+    <button type="button" class="btn-close" aria-label="Close" (click)="activeModal.dismiss()"></button>
+</div>
+
+<app-spinner [showSpinner]="loading"></app-spinner>
+
+<div class="modal-body bg-secondary bg-opacity-10 p-4" *ngIf="!loading">
+    <div class="container-fluid">
+        <div class="row g-4">
+
+            <div class="col-md-6">
+                <div class="card border-0 shadow-sm rounded-4 h-100">
+                    <div class="card-body d-flex flex-column">
+                        <h6 class="fw-bold text-dark mb-3"><i class="bi bi-pie-chart text-primary me-2"></i>Composición
+                            Financiera</h6>
+                        <div class="flex-grow-1 chart-container">
+                            <ngx-charts-pie-chart [results]="composicionData" [scheme]="colorScheme" [labels]="true"
+                                [doughnut]="true" [arcWidth]="0.35">
+                            </ngx-charts-pie-chart>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="card border-0 shadow-sm rounded-4 h-100">
+                    <div class="card-body d-flex flex-column">
+                        <h6 class="fw-bold text-dark mb-3"><i class="bi bi-bar-chart-steps text-success me-2"></i>Top 5
+                            Cuentas (Saldos)</h6>
+                        <div class="flex-grow-1 chart-container">
+                            <ngx-charts-bar-horizontal [results]="topCuentasData" [scheme]="colorScheme" [xAxis]="true"
+                                [yAxis]="true" [showXAxisLabel]="true" xAxisLabel="Saldo absoluto (CLP)">
+                            </ngx-charts-bar-horizontal>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="card border-0 shadow-sm rounded-4 h-100">
+                    <div class="card-body d-flex flex-column">
+                        <h6 class="fw-bold text-dark mb-3"><i
+                                class="bi bi-graph-up-arrow text-warning me-2"></i>Ingresos vs Gastos</h6>
+                        <div class="flex-grow-1 chart-container">
+                            <ngx-charts-bar-vertical [results]="ingresosGastosData" [scheme]="colorScheme"
+                                [xAxis]="true" [yAxis]="true" [showXAxisLabel]="false" [showYAxisLabel]="true"
+                                yAxisLabel="Monto (CLP)">
+                            </ngx-charts-bar-vertical>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="card border-0 shadow-sm rounded-4 h-100">
+                    <div class="card-body d-flex flex-column">
+                        <h6 class="fw-bold text-dark mb-3"><i class="bi bi-diagram-3 text-danger me-2"></i>Distribución
+                            de Gastos (Top 6)</h6>
+                        <div class="flex-grow-1 chart-container">
+                            <ngx-charts-advanced-pie-chart [results]="gastosData" [scheme]="colorScheme">
+                            </ngx-charts-advanced-pie-chart>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<div class="modal-footer bg-white border-top">
+    <button type="button" class="btn btn-outline-secondary px-4" (click)="activeModal.close()">Cerrar</button>
 </div>

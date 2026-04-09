@@ -160,6 +160,10 @@
             <td *ngIf="!isPreviewMode"><span class="small text-muted">{{ b.username || 'System' }}</span></td>
             <td class="text-center">
               <div class="d-flex justify-content-center gap-1">
+                <button class="btn btn-sm btn-light border text-warning" (click)="abrirDashboard(b.id_blce)"
+                  title="Ver Dashboard Análisis" *ngIf="!isPreviewMode">
+                  <i class="bi bi-bar-chart-fill"></i>
+                </button>
                 <button class="btn btn-sm btn-light border text-primary" (click)="abrirModalEdicion(b.id_blce)"
                   [disabled]="b.estado_desc === 'Bloqueado' || b.id_estado === 1"
                   [class.opacity-50]="b.estado_desc === 'Bloqueado' || b.id_estado === 1"
